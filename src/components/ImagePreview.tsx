@@ -1,54 +1,58 @@
-import React from "react";
-import { View, StyleSheet, Image, Platform, Dimensions } from "react-native";
+import React, { useState } from "react";
+import { View, Image, StyleSheet, ImageBackground } from "react-native";
+import { QuadrilateralOverlay } from "./QuadrilateralOverlay";
 
 type ImagePreviewProps = {
   imageUri: string | null;
 };
 
 export const ImagePreview: React.FC<ImagePreviewProps> = ({ imageUri }) => {
-  if (!imageUri) {
-    return null;
-  }
+  const [imageDimensions, setImageDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
 
-  // Get screen dimensions to calculate appropriate image size
-  const { width, height } = Dimensions.get("window");
-  const isLandscape = width > height;
+  if (!imageUri) return null;
 
-  // Calculate image dimensions based on orientation
-  const imageWidth = isLandscape ? "90%" : "100%";
-  const imageHeight = isLandscape ? height * 0.7 : height * 0.5;
+  // Get image dimensions when it loads
+  const onImageLoad = () => {
+    Image.getSize(imageUri, (width, height) => {
+      // Calculate dimensions that maintain aspect ratio and fit the screen
+      const screenWidth = 300; // You might want to make this dynamic
+      const scaleFactor = screenWidth / width;
+      setImageDimensions({
+        width: screenWidth,
+        height: height * scaleFactor,
+      });
+    });
+  };
 
   return (
-    <View style={styles.imageContainer}>
-      <Image
+    <View style={styles.container}>
+      <ImageBackground
         source={{ uri: imageUri }}
-        style={[
-          styles.image,
-          {
-            width: imageWidth,
-            height: imageHeight,
-          },
-        ]}
+        style={[styles.image, imageDimensions]}
+        onLoad={onImageLoad}
         resizeMode="contain"
-      />
+      >
+        {imageDimensions.width > 0 && (
+          <QuadrilateralOverlay
+            imageWidth={imageDimensions.width}
+            imageHeight={imageDimensions.height}
+          />
+        )}
+      </ImageBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  imageContainer: {
+  container: {
+    position: "relative",
     alignItems: "center",
     justifyContent: "center",
-    width: "100%",
-    height: "100%",
   },
   image: {
-    borderRadius: 8,
-    ...Platform.select({
-      web: {
-        maxWidth: 800,
-        maxHeight: 600,
-      },
-    }),
+    backgroundColor: "#000",
   },
 });
