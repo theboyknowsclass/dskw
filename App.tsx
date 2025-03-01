@@ -47,13 +47,11 @@ const AppContent = () => {
  */
 export default function App() {
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <ThemeProvider>
-          <AppContent />
-        </ThemeProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
 

@@ -28,37 +28,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   // Determine if the screen is in landscape orientation
   const isLandscape = width > height;
 
-  // Decide whether to show the preview section based on orientation and image selection
-  const shouldShowPreview = isLandscape || selectedImage !== null;
-
-  // Function to render the preview section
-  const renderPreviewSection = () => (
-    <View
-      style={[
-        isLandscape ? styles.landscapeHalf : styles.portraitFull,
-        styles.previewSection,
-      ]}
-    >
-      <ImagePreview imageUri={selectedImage} />
-    </View>
-  );
-
-  // Function to render the controls section
-  const renderControlsSection = () => (
-    <View
-      style={[
-        isLandscape ? styles.landscapeHalf : styles.portraitFull,
-        styles.controlsSection,
-      ]}
-    >
-      <ImageControls
-        onSelectImage={pickImage}
-        isLoading={isLoading}
-        error={error}
-        textColor={colors.text}
-      />
-    </View>
-  );
+  // Decide whether to show the preview section based image selection
+  const shouldShowPreview = selectedImage !== null;
 
   return (
     <View
@@ -81,8 +52,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         ]}
       >
         {/* In portrait mode, only show preview if there's a selected image */}
-        {shouldShowPreview && renderPreviewSection()}
-        {renderControlsSection()}
+        {shouldShowPreview && (
+          <View
+            style={[
+              isLandscape ? styles.landscapeHalf : styles.portraitFull,
+              styles.previewSection,
+            ]}
+          >
+            <ImagePreview imageUri={selectedImage} />
+          </View>
+        )}
+        <View
+          style={[
+            isLandscape ? styles.landscapeHalf : styles.portraitFull,
+            styles.controlsSection,
+          ]}
+        >
+          <ImageControls
+            onSelectImage={pickImage}
+            isLoading={isLoading}
+            error={error}
+            textColor={colors.text}
+          />
+        </View>
       </View>
     </View>
   );
