@@ -10,6 +10,7 @@ type QuadrilateralState = {
   activePointIndex: number | null;
   setPoints: (points: Point[]) => void;
   setActivePointIndex: (index: number | null) => void;
+  updatePoint: (index: number, point: Point) => void;
 };
 
 // Initialize with default points forming a rectangle in the center
@@ -26,4 +27,10 @@ export const useQuadrilateralStore = create<QuadrilateralState>()((set) => ({
   setPoints: (points: Point[]) => set({ points }),
   setActivePointIndex: (index: number | null) =>
     set({ activePointIndex: index }),
+  updatePoint: (index: number, point: Point) =>
+    set((state) => {
+      const newPoints = [...state.points];
+      newPoints[index] = point;
+      return { points: newPoints };
+    }),
 }));
