@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Platform,
-  StatusBar,
 } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -14,23 +13,22 @@ import { ThemeToggle } from "./ThemeToggle";
 
 // Interface for header props
 interface HeaderProps {
-  title: string;
   navigation: DrawerNavigationProp<any, any>;
+  title?: string;
 }
 
 /**
  * Header component with hamburger menu button and theme toggle
  * Follows the Single Responsibility Principle
  */
-export const Header: React.FC<HeaderProps> = ({ title, navigation }) => {
-  const { colors, isDarkTheme } = useTheme();
+export const Header: React.FC<HeaderProps> = ({ navigation, title }) => {
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
   // Calculate proper padding based on platform and insets
   const getHeaderStyle = () => {
     return {
       backgroundColor: colors.background,
-      borderBottomColor: colors.border,
       paddingTop:
         Platform.OS === "android"
           ? insets.top
@@ -62,9 +60,13 @@ export const Header: React.FC<HeaderProps> = ({ title, navigation }) => {
         </View>
       </TouchableOpacity>
 
-      <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
-        {title}
-      </Text>
+      {title ? (
+        <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
+          {title}
+        </Text>
+      ) : (
+        <View style={styles.spacer} />
+      )}
 
       {/* Theme Toggle Button */}
       <ThemeToggle />
@@ -79,7 +81,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
     ...Platform.select({
       android: {
         elevation: 4,
@@ -101,6 +102,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 2,
     borderRadius: 1,
+  },
+  spacer: {
+    flex: 1,
   },
   title: {
     flex: 1,

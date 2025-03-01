@@ -1,11 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, Platform } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useTheme } from "../contexts/ThemeContext";
-import { Button } from "../components/Button";
 import { Header } from "../components/Header";
 import { useImagePicker } from "../hooks/useImagePicker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useWindowDimensions } from "react-native";
+import { ImagePreview } from "../components/ImagePreview";
+import { ImageControls } from "../components/ImageControls";
 
 // Define the navigation props type
 type HomeScreenProps = {
@@ -19,9 +21,44 @@ type HomeScreenProps = {
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   // Use our custom hooks for theme and image picker
   const { colors } = useTheme();
-  const { selectedImage, isLoading, error, pickImage, clearImage } =
-    useImagePicker();
+  const { selectedImage, isLoading, error, pickImage } = useImagePicker();
   const insets = useSafeAreaInsets();
+  const { width, height } = useWindowDimensions();
+
+  // Determine if the screen is in landscape orientation
+  const isLandscape = width > height;
+
+  // Decide whether to show the preview section based on orientation and image selection
+  const shouldShowPreview = isLandscape || selectedImage !== null;
+
+  // Function to render the preview section
+  const renderPreviewSection = () => (
+    <View
+      style={[
+        isLandscape ? styles.landscapeHalf : styles.portraitFull,
+        styles.previewSection,
+      ]}
+    >
+      <ImagePreview imageUri={selectedImage} />
+    </View>
+  );
+
+  // Function to render the controls section
+  const renderControlsSection = () => (
+    <View
+      style={[
+        isLandscape ? styles.landscapeHalf : styles.portraitFull,
+        styles.controlsSection,
+      ]}
+    >
+      <ImageControls
+        onSelectImage={pickImage}
+        isLoading={isLoading}
+        error={error}
+        textColor={colors.text}
+      />
+    </View>
+  );
 
   return (
     <View
@@ -29,51 +66,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         styles.container,
         {
           backgroundColor: colors.background,
-          // Apply safe area insets to the container
           paddingBottom: insets.bottom,
         },
       ]}
     >
       {/* Header with hamburger menu */}
-      <Header title="Home" navigation={navigation} />
+      <Header navigation={navigation} />
 
-      <View style={styles.content}>
-        {/* Show selected image if available */}
-        {selectedImage ? (
-          <View style={styles.imageContainer}>
-            <Image
-              source={{ uri: selectedImage }}
-              style={styles.image}
-              resizeMode="contain"
-            />
-            <Text style={[styles.imageText, { color: colors.text }]}>
-              Image selected!
-            </Text>
-            <Button
-              title="Clear Image"
-              onPress={clearImage}
-              variant="secondary"
-              buttonStyle={styles.clearButton}
-            />
-          </View>
-        ) : (
-          <View style={styles.buttonContainer}>
-            <Text style={[styles.heading, { color: colors.text }]}>
-              Welcome to the Image Picker App
-            </Text>
-            <Text style={[styles.subheading, { color: colors.text }]}>
-              Select an image from your device
-            </Text>
-            <Button
-              title="Select Image"
-              onPress={pickImage}
-              loading={isLoading}
-              size="large"
-            />
-            {/* Show error if any */}
-            {error && <Text style={styles.errorText}>{error}</Text>}
-          </View>
-        )}
+      {/* Main content container with conditional direction */}
+      <View
+        style={[
+          styles.content,
+          isLandscape ? styles.landscapeContent : styles.portraitContent,
+        ]}
+      >
+        {/* In portrait mode, only show preview if there's a selected image */}
+        {shouldShowPreview && renderPreviewSection()}
+        {renderControlsSection()}
       </View>
     </View>
   );
@@ -85,50 +94,29 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  portraitContent: {
+    flexDirection: "column",
+  },
+  landscapeContent: {
+    flexDirection: "row",
+  },
+  portraitFull: {
+    flex: 1,
+    width: "100%",
+  },
+  landscapeHalf: {
+    flex: 1,
+    height: "100%",
+  },
+  previewSection: {
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
+    padding: 20,
   },
-  buttonContainer: {
-    width: "100%",
-    alignItems: "center",
+  controlsSection: {
     justifyContent: "center",
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  subheading: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 30,
-  },
-  errorText: {
-    color: "red",
-    marginTop: 20,
-    textAlign: "center",
-  },
-  imageContainer: {
     alignItems: "center",
-    width: "100%",
-  },
-  image: {
-    width: "100%",
-    height: 300,
-    borderRadius: 8,
-    ...Platform.select({
-      web: {
-        maxWidth: 500,
-      },
-    }),
-  },
-  imageText: {
-    fontSize: 18,
-    marginVertical: 20,
-  },
-  clearButton: {
-    marginTop: 20,
+    padding: 20,
   },
 });

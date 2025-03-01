@@ -29,7 +29,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ navigation }) => {
       ]}
     >
       {/* Header with hamburger menu */}
-      <Header title="About" navigation={navigation} />
+      <Header navigation={navigation} title="About" />
 
       <ScrollView
         style={styles.scrollView}

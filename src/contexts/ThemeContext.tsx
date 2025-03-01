@@ -75,7 +75,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       setColors(theme === "dark" ? darkTheme : lightTheme);
     }
     setIsInitialized(true);
-  }, []);
+  }, [systemColorScheme, theme]);
 
   // When theme changes in store, update the UI
   useEffect(() => {
