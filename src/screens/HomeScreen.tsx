@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image, ImageBackground } from "react-native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useTheme } from "../contexts/ThemeContext";
 import { Header } from "../components/Header";
@@ -8,6 +8,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useWindowDimensions } from "react-native";
 import { ImagePreview } from "../components/ImagePreview";
 import { ImageControls } from "../components/ImageControls";
+import { ZoomPreview } from "../components/ZoomPreview";
+import { useOverlayStore } from "../store/overlayStore";
 
 // Define the navigation props type
 type HomeScreenProps = {
@@ -24,6 +26,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { selectedImage, isLoading, error, pickImage } = useImagePicker();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
+  const { isDragging } = useOverlayStore();
 
   // Determine if the screen is in landscape orientation
   const isLandscape = width > height;
@@ -68,12 +71,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             styles.controlsSection,
           ]}
         >
-          <ImageControls
-            onSelectImage={pickImage}
-            isLoading={isLoading}
-            error={error}
-            textColor={colors.text}
-          />
+          {isDragging && selectedImage ? (
+            <ZoomPreview />
+          ) : (
+            <ImageControls
+              onSelectImage={pickImage}
+              isLoading={isLoading}
+              error={error}
+              textColor={colors.text}
+            />
+          )}
         </View>
       </View>
     </View>

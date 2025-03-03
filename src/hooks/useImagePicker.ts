@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { Image } from "react-native";
 import {
   ImagePickerService,
   ImageSelectionResult,
 } from "../services/ImagePickerService";
+import { useImageStore } from "../store/imageStore";
 
 /**
  * Custom hook for image selection following the Dependency Inversion Principle
@@ -12,6 +14,7 @@ export const useImagePicker = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const { setUri, setDimensions } = useImageStore();
 
   /**
    * Function to handle image selection
@@ -27,6 +30,19 @@ export const useImagePicker = () => {
 
       if (result.success && result.uri) {
         setSelectedImage(result.uri);
+        // Get image dimensions when it loads
+        Image.getSize(result.uri, (width, height) => {
+          const screenWidth = 300; // You might want to make this dynamic
+          const scaleFactor = screenWidth / width;
+          setDimensions(
+            { width, height }, // Original dimensions
+            {
+              width: screenWidth,
+              height: height * scaleFactor,
+            } // Scaled dimensions
+          );
+          setUri(result.uri);
+        });
       } else if (result.error) {
         setError(result.error);
       }
@@ -45,6 +61,8 @@ export const useImagePicker = () => {
   const clearImage = (): void => {
     setSelectedImage(null);
     setError(null);
+    setUri(null);
+    setDimensions({ width: 0, height: 0 }, { width: 0, height: 0 });
   };
 
   return {

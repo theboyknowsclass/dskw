@@ -1,8 +1,9 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useRef } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Svg, { Polygon, Circle } from "react-native-svg";
-import { useQuadrilateralStore } from "../store/quadrilateralStore";
+import { useOverlayStore } from "../store/overlayStore";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useTheme } from "../contexts/ThemeContext";
 
 type QuadrilateralOverlayProps = {
   imageWidth: number;
@@ -13,8 +14,18 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
   imageWidth,
   imageHeight,
 }) => {
-  const { points, activePointIndex, setActivePointIndex, updatePoint } =
-    useQuadrilateralStore();
+  const {
+    points,
+    activePointIndex,
+    isDragging,
+    setActivePointIndex,
+    updatePoint,
+    setIsDragging,
+  } = useOverlayStore();
+  const { colors } = useTheme();
+
+  // Ref to track the container's position
+  const containerRef = useRef<View>(null);
 
   // Convert relative coordinates to screen coordinates
   const screenPoints = useMemo(() => {
@@ -27,11 +38,18 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
   // Convert screen coordinates to relative coordinates
   const getRelativeCoordinates = useCallback(
     (screenX: number, screenY: number) => {
-      // Calculate relative coordinates (0-1) based on image dimensions
-      const relativeX = Math.max(0, Math.min(1, screenX / imageWidth));
-      const relativeY = Math.max(0, Math.min(1, screenY / imageHeight));
+      // Get the container's position
+      containerRef.current?.measure((x, y, width, height, pageX, pageY) => {
+        // Calculate coordinates relative to the container
+        const relativeX = (screenX - pageX) / imageWidth;
+        const relativeY = (screenY - pageY) / imageHeight;
 
-      return { x: relativeX, y: relativeY };
+        // Clamp values between 0 and 1
+        return {
+          x: Math.max(0, Math.min(1, relativeX)),
+          y: Math.max(0, Math.min(1, relativeY)),
+        };
+      });
     },
     [imageWidth, imageHeight]
   );
@@ -42,27 +60,30 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
       return Gesture.Pan()
         .onStart(() => {
           setActivePointIndex(index);
+          setIsDragging(true);
         })
         .onUpdate((e) => {
-          // Calculate the new position (clamped to image boundaries)
-          const pointX = Math.max(0, Math.min(imageWidth, e.absoluteX));
-          const pointY = Math.max(0, Math.min(imageHeight, e.absoluteY));
+          // Get the container's position
+          containerRef.current?.measure((x, y, width, height, pageX, pageY) => {
+            // Calculate coordinates relative to the container
+            const relativeX = (e.absoluteX - pageX) / imageWidth;
+            const relativeY = (e.absoluteY - pageY) / imageHeight;
 
-          // Convert to relative coordinates and update the point
-          const relativePoint = getRelativeCoordinates(pointX, pointY);
-          updatePoint(index, relativePoint);
+            // Clamp values between 0 and 1
+            const clampedPoint = {
+              x: Math.max(0, Math.min(1, relativeX)),
+              y: Math.max(0, Math.min(1, relativeY)),
+            };
+
+            updatePoint(index, clampedPoint);
+          });
         })
         .onEnd(() => {
           setActivePointIndex(null);
+          setIsDragging(false);
         });
     },
-    [
-      imageWidth,
-      imageHeight,
-      getRelativeCoordinates,
-      setActivePointIndex,
-      updatePoint,
-    ]
+    [imageWidth, imageHeight, setActivePointIndex, updatePoint, setIsDragging]
   );
 
   const polygonPoints = useMemo(() => {
@@ -70,14 +91,14 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
   }, [screenPoints]);
 
   return (
-    <View style={StyleSheet.absoluteFill}>
+    <View ref={containerRef} style={StyleSheet.absoluteFill}>
       {/* SVG Layer (visual only) */}
       <Svg width={imageWidth} height={imageHeight}>
         <Polygon
           points={polygonPoints}
           fill="none"
-          stroke="rgba(255, 255, 255, 0.8)"
-          strokeWidth="2"
+          stroke={isDragging ? colors.accent : `${colors.accent}cc`}
+          strokeWidth={isDragging ? "3" : "2"}
         />
 
         {screenPoints.map((point, index) => (
@@ -87,9 +108,7 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
             cy={point.y}
             r="15"
             fill={
-              activePointIndex === index
-                ? "rgba(255, 255, 255, 0.8)"
-                : "rgba(255, 255, 255, 0.5)"
+              activePointIndex === index ? colors.accent : `${colors.accent}80`
             }
           />
         ))}
