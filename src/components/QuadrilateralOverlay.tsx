@@ -35,25 +35,6 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
     }));
   }, [points, imageWidth, imageHeight]);
 
-  // Convert screen coordinates to relative coordinates
-  const getRelativeCoordinates = useCallback(
-    (screenX: number, screenY: number) => {
-      // Get the container's position
-      containerRef.current?.measure((x, y, width, height, pageX, pageY) => {
-        // Calculate coordinates relative to the container
-        const relativeX = (screenX - pageX) / imageWidth;
-        const relativeY = (screenY - pageY) / imageHeight;
-
-        // Clamp values between 0 and 1
-        return {
-          x: Math.max(0, Math.min(1, relativeX)),
-          y: Math.max(0, Math.min(1, relativeY)),
-        };
-      });
-    },
-    [imageWidth, imageHeight]
-  );
-
   // Create a pan gesture for a point
   const createPanGesture = useCallback(
     (index: number) => {
@@ -83,7 +64,7 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
           setIsDragging(false);
         });
     },
-    [imageWidth, imageHeight, setActivePointIndex, updatePoint, setIsDragging]
+    [imageWidth, imageHeight, setActivePointIndex, updatePoint, setIsDragging],
   );
 
   const polygonPoints = useMemo(() => {
@@ -117,13 +98,12 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
       {/* Separate interaction layer */}
       {screenPoints.map((point, index) => {
         // Memoize the gesture for each point
-        const panGesture = useMemo(
-          () => createPanGesture(index),
-          [createPanGesture, index]
-        );
 
         return (
-          <GestureDetector key={`gesture-${index}`} gesture={panGesture}>
+          <GestureDetector
+            key={`gesture-${index}`}
+            gesture={createPanGesture(index)}
+          >
             <View
               style={[
                 styles.touchPoint,
@@ -146,13 +126,5 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     backgroundColor: "transparent",
-  },
-  touchPointDebug: {
-    position: "absolute",
-    width: 40,
-    height: 40,
-    backgroundColor: "rgba(255, 0, 0, 0.2)",
-    borderWidth: 1,
-    borderColor: "red",
   },
 });

@@ -44,7 +44,6 @@ export const useImagePicker = (screenDimensions: ScreenDimensions) => {
           // Calculate dimensions that maintain aspect ratio and fit the screen
           const isScreenLandscape =
             screenDimensions.width > screenDimensions.height;
-          const isImageLandscape = width > height;
 
           // Determine the maximum allowed dimensions based on screen orientation
           const maxWidth = isScreenLandscape
@@ -67,7 +66,7 @@ export const useImagePicker = (screenDimensions: ScreenDimensions) => {
             {
               width: width * scaleFactor,
               height: height * scaleFactor,
-            } // Scaled dimensions
+            }, // Scaled dimensions
           );
           setUri(result.uri);
         });
@@ -76,7 +75,7 @@ export const useImagePicker = (screenDimensions: ScreenDimensions) => {
       }
     } catch (err) {
       setError(
-        `Unexpected error: ${err instanceof Error ? err.message : String(err)}`
+        `Unexpected error: ${err instanceof Error ? err.message : String(err)}`,
       );
     } finally {
       setLoading(false);

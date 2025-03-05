@@ -5,29 +5,18 @@ import { useOverlayStore } from "../stores/useOverlayStore";
 import { useImageStore } from "../stores/useImageStore";
 
 export const ZoomPreview: React.FC = () => {
-  const { points, activePointIndex, zoomLevel, setZoomLevel } =
-    useOverlayStore();
+  const { points, activePointIndex, zoomLevel } = useOverlayStore();
   const { uri, originalDimensions } = useImageStore();
   const { colors } = useTheme();
   const { width: screenWidth } = Dimensions.get("window");
 
+  if (!uri || !activePointIndex) throw new Error("No image or active point");
+
   // Calculate preview dimensions
   const previewSize = Math.min(screenWidth * 0.8, 400);
-  console.log("previewSize", previewSize);
 
   // Get the active point coordinates
-  const activePoint =
-    activePointIndex !== null ? points[activePointIndex] : null;
-
-  if (!activePoint || !uri) {
-    return (
-      <View style={styles.container}>
-        <Text style={[styles.text, { color: colors.text }]}>
-          Select a point to preview
-        </Text>
-      </View>
-    );
-  }
+  const activePoint = points[activePointIndex];
 
   // Calculate the scaled dimensions
   const scaledDimensions = useMemo(() => {
@@ -80,7 +69,7 @@ export const ZoomPreview: React.FC = () => {
         ]}
       >
         <Image
-          source={{ uri }}
+          source={{ uri: uri }}
           style={[
             styles.previewImage,
             {

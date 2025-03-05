@@ -10,7 +10,7 @@ import {
   initialWindowMetrics,
 } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet } from "react-native";
 import { ThemeProvider, useTheme } from "./src/contexts/ThemeContext";
 import { AppDrawerNavigator } from "./src/navigation/DrawerNavigator";
 
@@ -35,10 +35,12 @@ const AppContent = () => {
   };
 
   return (
-    <NavigationContainer theme={theme}>
-      <StatusBar style={isDarkTheme ? "light" : "dark"} />
-      <AppDrawerNavigator />
-    </NavigationContainer>
+    <GestureHandlerRootView style={styles.container}>
+      <NavigationContainer theme={theme}>
+        <StatusBar style={isDarkTheme ? "light" : "dark"} />
+        <AppDrawerNavigator />
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 };
 

@@ -33,8 +33,8 @@ export const Header: React.FC<HeaderProps> = ({ navigation, title }) => {
         Platform.OS === "android"
           ? insets.top
           : insets.top > 0
-          ? insets.top
-          : 8,
+            ? insets.top
+            : 8,
     };
   };
 
