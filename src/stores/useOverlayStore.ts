@@ -29,7 +29,7 @@ export const useOverlayStore = create<OverlayState>()((set) => ({
   points: initialPoints,
   activePointIndex: null,
   isDragging: false,
-  zoomLevel: 2, // Default zoom level
+  zoomLevel: 5, // Default zoom level
   setPoints: (points: Point[]) => set({ points }),
   setActivePointIndex: (index: number | null) =>
     set({ activePointIndex: index }),

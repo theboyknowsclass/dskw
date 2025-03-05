@@ -1,46 +1,31 @@
-import React, { useState } from "react";
-import { View, Image, StyleSheet, ImageBackground } from "react-native";
+import React from "react";
+import { View, StyleSheet, ImageBackground } from "react-native";
 import { QuadrilateralOverlay } from "./QuadrilateralOverlay";
 
 type ImagePreviewProps = {
-  imageUri: string | null;
+  imageUri: string;
+  displayWidth: number; // width of the image in the preview
+  displayHeight: number; // height of the image in the preview
 };
 
-export const ImagePreview: React.FC<ImagePreviewProps> = ({ imageUri }) => {
-  const [imageDimensions, setImageDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
-
+export const ImagePreview: React.FC<ImagePreviewProps> = ({
+  imageUri,
+  displayWidth,
+  displayHeight,
+}) => {
   if (!imageUri) return null;
-
-  // Get image dimensions when it loads
-  const onImageLoad = () => {
-    Image.getSize(imageUri, (width, height) => {
-      // Calculate dimensions that maintain aspect ratio and fit the screen
-      const screenWidth = 300; // You might want to make this dynamic
-      const scaleFactor = screenWidth / width;
-      setImageDimensions({
-        width: screenWidth,
-        height: height * scaleFactor,
-      });
-    });
-  };
 
   return (
     <View style={styles.container}>
       <ImageBackground
         source={{ uri: imageUri }}
-        style={[styles.image, imageDimensions]}
-        onLoad={onImageLoad}
+        style={[styles.image, { width: displayWidth, height: displayHeight }]}
         resizeMode="contain"
       >
-        {imageDimensions.width > 0 && (
-          <QuadrilateralOverlay
-            imageWidth={imageDimensions.width}
-            imageHeight={imageDimensions.height}
-          />
-        )}
+        <QuadrilateralOverlay
+          imageWidth={displayWidth}
+          imageHeight={displayHeight}
+        />
       </ImageBackground>
     </View>
   );

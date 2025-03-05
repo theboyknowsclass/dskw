@@ -9,7 +9,8 @@ import { useWindowDimensions } from "react-native";
 import { ImagePreview } from "../components/ImagePreview";
 import { ImageControls } from "../components/ImageControls";
 import { ZoomPreview } from "../components/ZoomPreview";
-import { useOverlayStore } from "../store/overlayStore";
+import { useOverlayStore } from "../stores/useOverlayStore";
+import { useImageStore } from "../stores/useImageStore";
 
 // Define the navigation props type
 type HomeScreenProps = {
@@ -23,16 +24,18 @@ type HomeScreenProps = {
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   // Use our custom hooks for theme and image picker
   const { colors } = useTheme();
-  const { selectedImage, isLoading, error, pickImage } = useImagePicker();
-  const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
+  const { pickImage } = useImagePicker({ width, height });
+  const insets = useSafeAreaInsets();
   const { isDragging } = useOverlayStore();
+  const { uri, isLoading, error, scaledDimensions } = useImageStore();
 
   // Determine if the screen is in landscape orientation
-  const isLandscape = width > height;
+  const contentStyle =
+    width > height ? styles.landscapeContent : styles.portraitContent;
 
   // Decide whether to show the preview section based image selection
-  const shouldShowPreview = selectedImage !== null;
+  const shouldShowPreview = uri !== null;
 
   return (
     <View
@@ -48,30 +51,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <Header navigation={navigation} />
 
       {/* Main content container with conditional direction */}
-      <View
-        style={[
-          styles.content,
-          isLandscape ? styles.landscapeContent : styles.portraitContent,
-        ]}
-      >
-        {/* In portrait mode, only show preview if there's a selected image */}
+      <View style={[styles.content, contentStyle]}>
+        {/* only show preview if there's a selected image */}
         {shouldShowPreview && (
-          <View
-            style={[
-              isLandscape ? styles.landscapeHalf : styles.portraitFull,
-              styles.previewSection,
-            ]}
-          >
-            <ImagePreview imageUri={selectedImage} />
+          <View style={[styles.section]}>
+            <ImagePreview
+              imageUri={uri}
+              displayWidth={scaledDimensions.width}
+              displayHeight={scaledDimensions.height}
+            />
           </View>
         )}
-        <View
-          style={[
-            isLandscape ? styles.landscapeHalf : styles.portraitFull,
-            styles.controlsSection,
-          ]}
-        >
-          {isDragging && selectedImage ? (
+        <View style={[styles.section]}>
+          {isDragging && uri ? (
             <ZoomPreview />
           ) : (
             <ImageControls
@@ -100,22 +92,12 @@ const styles = StyleSheet.create({
   landscapeContent: {
     flexDirection: "row",
   },
-  portraitFull: {
-    flex: 1,
-    width: "100%",
-  },
-  landscapeHalf: {
+  section: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
     flex: 1,
     height: "100%",
-  },
-  previewSection: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  controlsSection: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
+    width: "100%",
   },
 });

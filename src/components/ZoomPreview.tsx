@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet, Text, Image, Dimensions } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
-import { useOverlayStore } from "../store/overlayStore";
-import { useImageStore } from "../store/imageStore";
+import { useOverlayStore } from "../stores/useOverlayStore";
+import { useImageStore } from "../stores/useImageStore";
 
 export const ZoomPreview: React.FC = () => {
   const { points, activePointIndex, zoomLevel, setZoomLevel } =
@@ -13,6 +13,7 @@ export const ZoomPreview: React.FC = () => {
 
   // Calculate preview dimensions
   const previewSize = Math.min(screenWidth * 0.8, 400);
+  console.log("previewSize", previewSize);
 
   // Get the active point coordinates
   const activePoint =
@@ -110,26 +111,9 @@ export const ZoomPreview: React.FC = () => {
         </View>
       </View>
       <View style={styles.controls}>
-        <Text style={[styles.text, { color: colors.text }]}>
-          Zoom Level: {zoomLevel}x
-        </Text>
         <Text style={[styles.coordinates, { color: colors.text }]}>
           {coordinatesText}
         </Text>
-        <View style={styles.zoomControls}>
-          <Text
-            style={[styles.zoomButton, { color: colors.text }]}
-            onPress={() => setZoomLevel(Math.max(1, zoomLevel - 0.5))}
-          >
-            -
-          </Text>
-          <Text
-            style={[styles.zoomButton, { color: colors.text }]}
-            onPress={() => setZoomLevel(Math.min(5, zoomLevel + 0.5))}
-          >
-            +
-          </Text>
-        </View>
       </View>
     </View>
   );
@@ -153,19 +137,19 @@ const styles = StyleSheet.create({
   },
   crosshair: {
     position: "absolute",
-    width: 24,
-    height: 24,
+    width: 48,
+    height: 48,
     top: "50%",
     left: "50%",
-    marginLeft: -12,
-    marginTop: -12,
+    marginLeft: -24,
+    marginTop: -24,
     justifyContent: "center",
     alignItems: "center",
   },
   crosshairLine: {
     position: "absolute",
-    width: 1,
-    height: 24,
+    width: 2,
+    height: 48,
     backgroundColor: "transparent",
   },
   controls: {

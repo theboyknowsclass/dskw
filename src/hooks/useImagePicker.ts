@@ -1,27 +1,37 @@
-import { useState } from "react";
 import { Image } from "react-native";
 import {
   ImagePickerService,
   ImageSelectionResult,
 } from "../services/ImagePickerService";
-import { useImageStore } from "../store/imageStore";
+import { useImageStore } from "../stores/useImageStore";
+
+type ScreenDimensions = {
+  width: number;
+  height: number;
+};
 
 /**
  * Custom hook for image selection following the Dependency Inversion Principle
  * The hook depends on abstractions (interfaces) rather than concrete implementations
  */
-export const useImagePicker = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const { setUri, setDimensions } = useImageStore();
+export const useImagePicker = (screenDimensions: ScreenDimensions) => {
+  const {
+    uri: selectedImage,
+    isLoading,
+    error,
+    setUri,
+    setDimensions,
+    setLoading,
+    setError,
+    clearImage,
+  } = useImageStore();
 
   /**
    * Function to handle image selection
    */
   const pickImage = async (): Promise<void> => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       setError(null);
 
       // Use the ImagePickerService to select an image
@@ -29,15 +39,33 @@ export const useImagePicker = () => {
         await ImagePickerService.selectImage();
 
       if (result.success && result.uri) {
-        setSelectedImage(result.uri);
         // Get image dimensions when it loads
         Image.getSize(result.uri, (width, height) => {
-          const screenWidth = 300; // You might want to make this dynamic
-          const scaleFactor = screenWidth / width;
+          // Calculate dimensions that maintain aspect ratio and fit the screen
+          const isScreenLandscape =
+            screenDimensions.width > screenDimensions.height;
+          const isImageLandscape = width > height;
+
+          // Determine the maximum allowed dimensions based on screen orientation
+          const maxWidth = isScreenLandscape
+            ? screenDimensions.width * 0.4 // In landscape, use 40% of screen width
+            : screenDimensions.width * 0.8; // In portrait, use 80% of screen width
+
+          const maxHeight = isScreenLandscape
+            ? screenDimensions.height * 0.8 // In landscape, use 80% of screen height
+            : screenDimensions.height * 0.4; // In portrait, use 40% of screen height
+
+          // Calculate scale factors for both dimensions
+          const widthScale = maxWidth / width;
+          const heightScale = maxHeight / height;
+
+          // Use the smaller scale factor to ensure the image fits in both dimensions
+          const scaleFactor = Math.min(widthScale, heightScale);
+
           setDimensions(
             { width, height }, // Original dimensions
             {
-              width: screenWidth,
+              width: width * scaleFactor,
               height: height * scaleFactor,
             } // Scaled dimensions
           );
@@ -51,18 +79,8 @@ export const useImagePicker = () => {
         `Unexpected error: ${err instanceof Error ? err.message : String(err)}`
       );
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
-
-  /**
-   * Function to clear the selected image and any errors
-   */
-  const clearImage = (): void => {
-    setSelectedImage(null);
-    setError(null);
-    setUri(null);
-    setDimensions({ width: 0, height: 0 }, { width: 0, height: 0 });
   };
 
   return {

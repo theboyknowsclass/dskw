@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, useRef } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Svg, { Polygon, Circle } from "react-native-svg";
-import { useOverlayStore } from "../store/overlayStore";
+import { useOverlayStore } from "../stores/useOverlayStore";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useTheme } from "../contexts/ThemeContext";
 
