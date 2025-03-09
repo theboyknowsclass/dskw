@@ -1,9 +1,8 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useTheme } from "../contexts/ThemeContext";
 import { Header } from "../components/Header";
-import { useImagePicker } from "../hooks/useImagePicker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useWindowDimensions } from "react-native";
 import { ImagePreview } from "../components/ImagePreview";
@@ -11,6 +10,9 @@ import { ImageControls } from "../components/ImageControls";
 import { ZoomPreview } from "../components/ZoomPreview";
 import { useOverlayStore } from "../stores/useOverlayStore";
 import { useImageStore } from "../stores/useImageStore";
+
+// Get screen dimensions for responsive sizing
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // Define the navigation props type
 type HomeScreenProps = {
@@ -22,17 +24,27 @@ type HomeScreenProps = {
  * Follows the Interface Segregation Principle by only accepting the props it needs
  */
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  // Use our custom hooks for theme and image picker
+  // Use our custom hooks for theme
   const { colors } = useTheme();
   const { width, height } = useWindowDimensions();
-  const { pickImage } = useImagePicker({ width, height });
   const insets = useSafeAreaInsets();
-  const { isDragging } = useOverlayStore();
-  const { uri, isLoading, error, scaledDimensions } = useImageStore();
+  const { activePointIndex } = useOverlayStore();
+  const { uri, scaledDimensions } = useImageStore();
+
+  const isDragging = activePointIndex != null;
 
   // Determine if the screen is in landscape orientation
-  const contentStyle =
-    width > height ? styles.landscapeContent : styles.portraitContent;
+  const isLandscape = width > height;
+
+  // Determine if we're on a large screen
+  const isLargeScreen = SCREEN_WIDTH > 1024;
+
+  // Calculate content style based on orientation and screen size
+  const contentStyle = [
+    styles.content,
+    isLandscape ? styles.landscapeContent : styles.portraitContent,
+    isLargeScreen ? styles.largeScreenContent : null,
+  ];
 
   // Decide whether to show the preview section based image selection
   const shouldShowPreview = uri !== null;
@@ -44,17 +56,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         {
           backgroundColor: colors.background,
           paddingBottom: insets.bottom,
+          borderWidth: 0,
         },
       ]}
     >
       {/* Header with hamburger menu */}
-      <Header navigation={navigation} />
+      <Header navigation={navigation} title="Image Scanner" />
 
-      {/* Main content container with conditional direction */}
-      <View style={[styles.content, contentStyle]}>
+      {/* Main content with no top border/margin */}
+      <View style={[contentStyle, { marginTop: 0, borderTopWidth: 0 }]}>
         {/* only show preview if there's a selected image */}
         {shouldShowPreview && (
-          <View style={[styles.section]}>
+          <View style={[styles.section, styles.previewSection]}>
             <ImagePreview
               imageUri={uri}
               displayWidth={scaledDimensions.width}
@@ -62,16 +75,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             />
           </View>
         )}
-        <View style={[styles.section]}>
-          {isDragging && uri ? (
+        <View style={[styles.section, styles.controlsSection]}>
+          {isDragging ? (
             <ZoomPreview />
           ) : (
-            <ImageControls
-              onSelectImage={pickImage}
-              isLoading={isLoading}
-              error={error}
-              textColor={colors.text}
-            />
+            <ImageControls width={width} height={height} />
           )}
         </View>
       </View>
@@ -82,22 +90,39 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    borderWidth: 0,
   },
   content: {
     flex: 1,
-  },
-  portraitContent: {
-    flexDirection: "column",
+    padding: 20,
+    borderWidth: 0,
+    borderTopWidth: 0,
   },
   landscapeContent: {
     flexDirection: "row",
   },
+  portraitContent: {
+    flexDirection: "column",
+  },
+  largeScreenContent: {
+    maxWidth: 1200,
+    width: "100%",
+    alignSelf: "center",
+  },
   section: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
-    flex: 1,
-    height: "100%",
-    width: "100%",
+    padding: 10,
+    borderWidth: 0,
+  },
+  previewSection: {
+    backgroundColor: "#1a1a1a",
+    borderRadius: 8,
+    overflow: "hidden",
+    margin: 10,
+  },
+  controlsSection: {
+    margin: 10,
   },
 });

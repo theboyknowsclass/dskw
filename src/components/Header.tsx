@@ -5,11 +5,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   Platform,
+  Dimensions,
 } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemeToggle } from "./ThemeToggle";
+
+// Get screen dimensions for responsive sizing
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // Interface for header props
 interface HeaderProps {
@@ -25,67 +29,126 @@ export const Header: React.FC<HeaderProps> = ({ navigation, title }) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
+  // Check if we're on a wide screen
+  const isWideScreen = SCREEN_WIDTH > 768;
+
   // Calculate proper padding based on platform and insets
-  const getHeaderStyle = () => {
-    return {
-      backgroundColor: colors.background,
-      paddingTop:
-        Platform.OS === "android"
-          ? insets.top
-          : insets.top > 0
-            ? insets.top
-            : 8,
-    };
+  const headerStyle = {
+    backgroundColor: colors.background,
+    paddingTop:
+      Platform.OS === "android" ? insets.top : insets.top > 0 ? insets.top : 8,
   };
 
+  // Dynamic container style
+  const containerStyle = [
+    styles.container,
+    headerStyle,
+    isWideScreen ? styles.wideContainer : null,
+  ];
+
   return (
-    <View style={[styles.container, getHeaderStyle()]}>
-      <TouchableOpacity
-        style={styles.menuButton}
-        onPress={() => navigation.openDrawer()}
-        accessibilityRole="button"
-        accessibilityLabel="Open menu"
-      >
-        {/* Simple hamburger menu icon */}
-        <View style={styles.menuIconContainer}>
-          <View
-            style={[styles.menuIconBar, { backgroundColor: colors.text }]}
-          />
-          <View
-            style={[styles.menuIconBar, { backgroundColor: colors.text }]}
-          />
-          <View
-            style={[styles.menuIconBar, { backgroundColor: colors.text }]}
-          />
+    <View
+      style={[styles.headerWrapper, { backgroundColor: colors.background }]}
+    >
+      <View style={containerStyle}>
+        {/* Left section with menu button */}
+        <View style={styles.leftSection}>
+          <TouchableOpacity
+            style={styles.menuButton}
+            onPress={() => navigation.openDrawer()}
+            accessibilityRole="button"
+            accessibilityLabel="Open menu"
+          >
+            {/* Simple hamburger menu icon */}
+            <View style={styles.menuIconContainer}>
+              <View
+                style={[styles.menuIconBar, { backgroundColor: colors.text }]}
+              />
+              <View
+                style={[styles.menuIconBar, { backgroundColor: colors.text }]}
+              />
+              <View
+                style={[styles.menuIconBar, { backgroundColor: colors.text }]}
+              />
+            </View>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
 
-      {title ? (
-        <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
-          {title}
-        </Text>
-      ) : (
-        <View style={styles.spacer} />
-      )}
+        {/* Middle section with title */}
+        <View style={styles.middleSection}>
+          {title ? (
+            <Text
+              style={[styles.title, { color: colors.text }]}
+              numberOfLines={1}
+            >
+              {title}
+            </Text>
+          ) : (
+            <View style={styles.spacer} />
+          )}
+        </View>
 
-      {/* Theme Toggle Button */}
-      <ThemeToggle />
+        {/* Right section with theme toggle */}
+        <View style={styles.rightSection}>
+          <ThemeToggle />
+        </View>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  headerWrapper: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 0,
+    borderBottomWidth: 0,
+    borderColor: "transparent",
+    // Remove all shadow and elevation that might create lines
+    ...Platform.select({
+      android: {
+        elevation: 0,
+      },
+      ios: {
+        shadowColor: "transparent",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0,
+        shadowRadius: 0,
+      },
+      web: {
+        boxShadow: "none",
+      },
+    }),
+  },
   container: {
     minHeight: 60,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    width: "100%",
     paddingHorizontal: 16,
-    ...Platform.select({
-      android: {
-        elevation: 4,
-      },
-    }),
+    borderWidth: 0,
+    borderBottomWidth: 0,
+    borderColor: "transparent",
+  },
+  wideContainer: {
+    maxWidth: 1200,
+    alignSelf: "center",
+  },
+  leftSection: {
+    flex: 1,
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+  middleSection: {
+    flex: 3,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rightSection: {
+    flex: 1,
+    alignItems: "flex-end",
+    justifyContent: "center",
   },
   menuButton: {
     width: 40,
@@ -107,7 +170,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    flex: 1,
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",

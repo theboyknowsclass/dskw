@@ -1,5 +1,12 @@
 import { create } from "zustand";
 
+export enum Corner {
+  Top_Left = 0,
+  Top_Right = 1,
+  Bottom_Right = 2,
+  Bottom_Left = 3,
+}
+
 export type Point = {
   x: number;
   y: number;
@@ -7,13 +14,11 @@ export type Point = {
 
 type OverlayState = {
   points: Point[];
-  activePointIndex: number | null;
-  isDragging: boolean;
+  activePointIndex: Corner | null;
   zoomLevel: number;
   setPoints: (points: Point[]) => void;
-  setActivePointIndex: (index: number | null) => void;
-  updatePoint: (index: number, point: Point) => void;
-  setIsDragging: (isDragging: boolean) => void;
+  setActivePointIndex: (corner: Corner | null) => void;
+  updatePoint: (corner: Corner, point: Point) => void;
   setZoomLevel: (level: number) => void;
 };
 
@@ -28,17 +33,15 @@ const initialPoints: Point[] = [
 export const useOverlayStore = create<OverlayState>()((set) => ({
   points: initialPoints,
   activePointIndex: null,
-  isDragging: false,
   zoomLevel: 5, // Default zoom level
   setPoints: (points: Point[]) => set({ points }),
-  setActivePointIndex: (index: number | null) =>
-    set({ activePointIndex: index }),
-  updatePoint: (index: number, point: Point) =>
+  setActivePointIndex: (corner: Corner | null) =>
+    set({ activePointIndex: corner }),
+  updatePoint: (corner: Corner, point: Point) =>
     set((state) => {
       const newPoints = [...state.points];
-      newPoints[index] = point;
+      newPoints[corner] = point;
       return { points: newPoints };
     }),
-  setIsDragging: (isDragging: boolean) => set({ isDragging }),
   setZoomLevel: (level: number) => set({ zoomLevel: level }),
 }));

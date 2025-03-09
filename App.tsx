@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   NavigationContainer,
@@ -10,9 +10,37 @@ import {
   initialWindowMetrics,
 } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 import { ThemeProvider, useTheme } from "./src/contexts/ThemeContext";
 import { AppDrawerNavigator } from "./src/navigation/DrawerNavigator";
+
+// Apply global styles for web platform
+if (Platform.OS === "web") {
+  // Create a style element
+  const style = document.createElement("style");
+  // Remove all unwanted borders and lines
+  style.textContent = `
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+    }
+    div, nav, header {
+      border: none !important;
+      border-width: 0 !important;
+      border-bottom-width: 0 !important;
+      border-top-width: 0 !important;
+      box-shadow: none !important;
+    }
+  `;
+  // Add the style to the document head
+  document.head.appendChild(style);
+}
 
 /**
  * App Content component wrapped with theme context
@@ -33,6 +61,13 @@ const AppContent = () => {
       notification: colors.accent,
     },
   };
+
+  // Add an effect to update the document's body style on web
+  useEffect(() => {
+    if (Platform.OS === "web") {
+      document.body.style.backgroundColor = colors.background;
+    }
+  }, [colors.background]);
 
   return (
     <GestureHandlerRootView style={styles.container}>
@@ -60,5 +95,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    borderWidth: 0,
   },
 });

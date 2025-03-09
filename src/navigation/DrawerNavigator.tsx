@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Platform, Dimensions } from "react-native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -7,12 +7,24 @@ import {
 } from "@react-navigation/drawer";
 import { HomeScreen } from "../screens/HomeScreen";
 import { AboutScreen } from "../screens/AboutScreen";
+import { ProcessImageScreen } from "../screens/ProcessImageScreen";
 import { useTheme } from "../contexts/ThemeContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ThemeToggle } from "../components/ThemeToggle";
 
 // Create drawer navigator
 const Drawer = createDrawerNavigator();
+
+// Screen dimensions for responsive sizing
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+// Determine drawer width based on platform and screen size
+const getDrawerWidth = () => {
+  if (Platform.OS === "web") {
+    return Math.min(320, SCREEN_WIDTH * 0.7); // Cap at 320px or 70% of screen width, whichever is smaller
+  }
+  return "70%"; // Default for mobile
+};
 
 /**
  * Custom drawer content component
@@ -77,10 +89,12 @@ export const AppDrawerNavigator = () => {
         drawerInactiveTintColor: colors.text,
         drawerStyle: {
           backgroundColor: colors.background,
-          width: "80%",
+          width: getDrawerWidth(),
           paddingLeft: insets.left,
           paddingBottom: insets.bottom,
         },
+        // Use front for web to prevent drawer from appearing on resize
+        drawerType: Platform.OS === "web" ? "front" : "slide",
         overlayColor: isDarkTheme ? "rgba(0, 0, 0, 0.8)" : "rgba(0, 0, 0, 0.5)",
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
@@ -90,6 +104,15 @@ export const AppDrawerNavigator = () => {
         component={HomeScreen}
         options={{
           drawerLabel: "Home",
+        }}
+      />
+      <Drawer.Screen
+        name="ProcessImage"
+        component={ProcessImageScreen}
+        options={{
+          drawerLabel: "Process Image",
+          // Hide from drawer but allow navigation to it
+          drawerItemStyle: { display: "none" },
         }}
       />
       <Drawer.Screen

@@ -8,8 +8,12 @@ import {
   ViewStyle,
   TextStyle,
   View,
+  Dimensions,
 } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
+
+// Get device width for responsive sizing
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // Interface for Button component props
 interface ButtonProps extends TouchableOpacityProps {
@@ -20,6 +24,7 @@ interface ButtonProps extends TouchableOpacityProps {
   buttonStyle?: ViewStyle;
   textStyle?: TextStyle;
   icon?: React.ReactNode; // For icon buttons
+  style?: ViewStyle; // Added for clearer style prop
 }
 
 /**
@@ -35,6 +40,7 @@ export const Button: React.FC<ButtonProps> = ({
   textStyle,
   disabled,
   icon,
+  style, // Added for clearer style prop
   ...rest
 }) => {
   // Use the current theme
@@ -46,7 +52,10 @@ export const Button: React.FC<ButtonProps> = ({
     const baseStyle: ViewStyle = {
       backgroundColor: colors.primary,
       borderRadius: 8,
-      opacity: disabled ? 0.6 : 1,
+      opacity: disabled ? 0.5 : 1, // Adjusted opacity for better visual feedback
+      // Responsive width based on screen size
+      maxWidth: SCREEN_WIDTH > 600 ? 300 : SCREEN_WIDTH * 0.8,
+      alignSelf: "center",
     };
 
     // Size styles
@@ -125,7 +134,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <TouchableOpacity
-      style={[styles.button, getButtonStyles(), buttonStyle]}
+      style={[styles.button, getButtonStyles(), buttonStyle, style]}
       disabled={disabled || loading}
       accessibilityRole="button"
       {...rest}
@@ -155,6 +164,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     justifyContent: "center",
+    minWidth: 100, // Ensure buttons have a minimum width
   },
   iconButtonContainer: {
     flexDirection: "row",

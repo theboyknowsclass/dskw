@@ -10,13 +10,11 @@ export const ZoomPreview: React.FC = () => {
   const { colors } = useTheme();
   const { width: screenWidth } = Dimensions.get("window");
 
-  if (!uri || !activePointIndex) throw new Error("No image or active point");
-
   // Calculate preview dimensions
   const previewSize = Math.min(screenWidth * 0.8, 400);
 
   // Get the active point coordinates
-  const activePoint = points[activePointIndex];
+  const activePoint = activePointIndex ? points[activePointIndex] : null;
 
   // Calculate the scaled dimensions
   const scaledDimensions = useMemo(() => {
@@ -29,6 +27,10 @@ export const ZoomPreview: React.FC = () => {
 
   // Calculate the transform to center and zoom on the active point
   const transform = useMemo(() => {
+    if (!activePoint) {
+      return [];
+    }
+
     // Calculate the center point in scaled coordinates
     const centerX = activePoint.x * scaledDimensions.width;
     const centerY = activePoint.y * scaledDimensions.height;
@@ -50,7 +52,7 @@ export const ZoomPreview: React.FC = () => {
 
   // Format coordinates for display
   const coordinatesText = useMemo(() => {
-    if (!activePointIndex) return "";
+    if (!activePointIndex || !activePoint) return "";
     const relativeX = activePoint.x.toFixed(3);
     const relativeY = activePoint.y.toFixed(3);
     const pixelX = Math.round(activePoint.x * originalDimensions.width);
@@ -69,7 +71,7 @@ export const ZoomPreview: React.FC = () => {
         ]}
       >
         <Image
-          source={{ uri: uri }}
+          source={{ uri: uri! }}
           style={[
             styles.previewImage,
             {

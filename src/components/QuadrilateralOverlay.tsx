@@ -14,14 +14,8 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
   imageWidth,
   imageHeight,
 }) => {
-  const {
-    points,
-    activePointIndex,
-    isDragging,
-    setActivePointIndex,
-    updatePoint,
-    setIsDragging,
-  } = useOverlayStore();
+  const { points, activePointIndex, setActivePointIndex, updatePoint } =
+    useOverlayStore();
   const { colors } = useTheme();
 
   // Ref to track the container's position
@@ -41,7 +35,6 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
       return Gesture.Pan()
         .onStart(() => {
           setActivePointIndex(index);
-          setIsDragging(true);
         })
         .onUpdate((e) => {
           // Get the container's position
@@ -61,15 +54,16 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
         })
         .onEnd(() => {
           setActivePointIndex(null);
-          setIsDragging(false);
         });
     },
-    [imageWidth, imageHeight, setActivePointIndex, updatePoint, setIsDragging],
+    [imageWidth, imageHeight, setActivePointIndex, updatePoint]
   );
 
   const polygonPoints = useMemo(() => {
     return screenPoints.map((point) => `${point.x},${point.y}`).join(" ");
   }, [screenPoints]);
+
+  const isDragging = activePointIndex != null;
 
   return (
     <View ref={containerRef} style={StyleSheet.absoluteFill}>
