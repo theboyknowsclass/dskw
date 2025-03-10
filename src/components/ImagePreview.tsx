@@ -1,6 +1,6 @@
-import React from "react";
-import { View, StyleSheet, ImageBackground } from "react-native";
-import { QuadrilateralOverlay } from "./QuadrilateralOverlay";
+import React from 'react';
+import { View, StyleSheet, ImageBackground } from 'react-native';
+import { QuadrilateralOverlay } from './QuadrilateralOverlay';
 
 type ImagePreviewProps = {
   imageUri: string;
@@ -33,11 +33,11 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
-    alignItems: "center",
-    justifyContent: "center",
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   image: {
-    backgroundColor: "#000",
+    backgroundColor: '#000',
   },
 });

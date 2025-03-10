@@ -1,18 +1,18 @@
-import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useTheme } from "../contexts/ThemeContext";
-import { Header } from "../components/Header";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useWindowDimensions } from "react-native";
-import { ImagePreview } from "../components/ImagePreview";
-import { ImageControls } from "../components/ImageControls";
-import { ZoomPreview } from "../components/ZoomPreview";
-import { useOverlayStore } from "../stores/useOverlayStore";
-import { useImageStore } from "../stores/useImageStore";
+import React from 'react';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { useTheme } from '../contexts/ThemeContext';
+import { Header } from '../components/Header';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useWindowDimensions } from 'react-native';
+import { ImagePreview } from '../components/ImagePreview';
+import { ImageControls } from '../components/ImageControls';
+import { ZoomPreview } from '../components/ZoomPreview';
+import { useOverlayStore } from '../stores/useOverlayStore';
+import { useImageStore } from '../stores/useImageStore';
 
 // Get screen dimensions for responsive sizing
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Define the navigation props type
 type HomeScreenProps = {
@@ -99,27 +99,27 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
   },
   landscapeContent: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   portraitContent: {
-    flexDirection: "column",
+    flexDirection: 'column',
   },
   largeScreenContent: {
     maxWidth: 1200,
-    width: "100%",
-    alignSelf: "center",
+    width: '100%',
+    alignSelf: 'center',
   },
   section: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 10,
     borderWidth: 0,
   },
   previewSection: {
-    backgroundColor: "#1a1a1a",
+    backgroundColor: '#1a1a1a',
     borderRadius: 8,
-    overflow: "hidden",
+    overflow: 'hidden',
     margin: 10,
   },
   controlsSection: {

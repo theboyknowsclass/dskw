@@ -1,9 +1,9 @@
-import { Image } from "react-native";
+import { Image } from 'react-native';
 import {
   ImagePickerService,
   ImageSelectionResult,
-} from "../services/ImagePickerService";
-import { useImageStore } from "../stores/useImageStore";
+} from '../services/ImagePickerService';
+import { useImageStore } from '../stores/useImageStore';
 
 type ScreenDimensions = {
   width: number;

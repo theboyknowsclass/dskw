@@ -1,12 +1,12 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Button } from "./Button";
-import { useImagePicker } from "../hooks/useImagePicker";
-import { useImageStore } from "../stores/useImageStore";
-import { useOverlayStore } from "../stores/useOverlayStore";
-import { transformImage } from "../utils/transformUtils";
-import { useNavigation } from "@react-navigation/native";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { Button } from './Button';
+import { useImagePicker } from '../hooks/useImagePicker';
+import { useImageStore } from '../stores/useImageStore';
+import { useOverlayStore } from '../stores/useOverlayStore';
+import { transformImage } from '../utils/transformUtils';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 
 type ImageControlsProps = {
   width: number;
@@ -47,7 +47,7 @@ export const ImageControls: React.FC<ImageControlsProps> = ({
       //setDestinationUri(transformedUri);
 
       // Navigate to the process image screen
-      navigation.navigate("ProcessImage");
+      navigation.navigate('ProcessImage');
     } catch (err) {
       setError(
         `Error processing image: ${err instanceof Error ? err.message : String(err)}`
@@ -86,28 +86,28 @@ export const ImageControls: React.FC<ImageControlsProps> = ({
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 20,
     maxWidth: 500, // Limit overall container width
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   buttonsColumn: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
     maxWidth: 300, // Limit the width of the button column
   },
   button: {
-    width: "100%",
+    width: '100%',
     marginBottom: 15,
     maxWidth: 300, // Limit individual button width
   },
   errorText: {
-    color: "red",
+    color: 'red',
     marginTop: 10,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });

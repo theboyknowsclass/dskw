@@ -38,12 +38,14 @@ The project follows SOLID principles with a clean architecture:
 ### Installation
 
 1. Clone the repository
+
 ```bash
 git clone <repository-url>
 cd dskw
 ```
 
 2. Install dependencies
+
 ```bash
 npm install
 # or
@@ -51,6 +53,7 @@ yarn
 ```
 
 3. Start the development server
+
 ```bash
 npx expo start
 ```
@@ -60,6 +63,7 @@ npx expo start
 This entire project, including code, architecture decisions, and documentation, was generated through pair programming with **Cursor AI** powered by **Claude 3.7 Sonnet** thinking agent.
 
 The development process included:
+
 - Setting up the project structure
 - Implementing theme management
 - Creating navigation systems
@@ -68,4 +72,4 @@ The development process included:
 
 ## License
 
-[MIT License](LICENSE) 
+[MIT License](LICENSE)

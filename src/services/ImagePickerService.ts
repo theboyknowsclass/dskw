@@ -1,4 +1,4 @@
-import * as ImagePicker from "expo-image-picker";
+import * as ImagePicker from 'expo-image-picker';
 
 // Interface for image selection result
 export interface ImageSelectionResult {
@@ -18,7 +18,7 @@ export class ImagePickerService {
    */
   static async requestPermissions(): Promise<boolean> {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    return status === "granted";
+    return status === 'granted';
   }
 
   /**
@@ -34,7 +34,7 @@ export class ImagePickerService {
         return {
           uri: null,
           success: false,
-          error: "Permission to access media library was denied",
+          error: 'Permission to access media library was denied',
         };
       }
 
@@ -50,7 +50,7 @@ export class ImagePickerService {
         return {
           uri: null,
           success: false,
-          error: "Image selection was cancelled",
+          error: 'Image selection was cancelled',
         };
       }
 

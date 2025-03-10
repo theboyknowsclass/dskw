@@ -1,9 +1,9 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useTheme } from "../contexts/ThemeContext";
-import { Header } from "../components/Header";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { useTheme } from '../contexts/ThemeContext';
+import { Header } from '../components/Header';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Define the navigation props type
 type AboutScreenProps = {
@@ -110,13 +110,13 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: 'center',
   },
   subheading: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginTop: 20,
     marginBottom: 10,
   },
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   version: {
     marginTop: 30,
     fontSize: 14,
-    textAlign: "center",
+    textAlign: 'center',
     opacity: 0.7,
   },
 });

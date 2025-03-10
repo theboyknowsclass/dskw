@@ -1,9 +1,9 @@
-import React, { useMemo, useCallback, useRef } from "react";
-import { View, StyleSheet } from "react-native";
-import Svg, { Polygon, Circle } from "react-native-svg";
-import { useOverlayStore } from "../stores/useOverlayStore";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { useTheme } from "../contexts/ThemeContext";
+import React, { useMemo, useCallback, useRef } from 'react';
+import { View, StyleSheet } from 'react-native';
+import Svg, { Polygon, Circle } from 'react-native-svg';
+import { useOverlayStore } from '../stores/useOverlayStore';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { useTheme } from '../contexts/ThemeContext';
 
 type QuadrilateralOverlayProps = {
   imageWidth: number;
@@ -60,7 +60,7 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
   );
 
   const polygonPoints = useMemo(() => {
-    return screenPoints.map((point) => `${point.x},${point.y}`).join(" ");
+    return screenPoints.map((point) => `${point.x},${point.y}`).join(' ');
   }, [screenPoints]);
 
   const isDragging = activePointIndex != null;
@@ -73,7 +73,7 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
           points={polygonPoints}
           fill="none"
           stroke={isDragging ? colors.accent : `${colors.accent}cc`}
-          strokeWidth={isDragging ? "3" : "2"}
+          strokeWidth={isDragging ? '3' : '2'}
         />
 
         {screenPoints.map((point, index) => (
@@ -116,9 +116,9 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
 
 const styles = StyleSheet.create({
   touchPoint: {
-    position: "absolute",
+    position: 'absolute',
     width: 40,
     height: 40,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
 });

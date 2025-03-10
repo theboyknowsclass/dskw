@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { useColorScheme } from "react-native";
-import { useThemeStore, ThemeType } from "../stores/useThemeStore";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useColorScheme } from 'react-native';
+import { useThemeStore, ThemeType } from '../stores/useThemeStore';
 
 // Define theme colors
 export interface ThemeColors {
@@ -16,25 +16,25 @@ export interface ThemeColors {
 
 // Define light and dark theme colors
 export const lightTheme: ThemeColors = {
-  background: "#FFFFFF",
-  text: "#121212",
-  primary: "#3498db",
-  secondary: "#2ecc71",
-  accent: "#00ff00",
-  border: "#e0e0e0",
-  error: "#e74c3c",
-  success: "#2ecc71",
+  background: '#FFFFFF',
+  text: '#121212',
+  primary: '#3498db',
+  secondary: '#2ecc71',
+  accent: '#00ff00',
+  border: '#e0e0e0',
+  error: '#e74c3c',
+  success: '#2ecc71',
 };
 
 export const darkTheme: ThemeColors = {
-  background: "#121212",
-  text: "#FFFFFF",
-  primary: "#2980b9",
-  secondary: "#27ae60",
-  accent: "#00ff00",
-  border: "#333333",
-  error: "#c0392b",
-  success: "#27ae60",
+  background: '#121212',
+  text: '#FFFFFF',
+  primary: '#2980b9',
+  secondary: '#27ae60',
+  accent: '#00ff00',
+  border: '#333333',
+  error: '#c0392b',
+  success: '#27ae60',
 };
 
 // Define the context shape
@@ -53,26 +53,26 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const systemColorScheme = useColorScheme() as "light" | "dark";
+  const systemColorScheme = useColorScheme() as 'light' | 'dark';
   const { theme, setTheme } = useThemeStore();
   const [colors, setColors] = useState<ThemeColors>(
-    systemColorScheme === "dark" ? darkTheme : lightTheme
+    systemColorScheme === 'dark' ? darkTheme : lightTheme
   );
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(
-    systemColorScheme === "dark"
+    systemColorScheme === 'dark'
   );
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   // On first load, determine the theme based on system preference or saved preference
   useEffect(() => {
     // First-time setup: If theme is 'system', apply the system preference as the actual theme
-    if (theme === "system") {
-      setIsDarkTheme(systemColorScheme === "dark");
-      setColors(systemColorScheme === "dark" ? darkTheme : lightTheme);
+    if (theme === 'system') {
+      setIsDarkTheme(systemColorScheme === 'dark');
+      setColors(systemColorScheme === 'dark' ? darkTheme : lightTheme);
     } else {
       // Use saved preference
-      setIsDarkTheme(theme === "dark");
-      setColors(theme === "dark" ? darkTheme : lightTheme);
+      setIsDarkTheme(theme === 'dark');
+      setColors(theme === 'dark' ? darkTheme : lightTheme);
     }
     setIsInitialized(true);
   }, [systemColorScheme, theme]);
@@ -80,14 +80,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   // When theme changes in store, update the UI
   useEffect(() => {
     if (isInitialized) {
-      setIsDarkTheme(theme === "dark");
-      setColors(theme === "dark" ? darkTheme : lightTheme);
+      setIsDarkTheme(theme === 'dark');
+      setColors(theme === 'dark' ? darkTheme : lightTheme);
     }
   }, [theme, isInitialized]);
 
   // Simple toggle between light and dark
   const toggleTheme = () => {
-    const newTheme: ThemeType = isDarkTheme ? "light" : "dark";
+    const newTheme: ThemeType = isDarkTheme ? 'light' : 'dark';
     setTheme(newTheme);
   };
 
@@ -115,7 +115,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
+    throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
 };

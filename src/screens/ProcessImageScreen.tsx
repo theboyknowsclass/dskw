@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   StyleSheet,
@@ -7,15 +7,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-} from "react-native";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useTheme } from "../contexts/ThemeContext";
-import { Header } from "../components/Header";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useImageStore } from "../stores/useImageStore";
+} from 'react-native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { useTheme } from '../contexts/ThemeContext';
+import { Header } from '../components/Header';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useImageStore } from '../stores/useImageStore';
 
 // Get screen dimensions for responsive sizing
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Define the navigation props type
 type ProcessImageScreenProps = {
@@ -94,58 +94,58 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     maxWidth: 800,
-    width: "100%",
-    alignSelf: "center",
+    width: '100%',
+    alignSelf: 'center',
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginVertical: 20,
-    textAlign: "center",
+    textAlign: 'center',
   },
   imageContainer: {
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#1a1a1a",
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#1a1a1a',
     borderRadius: 8,
-    overflow: "hidden",
+    overflow: 'hidden',
     maxWidth: Math.min(SCREEN_WIDTH - 40, 600),
     aspectRatio: 1,
   },
   processedImage: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
   },
   errorContainer: {
     padding: 30,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 8,
     marginVertical: 30,
   },
   errorText: {
     fontSize: 16,
-    textAlign: "center",
+    textAlign: 'center',
   },
   backButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     marginTop: 30,
-    width: "100%",
+    width: '100%',
     maxWidth: 300,
-    alignItems: "center",
+    alignItems: 'center',
   },
   backButtonText: {
-    color: "white",
+    color: 'white',
     fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

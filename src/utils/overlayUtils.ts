@@ -1,4 +1,4 @@
-import { Point } from "../stores/useOverlayStore";
+import { Point } from '../stores/useOverlayStore';
 
 /**
  * Orders an array of points according to the Corner enum.
@@ -12,7 +12,7 @@ import { Point } from "../stores/useOverlayStore";
  */
 export function orderPointsByCorner(points: Point[]): Point[] {
   if (points.length !== 4) {
-    throw new Error("Points array must contain exactly 4 points");
+    throw new Error('Points array must contain exactly 4 points');
   }
 
   // Clone the points to avoid mutating the original array
@@ -51,7 +51,7 @@ export function getLargestRectangle(sortedPoints: Point[]): {
   bottomRight: Point;
 } {
   if (sortedPoints.length !== 4) {
-    throw new Error("Points array must contain exactly 4 points");
+    throw new Error('Points array must contain exactly 4 points');
   }
 
   // Extract the points

@@ -1,29 +1,29 @@
-import React from "react";
-import { View, Text, StyleSheet, Platform, Dimensions } from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet, Platform, Dimensions } from 'react-native';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItemList,
-} from "@react-navigation/drawer";
-import { HomeScreen } from "../screens/HomeScreen";
-import { AboutScreen } from "../screens/AboutScreen";
-import { ProcessImageScreen } from "../screens/ProcessImageScreen";
-import { useTheme } from "../contexts/ThemeContext";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ThemeToggle } from "../components/ThemeToggle";
+} from '@react-navigation/drawer';
+import { HomeScreen } from '../screens/HomeScreen';
+import { AboutScreen } from '../screens/AboutScreen';
+import { ProcessImageScreen } from '../screens/ProcessImageScreen';
+import { useTheme } from '../contexts/ThemeContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 // Create drawer navigator
 const Drawer = createDrawerNavigator();
 
 // Screen dimensions for responsive sizing
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Determine drawer width based on platform and screen size
 const getDrawerWidth = () => {
-  if (Platform.OS === "web") {
+  if (Platform.OS === 'web') {
     return Math.min(320, SCREEN_WIDTH * 0.7); // Cap at 320px or 70% of screen width, whichever is smaller
   }
-  return "70%"; // Default for mobile
+  return '70%'; // Default for mobile
 };
 
 /**
@@ -94,8 +94,8 @@ export const AppDrawerNavigator = () => {
           paddingBottom: insets.bottom,
         },
         // Use front for web to prevent drawer from appearing on resize
-        drawerType: Platform.OS === "web" ? "front" : "slide",
-        overlayColor: isDarkTheme ? "rgba(0, 0, 0, 0.8)" : "rgba(0, 0, 0, 0.5)",
+        drawerType: Platform.OS === 'web' ? 'front' : 'slide',
+        overlayColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.5)',
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
@@ -103,23 +103,23 @@ export const AppDrawerNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          drawerLabel: "Home",
+          drawerLabel: 'Home',
         }}
       />
       <Drawer.Screen
         name="ProcessImage"
         component={ProcessImageScreen}
         options={{
-          drawerLabel: "Process Image",
+          drawerLabel: 'Process Image',
           // Hide from drawer but allow navigation to it
-          drawerItemStyle: { display: "none" },
+          drawerItemStyle: { display: 'none' },
         }}
       />
       <Drawer.Screen
         name="About"
         component={AboutScreen}
         options={{
-          drawerLabel: "About",
+          drawerLabel: 'About',
         }}
       />
     </Drawer.Navigator>
@@ -129,14 +129,14 @@ export const AppDrawerNavigator = () => {
 const styles = StyleSheet.create({
   drawerHeader: {
     height: 120,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
     padding: 16,
     marginBottom: 8,
   },
   drawerHeaderText: {
-    color: "#FFFFFF",
+    color: '#FFFFFF',
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   drawerSeparator: {
     height: 1,
@@ -149,16 +149,16 @@ const styles = StyleSheet.create({
   },
   themeToggleTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 12,
   },
   drawerFooter: {
     padding: 16,
     borderTopWidth: 1,
-    marginTop: "auto",
+    marginTop: 'auto',
   },
   footerText: {
     fontSize: 12,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });

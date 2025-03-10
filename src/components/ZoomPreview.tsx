@@ -1,14 +1,14 @@
-import React, { useMemo } from "react";
-import { View, StyleSheet, Text, Image, Dimensions } from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
-import { useOverlayStore } from "../stores/useOverlayStore";
-import { useImageStore } from "../stores/useImageStore";
+import React, { useMemo } from 'react';
+import { View, StyleSheet, Text, Image, Dimensions } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
+import { useOverlayStore } from '../stores/useOverlayStore';
+import { useImageStore } from '../stores/useImageStore';
 
 export const ZoomPreview: React.FC = () => {
   const { points, activePointIndex, zoomLevel } = useOverlayStore();
   const { uri, originalDimensions } = useImageStore();
   const { colors } = useTheme();
-  const { width: screenWidth } = Dimensions.get("window");
+  const { width: screenWidth } = Dimensions.get('window');
 
   // Calculate preview dimensions
   const previewSize = Math.min(screenWidth * 0.8, 400);
@@ -52,7 +52,7 @@ export const ZoomPreview: React.FC = () => {
 
   // Format coordinates for display
   const coordinatesText = useMemo(() => {
-    if (!activePointIndex || !activePoint) return "";
+    if (!activePointIndex || !activePoint) return '';
     const relativeX = activePoint.x.toFixed(3);
     const relativeY = activePoint.y.toFixed(3);
     const pixelX = Math.round(activePoint.x * originalDimensions.width);
@@ -77,7 +77,7 @@ export const ZoomPreview: React.FC = () => {
             {
               width: scaledDimensions.width,
               height: scaledDimensions.height,
-              position: "absolute",
+              position: 'absolute',
               transform,
             },
           ]}
@@ -95,7 +95,7 @@ export const ZoomPreview: React.FC = () => {
               styles.crosshairLine,
               {
                 backgroundColor: `${colors.accent}bf`,
-                transform: [{ rotate: "90deg" }],
+                transform: [{ rotate: '90deg' }],
               },
             ]}
           />
@@ -113,62 +113,62 @@ export const ZoomPreview: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   previewContainer: {
-    overflow: "hidden",
+    overflow: 'hidden',
     borderRadius: 8,
-    backgroundColor: "#000",
+    backgroundColor: '#000',
     marginBottom: 20,
-    position: "relative",
+    position: 'relative',
   },
   previewImage: {
-    position: "absolute",
+    position: 'absolute',
   },
   crosshair: {
-    position: "absolute",
+    position: 'absolute',
     width: 48,
     height: 48,
-    top: "50%",
-    left: "50%",
+    top: '50%',
+    left: '50%',
     marginLeft: -24,
     marginTop: -24,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   crosshairLine: {
-    position: "absolute",
+    position: 'absolute',
     width: 2,
     height: 48,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   controls: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   text: {
     fontSize: 16,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 10,
   },
   coordinates: {
     fontSize: 14,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 15,
     opacity: 0.8,
   },
   zoomControls: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 20,
   },
   zoomButton: {
     fontSize: 24,
     width: 40,
     height: 40,
-    textAlign: "center",
-    textAlignVertical: "center",
+    textAlign: 'center',
+    textAlignVertical: 'center',
     borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 });

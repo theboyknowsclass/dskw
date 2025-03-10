@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -9,18 +9,18 @@ import {
   TextStyle,
   View,
   Dimensions,
-} from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
+} from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Get device width for responsive sizing
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Interface for Button component props
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   loading?: boolean;
-  variant?: "primary" | "secondary" | "outline" | "iconButton";
-  size?: "small" | "medium" | "large";
+  variant?: 'primary' | 'secondary' | 'outline' | 'iconButton';
+  size?: 'small' | 'medium' | 'large';
   buttonStyle?: ViewStyle;
   textStyle?: TextStyle;
   icon?: React.ReactNode; // For icon buttons
@@ -34,8 +34,8 @@ interface ButtonProps extends TouchableOpacityProps {
 export const Button: React.FC<ButtonProps> = ({
   title,
   loading = false,
-  variant = "primary",
-  size = "medium",
+  variant = 'primary',
+  size = 'medium',
   buttonStyle,
   textStyle,
   disabled,
@@ -55,7 +55,7 @@ export const Button: React.FC<ButtonProps> = ({
       opacity: disabled ? 0.5 : 1, // Adjusted opacity for better visual feedback
       // Responsive width based on screen size
       maxWidth: SCREEN_WIDTH > 600 ? 300 : SCREEN_WIDTH * 0.8,
-      alignSelf: "center",
+      alignSelf: 'center',
     };
 
     // Size styles
@@ -68,14 +68,14 @@ export const Button: React.FC<ButtonProps> = ({
     // Variant styles
     const variantStyles: Record<string, ViewStyle> = {
       primary: { backgroundColor: colors.primary },
-      secondary: { backgroundColor: isDarkTheme ? "#2C2C2C" : "#E0E0E0" },
+      secondary: { backgroundColor: isDarkTheme ? '#2C2C2C' : '#E0E0E0' },
       outline: {
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
         borderWidth: 1,
         borderColor: colors.primary,
       },
       iconButton: {
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
         paddingVertical: 8,
         paddingHorizontal: 8,
         borderRadius: 20,
@@ -83,7 +83,7 @@ export const Button: React.FC<ButtonProps> = ({
     };
 
     // Apply size styles only for non-icon buttons
-    if (variant === "iconButton") {
+    if (variant === 'iconButton') {
       return {
         ...baseStyle,
         ...variantStyles[variant],
@@ -100,13 +100,13 @@ export const Button: React.FC<ButtonProps> = ({
   // Determine text styles based on variant
   const getTextStyles = (): TextStyle => {
     const baseStyle: TextStyle = {
-      fontWeight: "bold",
-      textAlign: "center",
+      fontWeight: 'bold',
+      textAlign: 'center',
     };
 
     const variantTextStyles: Record<string, TextStyle> = {
-      primary: { color: "#FFFFFF" },
-      secondary: { color: isDarkTheme ? "#FFFFFF" : "#000000" },
+      primary: { color: '#FFFFFF' },
+      secondary: { color: isDarkTheme ? '#FFFFFF' : '#000000' },
       outline: { color: colors.primary },
       iconButton: { color: colors.text },
     };
@@ -118,7 +118,7 @@ export const Button: React.FC<ButtonProps> = ({
     };
 
     // For icon buttons, we only apply the variant text style
-    if (variant === "iconButton") {
+    if (variant === 'iconButton') {
       return {
         ...baseStyle,
         ...variantTextStyles[variant],
@@ -142,9 +142,9 @@ export const Button: React.FC<ButtonProps> = ({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === "outline" ? colors.primary : "#FFFFFF"}
+          color={variant === 'outline' ? colors.primary : '#FFFFFF'}
         />
-      ) : variant === "iconButton" && icon ? (
+      ) : variant === 'iconButton' && icon ? (
         <View style={styles.iconButtonContainer}>
           {icon}
           {title ? (
@@ -162,14 +162,14 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     minWidth: 100, // Ensure buttons have a minimum width
   },
   iconButtonContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   iconButtonText: {
     marginLeft: 4,

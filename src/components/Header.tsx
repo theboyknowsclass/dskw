@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   Text,
@@ -6,14 +6,14 @@ import {
   TouchableOpacity,
   Platform,
   Dimensions,
-} from "react-native";
-import { useTheme } from "../contexts/ThemeContext";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ThemeToggle } from "./ThemeToggle";
+} from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ThemeToggle } from './ThemeToggle';
 
 // Get screen dimensions for responsive sizing
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Interface for header props
 interface HeaderProps {
@@ -36,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({ navigation, title }) => {
   const headerStyle = {
     backgroundColor: colors.background,
     paddingTop:
-      Platform.OS === "android" ? insets.top : insets.top > 0 ? insets.top : 8,
+      Platform.OS === 'android' ? insets.top : insets.top > 0 ? insets.top : 8,
   };
 
   // Dynamic container style
@@ -99,70 +99,70 @@ export const Header: React.FC<HeaderProps> = ({ navigation, title }) => {
 
 const styles = StyleSheet.create({
   headerWrapper: {
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 0,
     borderBottomWidth: 0,
-    borderColor: "transparent",
+    borderColor: 'transparent',
     // Remove all shadow and elevation that might create lines
     ...Platform.select({
       android: {
         elevation: 0,
       },
       ios: {
-        shadowColor: "transparent",
+        shadowColor: 'transparent',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0,
         shadowRadius: 0,
       },
       web: {
-        boxShadow: "none",
+        boxShadow: 'none',
       },
     }),
   },
   container: {
     minHeight: 60,
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
     paddingHorizontal: 16,
     borderWidth: 0,
     borderBottomWidth: 0,
-    borderColor: "transparent",
+    borderColor: 'transparent',
   },
   wideContainer: {
     maxWidth: 1200,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   leftSection: {
     flex: 1,
-    alignItems: "flex-start",
-    justifyContent: "center",
+    alignItems: 'flex-start',
+    justifyContent: 'center',
   },
   middleSection: {
     flex: 3,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   rightSection: {
     flex: 1,
-    alignItems: "flex-end",
-    justifyContent: "center",
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
   menuButton: {
     width: 40,
     height: 40,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   menuIconContainer: {
     width: 24,
     height: 18,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   menuIconBar: {
-    width: "100%",
+    width: '100%',
     height: 2,
     borderRadius: 1,
   },
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

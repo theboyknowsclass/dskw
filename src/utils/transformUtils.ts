@@ -1,6 +1,6 @@
-import cv from "@techstark/opencv-js";
-import { Point } from "../stores/useOverlayStore";
-import { getLargestRectangle, orderPointsByCorner } from "./overlayUtils";
+import cv from '@techstark/opencv-js';
+import { Point } from '../stores/useOverlayStore';
+import { getLargestRectangle, orderPointsByCorner } from './overlayUtils';
 
 /**
  * Transforms an image using perspective correction based on the selected overlay points.
@@ -21,7 +21,7 @@ export const transformImage = async (
 ): Promise<string> => {
   // Ensure OpenCV is loaded
   if (!cv || !cv.Mat) {
-    throw new Error("OpenCV is not loaded");
+    throw new Error('OpenCV is not loaded');
   }
 
   // Order the points according to the Corner enum
@@ -36,7 +36,7 @@ export const transformImage = async (
     img.src = uri;
     await new Promise((resolve, reject) => {
       img.onload = resolve;
-      img.onerror = () => reject(new Error("Failed to load image"));
+      img.onerror = () => reject(new Error('Failed to load image'));
     });
 
     // Convert the image to a cv.Mat
@@ -102,25 +102,25 @@ export const transformImage = async (
       const cropped = dst.roi(rect);
 
       // Create a canvas sized to the cropped area
-      const croppedCanvas = document.createElement("canvas");
+      const croppedCanvas = document.createElement('canvas');
       croppedCanvas.width = rectWidth;
       croppedCanvas.height = rectHeight;
 
       // Draw the cropped image
       cv.imshow(croppedCanvas, cropped);
-      resultUri = croppedCanvas.toDataURL("image/jpeg");
+      resultUri = croppedCanvas.toDataURL('image/jpeg');
 
       // Clean up the cropped image
       cropped.delete();
     } else {
       // If not cropping, use the whole transformed image
-      const fullCanvas = document.createElement("canvas");
+      const fullCanvas = document.createElement('canvas');
       fullCanvas.width = src.cols;
       fullCanvas.height = src.rows;
 
       // Draw the full transformed image
       cv.imshow(fullCanvas, dst);
-      resultUri = fullCanvas.toDataURL("image/jpeg");
+      resultUri = fullCanvas.toDataURL('image/jpeg');
     }
 
     // Clean up OpenCV resources
@@ -132,7 +132,7 @@ export const transformImage = async (
 
     return resultUri;
   } catch (error) {
-    console.error("Error transforming image:", error);
+    console.error('Error transforming image:', error);
     throw error;
   }
 };

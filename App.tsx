@@ -1,23 +1,23 @@
-import React, { useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
+import React, { useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
 import {
   NavigationContainer,
   DefaultTheme,
   DarkTheme,
-} from "@react-navigation/native";
+} from '@react-navigation/native';
 import {
   SafeAreaProvider,
   initialWindowMetrics,
-} from "react-native-safe-area-context";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StyleSheet, Platform } from "react-native";
-import { ThemeProvider, useTheme } from "./src/contexts/ThemeContext";
-import { AppDrawerNavigator } from "./src/navigation/DrawerNavigator";
+} from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { StyleSheet, Platform } from 'react-native';
+import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
+import { AppDrawerNavigator } from './src/navigation/DrawerNavigator';
 
 // Apply global styles for web platform
-if (Platform.OS === "web") {
+if (Platform.OS === 'web') {
   // Create a style element
-  const style = document.createElement("style");
+  const style = document.createElement('style');
   // Remove all unwanted borders and lines
   style.textContent = `
     * {
@@ -64,7 +64,7 @@ const AppContent = () => {
 
   // Add an effect to update the document's body style on web
   useEffect(() => {
-    if (Platform.OS === "web") {
+    if (Platform.OS === 'web') {
       document.body.style.backgroundColor = colors.background;
     }
   }, [colors.background]);
@@ -72,7 +72,7 @@ const AppContent = () => {
   return (
     <GestureHandlerRootView style={styles.container}>
       <NavigationContainer theme={theme}>
-        <StatusBar style={isDarkTheme ? "light" : "dark"} />
+        <StatusBar style={isDarkTheme ? 'light' : 'dark'} />
         <AppDrawerNavigator />
       </NavigationContainer>
     </GestureHandlerRootView>
