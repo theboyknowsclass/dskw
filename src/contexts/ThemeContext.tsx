@@ -56,10 +56,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   const systemColorScheme = useColorScheme() as "light" | "dark";
   const { theme, setTheme } = useThemeStore();
   const [colors, setColors] = useState<ThemeColors>(
-    systemColorScheme === "dark" ? darkTheme : lightTheme,
+    systemColorScheme === "dark" ? darkTheme : lightTheme
   );
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(
-    systemColorScheme === "dark",
+    systemColorScheme === "dark"
   );
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
