@@ -52,10 +52,6 @@ export const ProcessImageScreen: React.FC<ProcessImageScreenProps> = ({
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
-          <Text style={[styles.title, { color: colors.text }]}>
-            Processed Image
-          </Text>
-
           {destinationUri ? (
             <View style={styles.imageContainer}>
               <Image
@@ -76,7 +72,7 @@ export const ProcessImageScreen: React.FC<ProcessImageScreenProps> = ({
             style={[styles.backButton, { backgroundColor: colors.primary }]}
             onPress={handleBack}
           >
-            <Text style={styles.backButtonText}>Back to Image Selection</Text>
+            <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -99,12 +95,6 @@ const styles = StyleSheet.create({
     maxWidth: 800,
     width: '100%',
     alignSelf: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginVertical: 20,
-    textAlign: 'center',
   },
   imageContainer: {
     width: '100%',

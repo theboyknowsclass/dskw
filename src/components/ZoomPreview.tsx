@@ -1,30 +1,24 @@
 import React, { useMemo } from 'react';
-import { View, StyleSheet, Text, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Image, ImageBackground } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { useImageStore } from '../stores/useImageStore';
 
-export const ZoomPreview: React.FC = () => {
-  const { points, activePointIndex, zoomLevel } = useOverlayStore();
+type ZoomPreviewProps = {
+  width: number;
+  height: number;
+};
+
+export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ width, height }) => {
+  const { points, activePointIndex } = useOverlayStore();
   const { uri, originalDimensions } = useImageStore();
   const { colors } = useTheme();
-  const { width: screenWidth } = Dimensions.get('window');
 
-  // Calculate preview dimensions
-  const previewSize = Math.min(screenWidth * 0.8, 400);
+  const previewSize = Math.max(width, height) * 0.4;
 
   // Get the active point coordinates
   const activePoint =
     activePointIndex != null ? points[activePointIndex] : null;
-
-  // Calculate the scaled dimensions
-  const scaledDimensions = useMemo(() => {
-    const scale = previewSize / originalDimensions.width;
-    return {
-      width: originalDimensions.width * scale,
-      height: originalDimensions.height * scale,
-    };
-  }, [originalDimensions, previewSize]);
 
   // Calculate the transform to center and zoom on the active point
   const transform = useMemo(() => {
@@ -32,36 +26,14 @@ export const ZoomPreview: React.FC = () => {
       return [];
     }
 
-    // Calculate the center point in scaled coordinates
-    const centerX = activePoint.x * scaledDimensions.width;
-    const centerY = activePoint.y * scaledDimensions.height;
-
-    // Calculate the translation to center the point
-    const translateX = previewSize / 2 - centerX;
-    const translateY = previewSize / 2 - centerY;
-
-    // Apply the zoom level to the translation
-    const scaledTranslateX = translateX * zoomLevel;
-    const scaledTranslateY = translateY * zoomLevel;
+    const startX = previewSize / 2;
+    const startY = previewSize / 2;
 
     return [
-      { translateX: scaledTranslateX },
-      { translateY: scaledTranslateY },
-      { scale: zoomLevel },
+      { translateX: startX - activePoint.x * originalDimensions.width },
+      { translateY: startY - activePoint.y * originalDimensions.height },
     ];
-  }, [activePoint, scaledDimensions, previewSize, zoomLevel]);
-
-  // Format coordinates for display
-  const coordinatesText = useMemo(() => {
-    if (!activePointIndex || !activePoint) return '';
-    const relativeX = activePoint.x.toFixed(3);
-    const relativeY = activePoint.y.toFixed(3);
-    const pixelX = Math.round(activePoint.x * originalDimensions.width);
-    const pixelY = Math.round(activePoint.y * originalDimensions.height);
-    return `Point ${
-      activePointIndex + 1
-    }: (${relativeX}, ${relativeY})\nPixel: (${pixelX}, ${pixelY})`;
-  }, [activePoint, activePointIndex, originalDimensions]);
+  }, [activePoint, originalDimensions, previewSize]);
 
   return (
     <View style={styles.container}>
@@ -76,8 +48,8 @@ export const ZoomPreview: React.FC = () => {
           style={[
             styles.previewImage,
             {
-              width: scaledDimensions.width,
-              height: scaledDimensions.height,
+              width: originalDimensions.width,
+              height: originalDimensions.height,
               position: 'absolute',
               transform,
             },
@@ -102,30 +74,22 @@ export const ZoomPreview: React.FC = () => {
           />
         </View>
       </View>
-      <View style={styles.controls}>
-        <Text style={[styles.coordinates, { color: colors.text }]}>
-          {coordinatesText}
-        </Text>
-      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   previewContainer: {
     overflow: 'hidden',
-    marginBottom: 20,
     position: 'relative',
-    backgroundImage:
-      'linear-gradient(45deg, lightgrey 25%, transparent 25%), linear-gradient(135deg, lightgrey 25%, transparent 25%), linear-gradient(45deg, transparent 75%, lightgrey 75%), linear-gradient(135deg, transparent 75%, lightgrey 75%)',
-    backgroundSize: '20px 20px',
-    backgroundPosition: '0 0, 10px 0, 10px -10px, 0px 10px',
     borderRadius: '50%',
+    // backgroundImage:
+    //   'linear-gradient(45deg, lightgrey 25%, transparent 25%), linear-gradient(135deg, lightgrey 25%, transparent 25%), linear-gradient(45deg, transparent 75%, lightgrey 75%), linear-gradient(135deg, transparent 75%, lightgrey 75%)',
+    // backgroundSize: '20px 20px',
   },
   previewImage: {
     position: 'absolute',
@@ -146,14 +110,5 @@ const styles = StyleSheet.create({
     width: 2,
     height: 48,
     backgroundColor: 'transparent',
-  },
-  controls: {
-    alignItems: 'center',
-  },
-  coordinates: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 15,
-    opacity: 0.8,
   },
 });

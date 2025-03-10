@@ -37,7 +37,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  image: {
-    backgroundColor: '#000',
-  },
+  image: {},
 });

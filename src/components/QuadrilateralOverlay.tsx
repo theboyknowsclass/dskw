@@ -54,7 +54,8 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
         })
         .onEnd(() => {
           setActivePointIndex(null);
-        });
+        })
+        .runOnJS(true);
     },
     [imageWidth, imageHeight, setActivePointIndex, updatePoint]
   );

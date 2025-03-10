@@ -70,7 +70,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         )}
         <View style={[styles.section]}>
           {isDragging ? (
-            <ZoomPreview />
+            <ZoomPreview width={width} height={height} />
           ) : (
             <ImageControls width={width} height={height} />
           )}
@@ -101,8 +101,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
-    margin: 10,
     borderWidth: 0,
   },
 });
