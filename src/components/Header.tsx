@@ -5,15 +5,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   Platform,
-  Dimensions,
 } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemeToggle } from './ThemeToggle';
-
-// Get screen dimensions for responsive sizing
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Interface for header props
 interface HeaderProps {
@@ -29,9 +25,6 @@ export const Header: React.FC<HeaderProps> = ({ navigation, title }) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
-  // Check if we're on a wide screen
-  const isWideScreen = SCREEN_WIDTH > 768;
-
   // Calculate proper padding based on platform and insets
   const headerStyle = {
     backgroundColor: colors.background,
@@ -40,11 +33,7 @@ export const Header: React.FC<HeaderProps> = ({ navigation, title }) => {
   };
 
   // Dynamic container style
-  const containerStyle = [
-    styles.container,
-    headerStyle,
-    isWideScreen ? styles.wideContainer : null,
-  ];
+  const containerStyle = [styles.container, headerStyle];
 
   return (
     <View
@@ -130,10 +119,6 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderBottomWidth: 0,
     borderColor: 'transparent',
-  },
-  wideContainer: {
-    maxWidth: 1200,
-    alignSelf: 'center',
   },
   leftSection: {
     flex: 1,

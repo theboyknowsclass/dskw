@@ -14,7 +14,8 @@ export const ZoomPreview: React.FC = () => {
   const previewSize = Math.min(screenWidth * 0.8, 400);
 
   // Get the active point coordinates
-  const activePoint = activePointIndex ? points[activePointIndex] : null;
+  const activePoint =
+    activePointIndex != null ? points[activePointIndex] : null;
 
   // Calculate the scaled dimensions
   const scaledDimensions = useMemo(() => {
@@ -118,10 +119,13 @@ const styles = StyleSheet.create({
   },
   previewContainer: {
     overflow: 'hidden',
-    borderRadius: 8,
-    backgroundColor: '#000',
     marginBottom: 20,
     position: 'relative',
+    backgroundImage:
+      'linear-gradient(45deg, lightgrey 25%, transparent 25%), linear-gradient(135deg, lightgrey 25%, transparent 25%), linear-gradient(45deg, transparent 75%, lightgrey 75%), linear-gradient(135deg, transparent 75%, lightgrey 75%)',
+    backgroundSize: '20px 20px',
+    backgroundPosition: '0 0, 10px 0, 10px -10px, 0px 10px',
+    borderRadius: '50%',
   },
   previewImage: {
     position: 'absolute',
@@ -146,29 +150,10 @@ const styles = StyleSheet.create({
   controls: {
     alignItems: 'center',
   },
-  text: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 10,
-  },
   coordinates: {
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 15,
     opacity: 0.8,
-  },
-  zoomControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-  },
-  zoomButton: {
-    fontSize: 24,
-    width: 40,
-    height: 40,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
 });

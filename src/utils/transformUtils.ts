@@ -17,7 +17,7 @@ import { getLargestRectangle, orderPointsByCorner } from './overlayUtils';
 export const transformImage = async (
   uri: string,
   selectedOverlay: Point[],
-  cropToRectangle: boolean = true
+  cropToRectangle: boolean = false
 ): Promise<string> => {
   // Ensure OpenCV is loaded
   if (!cv || !cv.Mat) {

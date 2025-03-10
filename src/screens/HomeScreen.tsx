@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useTheme } from '../contexts/ThemeContext';
 import { Header } from '../components/Header';
@@ -10,9 +10,6 @@ import { ImageControls } from '../components/ImageControls';
 import { ZoomPreview } from '../components/ZoomPreview';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { useImageStore } from '../stores/useImageStore';
-
-// Get screen dimensions for responsive sizing
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Define the navigation props type
 type HomeScreenProps = {
@@ -36,14 +33,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   // Determine if the screen is in landscape orientation
   const isLandscape = width > height;
 
-  // Determine if we're on a large screen
-  const isLargeScreen = SCREEN_WIDTH > 1024;
-
   // Calculate content style based on orientation and screen size
   const contentStyle = [
     styles.content,
     isLandscape ? styles.landscapeContent : styles.portraitContent,
-    isLargeScreen ? styles.largeScreenContent : null,
   ];
 
   // Decide whether to show the preview section based image selection
@@ -67,7 +60,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <View style={[contentStyle, { marginTop: 0, borderTopWidth: 0 }]}>
         {/* only show preview if there's a selected image */}
         {shouldShowPreview && (
-          <View style={[styles.section, styles.previewSection]}>
+          <View style={[styles.section]}>
             <ImagePreview
               imageUri={uri}
               displayWidth={scaledDimensions.width}
@@ -75,7 +68,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             />
           </View>
         )}
-        <View style={[styles.section, styles.controlsSection]}>
+        <View style={[styles.section]}>
           {isDragging ? (
             <ZoomPreview />
           ) : (
@@ -104,25 +97,12 @@ const styles = StyleSheet.create({
   portraitContent: {
     flexDirection: 'column',
   },
-  largeScreenContent: {
-    maxWidth: 1200,
-    width: '100%',
-    alignSelf: 'center',
-  },
   section: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
+    margin: 10,
     borderWidth: 0,
-  },
-  previewSection: {
-    backgroundColor: '#1a1a1a',
-    borderRadius: 8,
-    overflow: 'hidden',
-    margin: 10,
-  },
-  controlsSection: {
-    margin: 10,
   },
 });

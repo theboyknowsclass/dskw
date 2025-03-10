@@ -41,10 +41,10 @@ export const ImageControls: React.FC<ImageControlsProps> = ({
       setError(null);
 
       // Process the image
-      //const transformedUri = await transformImage(uri, points);
+      const transformedUri = await transformImage(uri, points);
 
       // Save the processed image URI
-      //setDestinationUri(transformedUri);
+      setDestinationUri(transformedUri);
 
       // Navigate to the process image screen
       navigation.navigate('ProcessImage');
