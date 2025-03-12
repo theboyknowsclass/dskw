@@ -91,9 +91,9 @@ export const transformImage = async (
 
     // Create a canvas sized to the cropped area
     let resultUri;
-    let canvasSrc;
     let canvasWidth;
     let canvasHeight;
+    let canvasSrc; // holds the transformed image
 
     if (cropToRectangle) {
       // If cropping, extract just the rectangle region
@@ -123,7 +123,6 @@ export const transformImage = async (
     resultUri = canvas.toDataURL('image/jpeg');
 
     // Clean up OpenCV resources
-    canvasSrc.delete();
     src.delete();
     dst.delete();
     srcPoints.delete();

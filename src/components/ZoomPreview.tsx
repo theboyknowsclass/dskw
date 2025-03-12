@@ -1,8 +1,11 @@
 import React, { useMemo } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, ImageBackground } from 'react-native';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { useImageStore } from '../stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
+
+// Import the checkerboard pattern
+const checkerboardPattern = require('../../assets/checkerboard.png');
 
 type ZoomPreviewProps = {
   width: number;
@@ -43,18 +46,31 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ width, height }) => {
           { width: previewSize, height: previewSize },
         ]}
       >
-        <Image
-          source={{ uri: uri! }}
+        <ImageBackground
+          source={checkerboardPattern}
+          resizeMode="repeat"
           style={[
             styles.previewImage,
             {
-              width: originalDimensions.width,
-              height: originalDimensions.height,
+              width: originalDimensions.width * 2,
+              height: originalDimensions.height * 2,
               position: 'absolute',
-              transform,
             },
           ]}
-        />
+        >
+          <Image
+            source={{ uri: uri! }}
+            style={[
+              styles.previewImage,
+              {
+                width: originalDimensions.width,
+                height: originalDimensions.height,
+                position: 'absolute',
+                transform,
+              },
+            ]}
+          />
+        </ImageBackground>
         {/* Crosshair indicator */}
         <View style={[styles.crosshair]}>
           <View

@@ -58,6 +58,7 @@ export const ImageControls: React.FC<ImageControlsProps> = ({
       {/* Stack buttons in a column */}
       <View style={styles.buttonsColumn}>
         <Button
+          variant={hasSelectedImage ? 'outline' : 'primary'}
           title="Select Image"
           onPress={pickImage}
           loading={isLoading}
@@ -66,6 +67,7 @@ export const ImageControls: React.FC<ImageControlsProps> = ({
         />
 
         <Button
+          variant={hasSelectedImage ? 'primary' : 'outline'}
           title="Next"
           onPress={handleNext}
           disabled={!hasSelectedImage}
