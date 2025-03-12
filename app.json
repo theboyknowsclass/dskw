@@ -2,6 +2,7 @@
   "expo": {
     "name": "dskw",
     "slug": "dskw",
+    "scheme": "dskw-scheme",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
@@ -12,6 +13,15 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": ["assets/Anta-Regular.ttf"]
+        }
+      ],
+      "expo-router"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -24,7 +34,8 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     }
   }
 }

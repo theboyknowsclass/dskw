@@ -1,3 +1,4 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import {
   TouchableOpacity,
@@ -9,8 +10,8 @@ import {
   TextStyle,
   View,
   Dimensions,
+  useColorScheme,
 } from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
 
 // Get device width for responsive sizing
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -44,14 +45,15 @@ export const Button: React.FC<ButtonProps> = ({
   ...rest
 }) => {
   // Use the current theme
-  const { colors, isDarkTheme } = useTheme();
+  const { colors } = useTheme();
+  const isDarkTheme = useColorScheme() === 'dark';
 
   // Determine button styles based on variant and size
   const getButtonStyles = (): ViewStyle => {
     // Base styles
     const baseStyle: ViewStyle = {
       backgroundColor: colors.primary,
-      borderRadius: 8,
+      borderRadius: 2,
       opacity: disabled ? 0.5 : 1, // Adjusted opacity for better visual feedback
       // Responsive width based on screen size
       maxWidth: SCREEN_WIDTH > 600 ? 300 : SCREEN_WIDTH * 0.8,
@@ -102,6 +104,7 @@ export const Button: React.FC<ButtonProps> = ({
     const baseStyle: TextStyle = {
       fontWeight: 'bold',
       textAlign: 'center',
+      fontFamily: 'Anta-Regular',
     };
 
     const variantTextStyles: Record<string, TextStyle> = {

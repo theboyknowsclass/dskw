@@ -1,20 +1,13 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { useTheme } from '../contexts/ThemeContext';
-import { Header } from '../components/Header';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-// Define the navigation props type
-type AboutScreenProps = {
-  navigation: DrawerNavigationProp<any, any>;
-};
-
 /**
- * About screen component
+ * About page
  * Follows the Liskov Substitution Principle by being interchangeable with other screens
  */
-export const AboutScreen: React.FC<AboutScreenProps> = ({ navigation }) => {
+export const About: React.FC = () => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -28,9 +21,6 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ navigation }) => {
         },
       ]}
     >
-      {/* Header with hamburger menu */}
-      <Header navigation={navigation} title="About" />
-
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
@@ -96,6 +86,8 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ navigation }) => {
     </View>
   );
 };
+
+export default About;
 
 const styles = StyleSheet.create({
   container: {

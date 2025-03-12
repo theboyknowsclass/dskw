@@ -5,8 +5,7 @@ import { useImagePicker } from '../hooks/useImagePicker';
 import { useImageStore } from '../stores/useImageStore';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { transformImage } from '../utils/transformUtils';
-import { useNavigation } from '@react-navigation/native';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { router } from 'expo-router';
 
 type ImageControlsProps = {
   width: number;
@@ -17,9 +16,6 @@ export const ImageControls: React.FC<ImageControlsProps> = ({
   width,
   height,
 }) => {
-  // Get navigation
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
-
   // Use image picker hook
   const { pickImage } = useImagePicker({ width, height });
 
@@ -47,7 +43,7 @@ export const ImageControls: React.FC<ImageControlsProps> = ({
       setDestinationUri(transformedUri);
 
       // Navigate to the process image screen
-      navigation.navigate('ProcessImage');
+      router.push('export');
     } catch (err) {
       setError(
         `Error processing image: ${err instanceof Error ? err.message : String(err)}`

@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import Svg, { Polygon, Circle } from 'react-native-svg';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@react-navigation/native';
 
 type QuadrilateralOverlayProps = {
   imageWidth: number;
@@ -73,7 +73,7 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
         <Polygon
           points={polygonPoints}
           fill="none"
-          stroke={isDragging ? colors.accent : `${colors.accent}cc`}
+          stroke={isDragging ? colors.primary : `${colors.primary}`}
           strokeWidth={isDragging ? '3' : '2'}
         />
 
@@ -84,7 +84,7 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
             cy={point.y}
             r="15"
             fill={
-              activePointIndex === index ? colors.accent : `${colors.accent}80`
+              activePointIndex === index ? colors.primary : `${colors.primary}`
             }
           />
         ))}

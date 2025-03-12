@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { View, StyleSheet, Text, Image, ImageBackground } from 'react-native';
-import { useTheme } from '../contexts/ThemeContext';
+import { View, StyleSheet, Image } from 'react-native';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { useImageStore } from '../stores/useImageStore';
+import { useTheme } from '@react-navigation/native';
 
 type ZoomPreviewProps = {
   width: number;
@@ -60,14 +60,14 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ width, height }) => {
           <View
             style={[
               styles.crosshairLine,
-              { backgroundColor: `${colors.accent}bf` },
+              { backgroundColor: `${colors.primary}bf` },
             ]}
           />
           <View
             style={[
               styles.crosshairLine,
               {
-                backgroundColor: `${colors.accent}bf`,
+                backgroundColor: `${colors.primary}bf`,
                 transform: [{ rotate: '90deg' }],
               },
             ]}

@@ -5,37 +5,40 @@ import {
   Image,
   Text,
   TouchableOpacity,
-  ScrollView,
   Dimensions,
 } from 'react-native';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { useTheme } from '../contexts/ThemeContext';
-import { Header } from '../components/Header';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useImageStore } from '../stores/useImageStore';
+import { useTheme } from '@react-navigation/native';
+import { router } from 'expo-router';
+import * as Sharing from 'expo-sharing';
 
 // Get screen dimensions for responsive sizing
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-// Define the navigation props type
-type ProcessImageScreenProps = {
-  navigation: DrawerNavigationProp<any, any>;
-};
 
 /**
  * Process Image screen component
  * This screen displays the processed image
  */
-export const ProcessImageScreen: React.FC<ProcessImageScreenProps> = ({
-  navigation,
-}) => {
+export const ExportImageScreen: React.FC = () => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const { destinationUri } = useImageStore();
 
   // Go back to the home screen
   const handleBack = () => {
-    navigation.goBack();
+    router.back();
+  };
+
+  const handleShare = () => {
+    if (destinationUri) {
+      console.log('share uri', destinationUri);
+      Sharing.shareAsync(destinationUri);
+    }
+  };
+
+  const handleSave = () => {
+    console.log('save');
   };
 
   return (
@@ -48,51 +51,57 @@ export const ProcessImageScreen: React.FC<ProcessImageScreenProps> = ({
         },
       ]}
     >
-      <Header navigation={navigation} />
+      <View style={styles.content}>
+        {destinationUri ? (
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: destinationUri }}
+              style={styles.processedImage}
+              resizeMode="contain"
+            />
+          </View>
+        ) : (
+          <View style={styles.errorContainer}>
+            <Text style={[styles.errorText, { color: colors.notification }]}>
+              No processed image available
+            </Text>
+          </View>
+        )}
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.content}>
-          {destinationUri ? (
-            <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: destinationUri }}
-                style={styles.processedImage}
-                resizeMode="contain"
-              />
-            </View>
-          ) : (
-            <View style={styles.errorContainer}>
-              <Text style={[styles.errorText, { color: colors.error }]}>
-                No processed image available
-              </Text>
-            </View>
-          )}
-
-          <TouchableOpacity
-            style={[styles.backButton, { backgroundColor: colors.primary }]}
-            onPress={handleBack}
-          >
-            <Text style={styles.backButtonText}>Back</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        <TouchableOpacity
+          style={[styles.backButton, { backgroundColor: colors.primary }]}
+          onPress={handleBack}
+        >
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.backButton, { backgroundColor: colors.primary }]}
+          onPress={handleShare}
+        >
+          <Text style={styles.backButtonText}>Share</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.backButton, { backgroundColor: colors.primary }]}
+          onPress={handleSave}
+        >
+          <Text style={styles.backButtonText}>Save</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
+export default ExportImageScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
   },
   content: {
     flex: 1,
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    maxWidth: 800,
     width: '100%',
     alignSelf: 'center',
   },

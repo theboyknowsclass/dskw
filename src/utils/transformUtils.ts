@@ -89,7 +89,11 @@ export const transformImage = async (
       new cv.Size(src.cols, src.rows)
     );
 
+    // Create a canvas sized to the cropped area
     let resultUri;
+    let canvasSrc;
+    let canvasWidth;
+    let canvasHeight;
 
     if (cropToRectangle) {
       // If cropping, extract just the rectangle region
@@ -99,31 +103,27 @@ export const transformImage = async (
         rectWidth,
         rectHeight
       );
-      const cropped = dst.roi(rect);
-
-      // Create a canvas sized to the cropped area
-      const croppedCanvas = document.createElement('canvas');
-      croppedCanvas.width = rectWidth;
-      croppedCanvas.height = rectHeight;
-
-      // Draw the cropped image
-      cv.imshow(croppedCanvas, cropped);
-      resultUri = croppedCanvas.toDataURL('image/jpeg');
-
-      // Clean up the cropped image
-      cropped.delete();
+      canvasSrc = dst.roi(rect);
+      canvasWidth = rectWidth;
+      canvasHeight = rectHeight;
     } else {
-      // If not cropping, use the whole transformed image
-      const fullCanvas = document.createElement('canvas');
-      fullCanvas.width = src.cols;
-      fullCanvas.height = src.rows;
-
-      // Draw the full transformed image
-      cv.imshow(fullCanvas, dst);
-      resultUri = fullCanvas.toDataURL('image/jpeg');
+      // If not cropping, use the full image
+      canvasSrc = dst;
+      canvasWidth = src.cols;
+      canvasHeight = src.rows;
     }
 
+    // Create a canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+
+    // Draw the full transformed image
+    cv.imshow(canvas, canvasSrc);
+    resultUri = canvas.toDataURL('image/jpeg');
+
     // Clean up OpenCV resources
+    canvasSrc.delete();
     src.delete();
     dst.delete();
     srcPoints.delete();

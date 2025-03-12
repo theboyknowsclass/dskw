@@ -1,8 +1,5 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { useTheme } from '../contexts/ThemeContext';
-import { Header } from '../components/Header';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useWindowDimensions } from 'react-native';
 import { ImagePreview } from '../components/ImagePreview';
@@ -10,17 +7,13 @@ import { ImageControls } from '../components/ImageControls';
 import { ZoomPreview } from '../components/ZoomPreview';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { useImageStore } from '../stores/useImageStore';
-
-// Define the navigation props type
-type HomeScreenProps = {
-  navigation: DrawerNavigationProp<any, any>;
-};
+import { useTheme } from '@react-navigation/native';
 
 /**
- * Home screen component
+ * Home component
  * Follows the Interface Segregation Principle by only accepting the props it needs
  */
-export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
+export const Home: React.FC = () => {
   // Use our custom hooks for theme
   const { colors } = useTheme();
   const { width, height } = useWindowDimensions();
@@ -53,9 +46,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         },
       ]}
     >
-      {/* Header with hamburger menu */}
-      <Header navigation={navigation} />
-
       {/* Main content with no top border/margin */}
       <View style={[contentStyle, { marginTop: 0, borderTopWidth: 0 }]}>
         {/* only show preview if there's a selected image */}
@@ -79,6 +69,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     </View>
   );
 };
+
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
