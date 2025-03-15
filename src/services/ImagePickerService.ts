@@ -43,6 +43,7 @@ export class ImagePickerService {
         mediaTypes: ['images', 'livePhotos'],
         allowsEditing: false,
         quality: 1,
+        base64: true,
       });
 
       // Handle user cancellation
