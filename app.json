@@ -13,15 +13,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "plugins": [
-      [
-        "expo-font",
-        {
-          "fonts": ["assets/Anta-Regular.ttf"]
-        }
-      ],
-      "expo-router"
-    ],
+    "plugins": ["expo-router"],
     "ios": {
       "supportsTablet": true
     },

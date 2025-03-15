@@ -89,6 +89,8 @@ export const transformImage = async (
       new cv.Size(src.cols, src.rows)
     );
 
+    console.log('cols, rows', src.cols, src.rows);
+
     // Create a canvas sized to the cropped area
     let resultUri;
     let canvasWidth;

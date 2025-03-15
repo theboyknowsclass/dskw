@@ -4,6 +4,7 @@ import { useImageStore } from '../stores/useImageStore';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { transformImage } from '../utils/transformUtils';
 import { router } from 'expo-router';
+import { runOnJS } from 'react-native-reanimated';
 
 type ImageProcessButtonProps = {
   style?: any;
@@ -39,7 +40,7 @@ export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
     <Button
       variant={hasSelectedImage ? 'primary' : 'outline'}
       title="Next"
-      onPress={handleProcess}
+      onPress={runOnJS(handleProcess)}
       disabled={!hasSelectedImage}
       size="large"
       buttonStyle={style}
