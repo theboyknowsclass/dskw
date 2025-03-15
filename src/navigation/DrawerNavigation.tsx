@@ -13,7 +13,10 @@ export const DrawerNavigation = () => {
         drawerStyle: {
           backgroundColor: theme.colors.background,
         },
-        headerTransparent: true,
+        headerStyle: {
+          backgroundColor: theme.colors.background,
+          borderBottomWidth: 0,
+        },
         overlayColor: theme.dark
           ? styles.drawerOverlayDark.backgroundColor
           : styles.drawerOverlayLight.backgroundColor,

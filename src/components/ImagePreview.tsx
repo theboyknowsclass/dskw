@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
-import { QuadrilateralOverlay } from './QuadrilateralOverlay';
+import { Overlay } from './Overlay';
 
 type ImagePreviewProps = {
   imageUri: string;
@@ -22,10 +22,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
         style={[styles.image, { width: displayWidth, height: displayHeight }]}
         resizeMode="contain"
       >
-        <QuadrilateralOverlay
-          imageWidth={displayWidth}
-          imageHeight={displayHeight}
-        />
+        <Overlay imageWidth={displayWidth} imageHeight={displayHeight} />
       </ImageBackground>
     </View>
   );

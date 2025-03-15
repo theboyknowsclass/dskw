@@ -7,12 +7,12 @@ import { useTheme } from '@react-navigation/native';
 import { throttle } from '../utils/throttleUtil';
 import { runOnJS } from 'react-native-reanimated';
 
-type QuadrilateralOverlayProps = {
+type OverlayProps = {
   imageWidth: number;
   imageHeight: number;
 };
 
-export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
+export const Overlay: React.FC<OverlayProps> = ({
   imageWidth,
   imageHeight,
 }) => {
@@ -31,8 +31,8 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
   }, [points, imageWidth, imageHeight]);
 
   // Create a throttled update function
-  const throttledUpdate = useCallback(
-    throttle((index: number, absoluteX: number, absoluteY: number) => {
+  const throttledUpdate = throttle(
+    (index: number, absoluteX: number, absoluteY: number) => {
       // Get the container's position
       const { pageX, pageY } = containerSize;
       // Calculate coordinates relative to the container
@@ -44,10 +44,9 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
         y: Math.max(0, Math.min(1, relativeY)),
       };
       updatePoint(index, clampedPoint);
-    }, 100),
-    [updatePoint, containerSize, imageWidth, imageHeight]
-  ); // ~60fps, adjust this value based on your needs
-
+    },
+    18 // ~60fps
+  );
   // Create a pan gesture for a point
   const createPanGesture = useCallback(
     (index: number) => {

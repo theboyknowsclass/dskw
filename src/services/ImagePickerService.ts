@@ -40,7 +40,7 @@ export class ImagePickerService {
 
       // Launch image library
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ['images', 'livePhotos'],
         allowsEditing: false,
         quality: 1,
       });
