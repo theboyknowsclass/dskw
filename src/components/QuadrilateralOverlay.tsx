@@ -1,80 +1,141 @@
-import React, { useMemo, useCallback, useRef } from 'react';
+import React, { useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg, { Polygon, Circle } from 'react-native-svg';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTheme } from '@react-navigation/native';
+import { runOnJS } from 'react-native-reanimated';
 
 type QuadrilateralOverlayProps = {
   imageWidth: number;
   imageHeight: number;
 };
 
+/**
+ * QuadrilateralOverlay Component
+ *
+ * Provides interactive corner points that users can drag to define a quadrilateral.
+ * Completely redesigned with minimal state updates for maximum stability.
+ */
 export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
   imageWidth,
   imageHeight,
 }) => {
-  const { points, activePointIndex, setActivePointIndex, updatePoint } =
+  // Direct store access with no intermediate state
+  const { points, activePointIndex, setActivePointIndex, batchUpdatePoint } =
     useOverlayStore();
   const { colors } = useTheme();
 
-  // Ref to track the container's position
+  // Reference for tracking render counts in development
+  const renderCount = useRef(0);
+  if (__DEV__) {
+    renderCount.current++;
+    console.log('QuadrilateralOverlay render', renderCount.current);
+  }
+
+  // Simple references for tracking container position and gesture state
   const containerRef = useRef<View>(null);
+  const isProcessingGestureRef = useRef(false);
 
-  // Convert relative coordinates to screen coordinates
-  const screenPoints = useMemo(() => {
-    return points.map((point) => ({
-      x: point.x * imageWidth,
-      y: point.y * imageHeight,
-    }));
-  }, [points, imageWidth, imageHeight]);
+  // Convert relative coordinates to screen coordinates - pure calculation
+  const screenPoints = points.map((point) => ({
+    x: point.x * imageWidth,
+    y: point.y * imageHeight,
+  }));
 
-  // Create a pan gesture for a point
-  const createPanGesture = useCallback(
-    (index: number) => {
-      return Gesture.Pan()
-        .onStart(() => {
-          setActivePointIndex(index);
-        })
-        .onUpdate((e) => {
-          // Get the container's position
-          containerRef.current?.measure((x, y, width, height, pageX, pageY) => {
-            // Calculate coordinates relative to the container
-            const relativeX = (e.absoluteX - pageX) / imageWidth;
-            const relativeY = (e.absoluteY - pageY) / imageHeight;
+  // Simplified point update with direct container measurement
+  const handlePointUpdate = (
+    index: number,
+    absoluteX: number,
+    absoluteY: number
+  ) => {
+    if (isProcessingGestureRef.current || index >= points.length) return;
 
-            // Clamp values between 0 and 1
-            const clampedPoint = {
-              x: Math.max(0, Math.min(1, relativeX)),
-              y: Math.max(0, Math.min(1, relativeY)),
-            };
+    // Set flag to limit update frequency
+    isProcessingGestureRef.current = true;
 
-            updatePoint(index, clampedPoint);
-          });
-        })
-        .onEnd(() => {
-          setActivePointIndex(null);
-        })
-        .runOnJS(true);
-    },
-    [imageWidth, imageHeight, setActivePointIndex, updatePoint]
-  );
+    if (containerRef.current) {
+      containerRef.current.measure((_, __, ___, ____, pageX, pageY) => {
+        // Calculate relative coordinates with bounds checking
+        const relativeX = Math.max(
+          0,
+          Math.min(1, (absoluteX - pageX) / imageWidth)
+        );
+        const relativeY = Math.max(
+          0,
+          Math.min(1, (absoluteY - pageY) / imageHeight)
+        );
 
-  const polygonPoints = useMemo(() => {
-    return screenPoints.map((point) => `${point.x},${point.y}`).join(' ');
-  }, [screenPoints]);
+        // Use the optimized batch update function instead
+        batchUpdatePoint(index, { x: relativeX, y: relativeY });
 
-  const isDragging = activePointIndex != null;
+        // Clear processing flag after minimal delay
+        setTimeout(() => {
+          isProcessingGestureRef.current = false;
+        }, 16); // Approx one frame at 60fps
+      });
+    } else {
+      // Release lock if measure fails
+      isProcessingGestureRef.current = false;
+    }
+  };
 
+  // Simplified gesture handling functions
+  const handleGestureStart = (index: number) => {
+    if (isProcessingGestureRef.current) return;
+    setActivePointIndex(index);
+  };
+
+  const handleGestureEnd = () => {
+    // Delay resetting active point to prevent visual flicker
+    setTimeout(() => {
+      setActivePointIndex(null);
+      isProcessingGestureRef.current = false;
+    }, 50);
+  };
+
+  // Create a pan gesture for each corner point
+  const createPanGesture = (index: number) => {
+    return Gesture.Pan()
+      .onStart(() => {
+        runOnJS(handleGestureStart)(index);
+      })
+      .onUpdate((e) => {
+        runOnJS(handlePointUpdate)(index, e.absoluteX, e.absoluteY);
+      })
+      .onEnd(() => {
+        runOnJS(handleGestureEnd)();
+      })
+      .minDistance(5);
+  };
+
+  // Create polygon points string for SVG
+  const polygonPoints = screenPoints
+    .map((point) => `${point.x},${point.y}`)
+    .join(' ');
+
+  // Pure render with minimal calculation
   return (
-    <View ref={containerRef} style={StyleSheet.absoluteFill}>
+    <View
+      ref={containerRef}
+      style={StyleSheet.absoluteFill}
+      testID="quadrilateral-overlay"
+      onLayout={() => {
+        // Initial measurement after layout
+        if (containerRef.current) {
+          containerRef.current.measure(() => {});
+        }
+      }}
+    >
       {/* SVG Layer (visual only) */}
       <Svg width={imageWidth} height={imageHeight}>
         <Polygon
           points={polygonPoints}
           fill="none"
-          stroke={isDragging ? colors.primary : `${colors.primary}`}
-          strokeWidth={isDragging ? '3' : '2'}
+          stroke={
+            activePointIndex !== null ? colors.primary : `${colors.primary}`
+          }
+          strokeWidth={activePointIndex !== null ? '3' : '2'}
         />
 
         {screenPoints.map((point, index) => (
@@ -90,27 +151,24 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
         ))}
       </Svg>
 
-      {/* Separate interaction layer */}
-      {screenPoints.map((point, index) => {
-        // Memoize the gesture for each point
-
-        return (
-          <GestureDetector
-            key={`gesture-${index}`}
-            gesture={createPanGesture(index)}
-          >
-            <View
-              style={[
-                styles.touchPoint,
-                {
-                  left: point.x - 20,
-                  top: point.y - 20,
-                },
-              ]}
-            />
-          </GestureDetector>
-        );
-      })}
+      {/* Touch targets for gestures */}
+      {screenPoints.map((point, index) => (
+        <GestureDetector
+          key={`gesture-${index}`}
+          gesture={createPanGesture(index)}
+        >
+          <View
+            style={[
+              styles.touchPoint,
+              {
+                left: point.x - 25,
+                top: point.y - 25,
+              },
+            ]}
+            testID={`corner-handle-${index}`}
+          />
+        </GestureDetector>
+      ))}
     </View>
   );
 };
@@ -118,8 +176,16 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
 const styles = StyleSheet.create({
   touchPoint: {
     position: 'absolute',
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     backgroundColor: 'transparent',
+    // Add a small border to make touch targets more visible in development
+    ...(process.env.NODE_ENV === 'development'
+      ? {
+          borderWidth: 1,
+          borderColor: 'rgba(255,255,255,0.2)',
+          borderRadius: 25,
+        }
+      : {}),
   },
 });
