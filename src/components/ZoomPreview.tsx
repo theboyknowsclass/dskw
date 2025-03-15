@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
-import { View, StyleSheet, Image, ImageBackground } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { useImageStore } from '../stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
+import { Image } from 'expo-image';
 
 // Import the checkerboard pattern
 const checkerboardPattern = require('../../assets/checkerboard.png');
@@ -12,67 +13,90 @@ type ZoomPreviewProps = {
   height: number;
 };
 
+/**
+ * ZoomPreview Component
+ *
+ * Shows a magnified view of the image around the currently active corner point.
+ * Completely redesigned with minimal state updates for maximum stability.
+ */
 export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ width, height }) => {
+  // Direct store access - no intermediate state
   const { points, activePointIndex } = useOverlayStore();
   const { uri, originalDimensions } = useImageStore();
   const { colors } = useTheme();
 
+  // Calculate preview size once
   const previewSize = Math.max(width, height) * 0.4;
 
-  // Get the active point coordinates
-  const activePoint =
-    activePointIndex != null ? points[activePointIndex] : null;
+  // Early return for missing data - pure logic, no state updates
+  if (
+    activePointIndex === null ||
+    !points?.[activePointIndex] ||
+    !uri ||
+    !originalDimensions.width ||
+    !originalDimensions.height
+  ) {
+    console.debug(
+      'ZoomPreview early return',
+      activePointIndex,
+      points,
+      uri,
+      originalDimensions
+    );
+    return null;
+  }
 
-  // Calculate the transform to center and zoom on the active point
-  const transform = useMemo(() => {
-    if (!activePoint) {
-      return [];
-    }
+  // Get active point directly from store
+  const activePoint = points[activePointIndex];
 
-    const startX = previewSize / 2;
-    const startY = previewSize / 2;
+  // Bound checking for the point coordinates
+  const pointX = Math.max(0, Math.min(1, activePoint.x));
+  const pointY = Math.max(0, Math.min(1, activePoint.y));
 
-    return [
-      { translateX: startX - activePoint.x * originalDimensions.width },
-      { translateY: startY - activePoint.y * originalDimensions.height },
-    ];
-  }, [activePoint, originalDimensions, previewSize]);
+  // Calculate transform directly in render method - no state or memo
+  const startX = previewSize / 2;
+  const startY = previewSize / 2;
 
+  const transform = [
+    { translateX: startX - pointX * originalDimensions.width },
+    { translateY: startY - pointY * originalDimensions.height },
+  ];
+
+  // Pure render with no state dependencies
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      testID="zoom-preview-container"
+      pointerEvents="none"
+    >
       <View
         style={[
           styles.previewContainer,
           { width: previewSize, height: previewSize },
         ]}
+        testID="zoom-preview-background"
       >
         <ImageBackground
           source={checkerboardPattern}
           resizeMode="repeat"
-          style={[
-            styles.previewImage,
-            {
-              width: originalDimensions.width * 2,
-              height: originalDimensions.height * 2,
-              position: 'absolute',
-            },
-          ]}
+          style={styles.checkerboard}
         >
           <Image
-            source={{ uri: uri! }}
+            source={{ uri }}
             style={[
               styles.previewImage,
               {
                 width: originalDimensions.width,
                 height: originalDimensions.height,
-                position: 'absolute',
                 transform,
               },
             ]}
+            contentFit="cover"
+            testID="zoom-preview-image"
           />
         </ImageBackground>
-        {/* Crosshair indicator */}
-        <View style={[styles.crosshair]}>
+
+        <View style={styles.crosshair} testID="zoom-preview-crosshair">
           <View
             style={[
               styles.crosshairLine,
@@ -98,14 +122,18 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 10,
   },
   previewContainer: {
     overflow: 'hidden',
     position: 'relative',
     borderRadius: '50%',
-    // backgroundImage:
-    //   'linear-gradient(45deg, lightgrey 25%, transparent 25%), linear-gradient(135deg, lightgrey 25%, transparent 25%), linear-gradient(45deg, transparent 75%, lightgrey 75%), linear-gradient(135deg, transparent 75%, lightgrey 75%)',
-    // backgroundSize: '20px 20px',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  checkerboard: {
+    width: '100%',
+    height: '100%',
   },
   previewImage: {
     position: 'absolute',
