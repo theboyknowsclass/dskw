@@ -4,7 +4,6 @@ import Svg, { Polygon, Circle } from 'react-native-svg';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTheme } from '@react-navigation/native';
-import { runOnJS } from 'react-native-reanimated';
 
 type QuadrilateralOverlayProps = {
   imageWidth: number;
@@ -26,16 +25,8 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
     useOverlayStore();
   const { colors } = useTheme();
 
-  // Reference for tracking render counts in development
-  const renderCount = useRef(0);
-  if (__DEV__) {
-    renderCount.current++;
-    console.log('QuadrilateralOverlay render', renderCount.current);
-  }
-
   // Simple references for tracking container position and gesture state
   const containerRef = useRef<View>(null);
-  const isProcessingGestureRef = useRef(false);
 
   // Convert relative coordinates to screen coordinates - pure calculation
   const screenPoints = points.map((point) => ({
@@ -49,10 +40,7 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
     absoluteX: number,
     absoluteY: number
   ) => {
-    if (isProcessingGestureRef.current || index >= points.length) return;
-
-    // Set flag to limit update frequency
-    isProcessingGestureRef.current = true;
+    if (index >= points.length) return;
 
     if (containerRef.current) {
       containerRef.current.measure((_, __, ___, ____, pageX, pageY) => {
@@ -68,45 +56,24 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
 
         // Use the optimized batch update function instead
         batchUpdatePoint(index, { x: relativeX, y: relativeY });
-
-        // Clear processing flag after minimal delay
-        setTimeout(() => {
-          isProcessingGestureRef.current = false;
-        }, 16); // Approx one frame at 60fps
       });
-    } else {
-      // Release lock if measure fails
-      isProcessingGestureRef.current = false;
     }
-  };
-
-  // Simplified gesture handling functions
-  const handleGestureStart = (index: number) => {
-    if (isProcessingGestureRef.current) return;
-    setActivePointIndex(index);
-  };
-
-  const handleGestureEnd = () => {
-    // Delay resetting active point to prevent visual flicker
-    setTimeout(() => {
-      setActivePointIndex(null);
-      isProcessingGestureRef.current = false;
-    }, 50);
   };
 
   // Create a pan gesture for each corner point
   const createPanGesture = (index: number) => {
     return Gesture.Pan()
       .onStart(() => {
-        runOnJS(handleGestureStart)(index);
+        setActivePointIndex(index);
       })
       .onUpdate((e) => {
-        runOnJS(handlePointUpdate)(index, e.absoluteX, e.absoluteY);
+        handlePointUpdate(index, e.absoluteX, e.absoluteY);
       })
       .onEnd(() => {
-        runOnJS(handleGestureEnd)();
+        setActivePointIndex(null);
       })
-      .minDistance(5);
+      .minDistance(5)
+      .runOnJS(true);
   };
 
   // Create polygon points string for SVG
