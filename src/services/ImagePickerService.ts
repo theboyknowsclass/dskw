@@ -3,6 +3,7 @@ import * as ImagePicker from 'expo-image-picker';
 // Interface for image selection result
 export interface ImageSelectionResult {
   uri: string | null;
+  base64: string | null | undefined;
   success: boolean;
   error?: string;
 }
@@ -33,6 +34,7 @@ export class ImagePickerService {
       if (!permissionGranted) {
         return {
           uri: null,
+          base64: null,
           success: false,
           error: 'Permission to access media library was denied',
         };
@@ -50,6 +52,7 @@ export class ImagePickerService {
       if (result.canceled) {
         return {
           uri: null,
+          base64: null,
           success: false,
           error: 'Image selection was cancelled',
         };
@@ -58,11 +61,13 @@ export class ImagePickerService {
       // Return the selected image URI
       return {
         uri: result.assets[0].uri,
+        base64: result.assets[0].base64,
         success: true,
       };
     } catch (error) {
       return {
         uri: null,
+        base64: null,
         success: false,
         error: `Failed to select image: ${
           error instanceof Error ? error.message : String(error)

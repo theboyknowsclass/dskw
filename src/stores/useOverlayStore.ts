@@ -15,11 +15,10 @@ export type Point = {
 type OverlayState = {
   points: Point[];
   activePointIndex: Corner | null;
-  zoomLevel: number;
   setPoints: (points: Point[]) => void;
   setActivePointIndex: (corner: Corner | null) => void;
   updatePoint: (corner: Corner, point: Point) => void;
-  setZoomLevel: (level: number) => void;
+  resetPoints: () => void;
 };
 
 // Initialize with default points forming a rectangle in the center
@@ -33,7 +32,6 @@ const initialPoints: Point[] = [
 export const useOverlayStore = create<OverlayState>()((set) => ({
   points: initialPoints,
   activePointIndex: null,
-  zoomLevel: 5, // Default zoom level
   setPoints: (points: Point[]) => set({ points }),
   setActivePointIndex: (corner: Corner | null) =>
     set({ activePointIndex: corner }),
@@ -43,5 +41,5 @@ export const useOverlayStore = create<OverlayState>()((set) => ({
       newPoints[corner] = point;
       return { points: newPoints };
     }),
-  setZoomLevel: (level: number) => set({ zoomLevel: level }),
+  resetPoints: () => set({ points: initialPoints }),
 }));

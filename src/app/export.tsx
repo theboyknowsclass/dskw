@@ -32,7 +32,6 @@ export const ExportImageScreen: React.FC = () => {
 
   const handleShare = () => {
     if (destinationUri) {
-      console.log('share uri', destinationUri);
       Sharing.shareAsync(destinationUri);
     }
   };
@@ -55,7 +54,7 @@ export const ExportImageScreen: React.FC = () => {
         {destinationUri ? (
           <View style={styles.imageContainer}>
             <Image
-              source={{ uri: destinationUri }}
+              source={{ uri: 'data:image/jpeg;base64,' + destinationUri }}
               style={styles.processedImage}
               resizeMode="contain"
             />

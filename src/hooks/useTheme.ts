@@ -10,7 +10,6 @@ export const useTheme = () => {
   useEffect(() => {
     const loadInitialData = async () => {
       const storedTheme = await getStoredTheme();
-      console.log('storedTheme', storedTheme);
       if (storedTheme) {
         setTheme(storedTheme);
         return;

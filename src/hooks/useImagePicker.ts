@@ -20,6 +20,7 @@ export const useImagePicker = (screenDimensions: ScreenDimensions) => {
     isLoading,
     error,
     setUri,
+    setBase64,
     setDimensions,
     setLoading,
     setError,
@@ -69,6 +70,7 @@ export const useImagePicker = (screenDimensions: ScreenDimensions) => {
             } // Scaled dimensions
           );
           setUri(result.uri);
+          setBase64(result.base64);
         });
       } else if (result.error) {
         setError(result.error);

@@ -13,7 +13,14 @@ type ImageProcessButtonProps = {
 export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
   style,
 }) => {
-  const { uri, setDestinationUri, setLoading, setError } = useImageStore();
+  const {
+    uri,
+    base64,
+    setDestinationUri,
+    setLoading,
+    setError,
+    originalDimensions,
+  } = useImageStore();
   const { points } = useOverlayStore();
   const hasSelectedImage = uri !== null;
 
@@ -24,7 +31,12 @@ export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
       setLoading(true);
       setError(null);
 
-      const transformedUri = await transformImage(uri, points);
+      const transformedUri = await transformImage(
+        base64 ?? uri,
+        originalDimensions.height,
+        originalDimensions.width,
+        points
+      );
       setDestinationUri(transformedUri);
       router.push('export');
     } catch (err) {

@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, StyleSheet, ImageBackground } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Overlay } from './Overlay';
+import { Image } from 'expo-image';
 
 type ImagePreviewProps = {
   imageUri: string;
@@ -17,13 +18,12 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
 
   return (
     <View style={styles.container}>
-      <ImageBackground
+      <Image
         source={{ uri: imageUri }}
         style={[styles.image, { width: displayWidth, height: displayHeight }]}
         resizeMode="contain"
-      >
-        <Overlay imageWidth={displayWidth} imageHeight={displayHeight} />
-      </ImageBackground>
+      ></Image>
+      <Overlay imageWidth={displayWidth} imageHeight={displayHeight} />
     </View>
   );
 };

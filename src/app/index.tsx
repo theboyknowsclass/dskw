@@ -19,7 +19,7 @@ export const Home: React.FC = () => {
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { activePointIndex } = useOverlayStore();
-  const { uri, scaledDimensions } = useImageStore();
+  const { uri, scaledDimensions, base64 } = useImageStore();
 
   const isDragging = activePointIndex != null;
 
@@ -33,7 +33,7 @@ export const Home: React.FC = () => {
   ];
 
   // Decide whether to show the preview section based image selection
-  const shouldShowPreview = uri !== null;
+  const shouldShowPreview = base64 !== null;
 
   return (
     <View
@@ -52,7 +52,7 @@ export const Home: React.FC = () => {
         {shouldShowPreview && (
           <View style={[styles.section]}>
             <ImagePreview
-              imageUri={uri}
+              imageUri={'data:image/jpeg;base64,' + base64}
               displayWidth={scaledDimensions.width}
               displayHeight={scaledDimensions.height}
             />

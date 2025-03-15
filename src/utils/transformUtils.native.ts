@@ -1,4 +1,11 @@
-import { DataTypes, ObjectType, OpenCV } from 'react-native-fast-opencv';
+import {
+  DataTypes,
+  ObjectType,
+  OpenCV,
+  InterpolationFlags,
+  BorderTypes,
+  DecompTypes,
+} from 'react-native-fast-opencv';
 import { Point } from '../stores/useOverlayStore';
 import { getLargestRectangle, orderPointsByCorner } from './overlayUtils';
 
@@ -16,6 +23,8 @@ import { getLargestRectangle, orderPointsByCorner } from './overlayUtils';
  */
 export const transformImage = async (
   uri: string,
+  imageHeight: number,
+  imageWidth: number,
   selectedOverlay: Point[],
   cropToRectangle: boolean = false
 ): Promise<string> => {
@@ -25,34 +34,41 @@ export const transformImage = async (
   // Get the largest rectangle that fits within the quadrilateral
   const largestRect = getLargestRectangle(orderedPoints);
 
-  console.log('transformImage Native', uri, selectedOverlay, cropToRectangle);
-
   const src = OpenCV.base64ToMat(uri);
 
-  console.log('src', src);
+  const cols = imageWidth;
+  const rows = imageHeight;
 
-  const { cols, rows } = OpenCV.toJSValue(src, 'png');
-
-  console.log('cols', cols);
-
-  const srcData = [];
-
-  srcData[0] = orderedPoints[0].x * cols; // Top-left x
-  srcData[1] = orderedPoints[0].y * rows; // Top-left y
-  srcData[2] = orderedPoints[1].x * cols; // Top-right x
-  srcData[3] = orderedPoints[1].y * rows; // Top-right y
-  srcData[4] = orderedPoints[2].x * cols; // Bottom-right x
-  srcData[5] = orderedPoints[2].y * rows; // Bottom-right y
-  srcData[6] = orderedPoints[3].x * cols; // Bottom-left x
-  srcData[7] = orderedPoints[3].y * rows; // Bottom-left y
-
-  const srcPoints = OpenCV.createObject(
-    ObjectType.Mat,
-    4,
-    1,
-    DataTypes.CV_32FC2,
-    srcData
+  const srcTopLeft = OpenCV.createObject(
+    ObjectType.Point2f,
+    orderedPoints[0].x * cols,
+    orderedPoints[0].y * rows
   );
+
+  const srcTopRight = OpenCV.createObject(
+    ObjectType.Point2f,
+    orderedPoints[1].x * cols,
+    orderedPoints[1].y * rows
+  );
+
+  const srcBottomRight = OpenCV.createObject(
+    ObjectType.Point2f,
+    orderedPoints[2].x * cols,
+    orderedPoints[2].y * rows
+  );
+
+  const srcBottomLeft = OpenCV.createObject(
+    ObjectType.Point2f,
+    orderedPoints[3].x * cols,
+    orderedPoints[3].y * rows
+  );
+
+  const srcPoints = OpenCV.createObject(ObjectType.Point2fVector, [
+    srcTopLeft,
+    srcTopRight,
+    srcBottomRight,
+    srcBottomLeft,
+  ]);
 
   // Calculate the actual coordinates of the largest rectangle
   const topLeftX = largestRect.topLeft.x * cols;
@@ -60,42 +76,42 @@ export const transformImage = async (
   const bottomRightX = largestRect.bottomRight.x * cols;
   const bottomRightY = largestRect.bottomRight.y * rows;
 
-  // Calculate width and height of the rectangle
-  const rectWidth = Math.round(bottomRightX - topLeftX);
-  const rectHeight = Math.round(bottomRightY - topLeftY);
-
-  const dstData = [];
-  dstData[0] = topLeftX; // Top-left x
-  dstData[1] = topLeftY; // Top-left y
-  dstData[2] = bottomRightX; // Top-right x
-  dstData[3] = topLeftY; // Top-right y
-  dstData[4] = bottomRightX; // Bottom-right x
-  dstData[5] = bottomRightY; // Bottom-right y
-  dstData[6] = topLeftX; // Bottom-left x
-  dstData[7] = bottomRightY; // Bottom-left y
-
-  const dstPoints = OpenCV.createObject(
-    ObjectType.Mat,
-    4,
-    1,
-    DataTypes.CV_32FC2,
-    dstData
+  const dstTopLeft = OpenCV.createObject(
+    ObjectType.Point2f,
+    topLeftX,
+    topLeftY
   );
 
-  const perspectiveMatrix = OpenCV.createObject(
-    ObjectType.Mat,
-    3,
-    3,
-    DataTypes.CV_32FC2
+  const dstTopRight = OpenCV.createObject(
+    ObjectType.Point2f,
+    bottomRightX,
+    topLeftY
   );
 
-  console.log('perspectiveMatrix', perspectiveMatrix);
+  const dstBottomRight = OpenCV.createObject(
+    ObjectType.Point2f,
+    bottomRightX,
+    bottomRightY
+  );
 
-  OpenCV.invoke(
-    'perspectiveTransform',
+  const dstBottomLeft = OpenCV.createObject(
+    ObjectType.Point2f,
+    topLeftX,
+    bottomRightY
+  );
+
+  const dstPoints = OpenCV.createObject(ObjectType.Point2fVector, [
+    dstTopLeft,
+    dstTopRight,
+    dstBottomRight,
+    dstBottomLeft,
+  ]);
+
+  const perspectiveMatrix = OpenCV.invoke(
+    'getPerspectiveTransform',
     srcPoints,
     dstPoints,
-    perspectiveMatrix
+    DecompTypes.DECOMP_LU
   );
 
   const dst = OpenCV.createObject(
@@ -107,6 +123,19 @@ export const transformImage = async (
 
   const size = OpenCV.createObject(ObjectType.Size, cols, rows);
 
-  OpenCV.invoke('warpPerspective', src, dst, perspectiveMatrix, size);
-  return '';
+  const scalar = OpenCV.createObject(ObjectType.Scalar, 0, 0, 0);
+
+  OpenCV.invoke(
+    'warpPerspective',
+    src,
+    dst,
+    perspectiveMatrix,
+    size,
+    InterpolationFlags.INTER_LINEAR,
+    BorderTypes.BORDER_CONSTANT,
+    scalar
+  );
+
+  const data2 = OpenCV.toJSValue(dst);
+  return data2.base64;
 };

@@ -16,6 +16,8 @@ import { getLargestRectangle, orderPointsByCorner } from './overlayUtils';
  */
 export const transformImage = async (
   uri: string,
+  imageHeight: number,
+  imageWidth: number,
   selectedOverlay: Point[],
   cropToRectangle: boolean = false
 ): Promise<string> => {
@@ -59,10 +61,6 @@ export const transformImage = async (
     const bottomRightX = largestRect.bottomRight.x * src.cols;
     const bottomRightY = largestRect.bottomRight.y * src.rows;
 
-    // Calculate width and height of the rectangle
-    const rectWidth = Math.round(bottomRightX - topLeftX);
-    const rectHeight = Math.round(bottomRightY - topLeftY);
-
     // Always use the same perspective transformation
     // Define destination points using the actual rectangle coordinates
     const dstPoints = new cv.Mat(4, 1, cv.CV_32FC2);
@@ -89,8 +87,6 @@ export const transformImage = async (
       new cv.Size(src.cols, src.rows)
     );
 
-    console.log('cols, rows', src.cols, src.rows);
-
     // Create a canvas sized to the cropped area
     let resultUri;
     let canvasWidth;
@@ -99,6 +95,11 @@ export const transformImage = async (
 
     if (cropToRectangle) {
       // If cropping, extract just the rectangle region
+
+      // Calculate width and height of the rectangle
+      const rectWidth = Math.round(bottomRightX - topLeftX);
+      const rectHeight = Math.round(bottomRightY - topLeftY);
+
       const rect = new cv.Rect(
         Math.round(topLeftX),
         Math.round(topLeftY),
