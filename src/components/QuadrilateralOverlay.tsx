@@ -1,9 +1,11 @@
-import React, { useMemo, useCallback, useRef } from 'react';
+import React, { useMemo, useCallback, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg, { Polygon, Circle } from 'react-native-svg';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTheme } from '@react-navigation/native';
+import { throttle } from '../utils/throttleUtil';
+import { runOnJS } from 'react-native-reanimated';
 
 type QuadrilateralOverlayProps = {
   imageWidth: number;
@@ -17,9 +19,8 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
   const { points, activePointIndex, setActivePointIndex, updatePoint } =
     useOverlayStore();
   const { colors } = useTheme();
-
-  // Ref to track the container's position
-  const containerRef = useRef<View>(null);
+  const [containerSize, setContainerSize] = useState({ pageX: 0, pageY: 0 });
+  const containerRef = useRef<View>(null); // Ref to track the container's position
 
   // Convert relative coordinates to screen coordinates
   const screenPoints = useMemo(() => {
@@ -29,6 +30,24 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
     }));
   }, [points, imageWidth, imageHeight]);
 
+  // Create a throttled update function
+  const throttledUpdate = useCallback(
+    throttle((index: number, absoluteX: number, absoluteY: number) => {
+      // Get the container's position
+      const { pageX, pageY } = containerSize;
+      // Calculate coordinates relative to the container
+      const relativeX = (absoluteX - pageX) / imageWidth;
+      const relativeY = (absoluteY - pageY) / imageHeight;
+
+      const clampedPoint = {
+        x: Math.max(0, Math.min(1, relativeX)),
+        y: Math.max(0, Math.min(1, relativeY)),
+      };
+      updatePoint(index, clampedPoint);
+    }, 100),
+    [updatePoint, containerSize, imageWidth, imageHeight]
+  ); // ~60fps, adjust this value based on your needs
+
   // Create a pan gesture for a point
   const createPanGesture = useCallback(
     (index: number) => {
@@ -37,27 +56,15 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
           setActivePointIndex(index);
         })
         .onUpdate((e) => {
-          // Get the container's position
-          containerRef.current?.measure((x, y, width, height, pageX, pageY) => {
-            // Calculate coordinates relative to the container
-            const relativeX = (e.absoluteX - pageX) / imageWidth;
-            const relativeY = (e.absoluteY - pageY) / imageHeight;
-
-            // Clamp values between 0 and 1
-            const clampedPoint = {
-              x: Math.max(0, Math.min(1, relativeX)),
-              y: Math.max(0, Math.min(1, relativeY)),
-            };
-
-            updatePoint(index, clampedPoint);
-          });
+          // Use the throttled update
+          runOnJS(throttledUpdate)(index, e.absoluteX, e.absoluteY);
         })
         .onEnd(() => {
           setActivePointIndex(null);
         })
         .runOnJS(true);
     },
-    [imageWidth, imageHeight, setActivePointIndex, updatePoint]
+    [setActivePointIndex, throttledUpdate]
   );
 
   const polygonPoints = useMemo(() => {
@@ -66,8 +73,18 @@ export const QuadrilateralOverlay: React.FC<QuadrilateralOverlayProps> = ({
 
   const isDragging = activePointIndex != null;
 
+  const onContainerLayout = () => {
+    containerRef.current?.measure((_, __, ___, ____, pageX, pageY) => {
+      setContainerSize({ pageX, pageY });
+    });
+  };
+
   return (
-    <View ref={containerRef} style={StyleSheet.absoluteFill}>
+    <View
+      ref={containerRef}
+      style={StyleSheet.absoluteFill}
+      onLayout={onContainerLayout}
+    >
       {/* SVG Layer (visual only) */}
       <Svg width={imageWidth} height={imageHeight}>
         <Polygon
