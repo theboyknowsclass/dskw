@@ -4,6 +4,7 @@ import { ThemeProvider } from '@react-navigation/native';
 
 import { DrawerNavigation } from '../navigation/DrawerNavigation';
 import { useTheme } from '../hooks/useTheme';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 /**
  * Root layout component that sets up the app's navigation drawer and theme handling.
@@ -13,12 +14,14 @@ export default function HomeLayout() {
   const theme = useTheme();
 
   return (
-    <ThemeProvider value={theme}>
-      {/* GestureHandlerRootView is required for gesture handling in React Native */}
-      <GestureHandlerRootView style={styles.container}>
-        <DrawerNavigation />
-      </GestureHandlerRootView>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider value={theme}>
+        {/* GestureHandlerRootView is required for gesture handling in React Native */}
+        <GestureHandlerRootView style={styles.container}>
+          <DrawerNavigation />
+        </GestureHandlerRootView>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 
