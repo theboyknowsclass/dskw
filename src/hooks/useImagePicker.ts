@@ -1,20 +1,11 @@
-import { Image } from 'react-native';
-import {
-  ImagePickerService,
-  ImageSelectionResult,
-} from '../services/ImagePickerService';
+import { ImagePickerService } from '../services/ImagePickerService';
 import { useImageStore } from '../stores/useImageStore';
-
-type ScreenDimensions = {
-  width: number;
-  height: number;
-};
 
 /**
  * Custom hook for image selection following the Dependency Inversion Principle
  * The hook depends on abstractions (interfaces) rather than concrete implementations
  */
-export const useImagePicker = (screenDimensions: ScreenDimensions) => {
+export const useImagePicker = (screenWidth: number, screenHeight: number) => {
   const {
     uri: selectedImage,
     isLoading,
@@ -35,43 +26,43 @@ export const useImagePicker = (screenDimensions: ScreenDimensions) => {
       setError(null);
 
       // Use the ImagePickerService to select an image
-      const result: ImageSelectionResult =
-        await ImagePickerService.selectImage();
+      const { success, error, data } = await ImagePickerService.selectImage();
 
-      if (result.success && result.uri) {
-        // Get image dimensions when it loads
-        Image.getSize(result.uri, (width, height) => {
-          // Calculate dimensions that maintain aspect ratio and fit the screen
-          const isScreenLandscape =
-            screenDimensions.width > screenDimensions.height;
+      if (success && data) {
+        const {
+          uri,
+          dimensions: { width, height },
+        } = data;
 
-          // Determine the maximum allowed dimensions based on screen orientation
-          const maxWidth = isScreenLandscape
-            ? screenDimensions.width * 0.4 // In landscape, use 40% of screen width
-            : screenDimensions.width * 0.8; // In portrait, use 80% of screen width
+        // Calculate dimensions that maintain aspect ratio and fit the screen
+        const isScreenLandscape = screenWidth > screenHeight;
 
-          const maxHeight = isScreenLandscape
-            ? screenDimensions.height * 0.8 // In landscape, use 80% of screen height
-            : screenDimensions.height * 0.4; // In portrait, use 40% of screen height
+        // Determine the maximum allowed dimensions based on screen orientation
+        const maxWidth = isScreenLandscape
+          ? screenWidth * 0.4 // In landscape, use 40% of screen width
+          : screenWidth * 0.8; // In portrait, use 80% of screen width
 
-          // Calculate scale factors for both dimensions
-          const widthScale = maxWidth / width;
-          const heightScale = maxHeight / height;
+        const maxHeight = isScreenLandscape
+          ? screenHeight * 0.8 // In landscape, use 80% of screen height
+          : screenHeight * 0.4; // In portrait, use 40% of screen height
 
-          // Use the smaller scale factor to ensure the image fits in both dimensions
-          const scaleFactor = Math.min(widthScale, heightScale);
+        // Calculate scale factors for both dimensions
+        const widthScale = maxWidth / width;
+        const heightScale = maxHeight / height;
 
-          setDimensions(
-            { width, height }, // Original dimensions
-            {
-              width: width * scaleFactor,
-              height: height * scaleFactor,
-            } // Scaled dimensions
-          );
-          setUri(result.uri);
-        });
-      } else if (result.error) {
-        setError(result.error);
+        // Use the smaller scale factor to ensure the image fits in both dimensions
+        const scaleFactor = Math.min(widthScale, heightScale);
+
+        setDimensions(
+          { width, height }, // Original dimensions
+          {
+            width: width * scaleFactor,
+            height: height * scaleFactor,
+          } // Scaled dimensions
+        );
+        setUri(uri);
+      } else if (error) {
+        setError(error);
       }
     } catch (err) {
       setError(

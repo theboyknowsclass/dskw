@@ -2,8 +2,9 @@ import React from 'react';
 import { Button } from './Button';
 import { useImageStore } from '../stores/useImageStore';
 import { useOverlayStore } from '../stores/useOverlayStore';
-import { transformImage } from '../utils/transformUtils';
+import { TransformService } from '../services/TransformService';
 import { router } from 'expo-router';
+import { runOnJS } from 'react-native-reanimated';
 
 type ImageProcessButtonProps = {
   style?: any;
@@ -12,7 +13,8 @@ type ImageProcessButtonProps = {
 export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
   style,
 }) => {
-  const { uri, setDestinationUri, setLoading, setError } = useImageStore();
+  const { uri, setDestinationUri, setLoading, setError, originalDimensions } =
+    useImageStore();
   const { points } = useOverlayStore();
   const hasSelectedImage = uri !== null;
 
@@ -23,7 +25,16 @@ export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
       setLoading(true);
       setError(null);
 
-      const transformedUri = await transformImage(uri, points);
+      const image = {
+        uri,
+        dimensions: originalDimensions,
+      };
+
+      const transformedUri = await TransformService.transformImage(
+        image,
+        points
+      );
+
       setDestinationUri(transformedUri);
       router.push('export');
     } catch (err) {
@@ -39,7 +50,7 @@ export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
     <Button
       variant={hasSelectedImage ? 'primary' : 'outline'}
       title="Next"
-      onPress={handleProcess}
+      onPress={runOnJS(handleProcess)}
       disabled={!hasSelectedImage}
       size="large"
       buttonStyle={style}

@@ -1,11 +1,8 @@
-import * as ImagePicker from 'expo-image-picker';
-
-// Interface for image selection result
-export interface ImageSelectionResult {
-  uri: string | null;
-  success: boolean;
-  error?: string;
-}
+import {
+  requestMediaLibraryPermissionsAsync,
+  launchImageLibraryAsync,
+} from 'expo-image-picker';
+import { ImageSource, Result } from '../types';
 
 /**
  * Image picker service following the Single Responsibility Principle
@@ -17,29 +14,29 @@ export class ImagePickerService {
    * @returns Promise resolving to a boolean indicating if permission was granted
    */
   static async requestPermissions(): Promise<boolean> {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const { status } = await requestMediaLibraryPermissionsAsync();
     return status === 'granted';
   }
 
   /**
    * Open the device image library and select an image
-   * @returns Promise resolving to ImageSelectionResult
+   * @returns Promise resolving to Result<ImageSource>
    */
-  static async selectImage(): Promise<ImageSelectionResult> {
+  static async selectImage(): Promise<Result<ImageSource>> {
     try {
       // Check for permissions first
       const permissionGranted = await this.requestPermissions();
 
       if (!permissionGranted) {
         return {
-          uri: null,
+          data: null,
           success: false,
           error: 'Permission to access media library was denied',
         };
       }
 
       // Launch image library
-      const result = await ImagePicker.launchImageLibraryAsync({
+      const result = await launchImageLibraryAsync({
         mediaTypes: ['images', 'livePhotos'],
         allowsEditing: false,
         quality: 1,
@@ -49,7 +46,7 @@ export class ImagePickerService {
       // Handle user cancellation
       if (result.canceled) {
         return {
-          uri: null,
+          data: null,
           success: false,
           error: 'Image selection was cancelled',
         };
@@ -57,12 +54,18 @@ export class ImagePickerService {
 
       // Return the selected image URI
       return {
-        uri: result.assets[0].uri,
+        data: {
+          uri: result.assets[0].uri,
+          dimensions: {
+            width: result.assets[0].width,
+            height: result.assets[0].height,
+          },
+        },
         success: true,
       };
     } catch (error) {
       return {
-        uri: null,
+        data: null,
         success: false,
         error: `Failed to select image: ${
           error instanceof Error ? error.message : String(error)

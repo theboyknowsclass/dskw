@@ -19,7 +19,7 @@ export const Home: React.FC = () => {
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { activePointIndex } = useOverlayStore();
-  const { uri, scaledDimensions } = useImageStore();
+  const { scaledDimensions, uri } = useImageStore();
 
   const isDragging = activePointIndex != null;
 

@@ -1,21 +1,12 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Image,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useImageStore } from '../stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
 import * as Sharing from 'expo-sharing';
-
-// Get screen dimensions for responsive sizing
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
+import { Image } from 'expo-image';
+import { Button } from '../components/Button';
 /**
  * Process Image screen component
  * This screen displays the processed image
@@ -23,7 +14,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 export const ExportImageScreen: React.FC = () => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const { destinationUri } = useImageStore();
+  const { destinationUri, scaledDimensions } = useImageStore();
 
   // Go back to the home screen
   const handleBack = () => {
@@ -32,7 +23,6 @@ export const ExportImageScreen: React.FC = () => {
 
   const handleShare = () => {
     if (destinationUri) {
-      console.log('share uri', destinationUri);
       Sharing.shareAsync(destinationUri);
     }
   };
@@ -55,37 +45,46 @@ export const ExportImageScreen: React.FC = () => {
         {destinationUri ? (
           <View style={styles.imageContainer}>
             <Image
-              source={{ uri: destinationUri }}
-              style={styles.processedImage}
-              resizeMode="contain"
+              source={destinationUri}
+              style={[
+                styles.processedImage,
+                {
+                  width: scaledDimensions.width,
+                  height: scaledDimensions.height,
+                },
+              ]}
+              contentFit="contain"
             />
           </View>
         ) : (
           <View style={styles.errorContainer}>
             <Text style={[styles.errorText, { color: colors.notification }]}>
-              No processed image available
+              Error
             </Text>
           </View>
         )}
 
-        <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: colors.primary }]}
+        <Button
+          title="Back"
           onPress={handleBack}
-        >
-          <Text style={styles.backButtonText}>Back</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: colors.primary }]}
+          variant="primary"
+          size="large"
+          buttonStyle={styles.button}
+        />
+        <Button
+          title="Share"
           onPress={handleShare}
-        >
-          <Text style={styles.backButtonText}>Share</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: colors.primary }]}
+          variant="primary"
+          size="large"
+          buttonStyle={styles.button}
+        />
+        <Button
+          title="Save"
           onPress={handleSave}
-        >
-          <Text style={styles.backButtonText}>Save</Text>
-        </TouchableOpacity>
+          variant="primary"
+          size="large"
+          buttonStyle={styles.button}
+        />
       </View>
     </View>
   );
@@ -106,17 +105,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   imageContainer: {
-    width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#1a1a1a',
-    overflow: 'hidden',
-    maxWidth: Math.min(SCREEN_WIDTH - 40, 600),
-    aspectRatio: 1,
   },
   processedImage: {
-    width: '100%',
-    height: '100%',
+    width: 400,
+    height: 400,
   },
   errorContainer: {
     padding: 30,
@@ -130,18 +123,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
-  backButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+  button: {
     marginTop: 30,
     width: '100%',
     maxWidth: 300,
-    alignItems: 'center',
-  },
-  backButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
 });

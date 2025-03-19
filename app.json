@@ -14,13 +14,20 @@
       "backgroundColor": "#ffffff"
     },
     "plugins": [
+      "expo-router",
       [
         "expo-font",
         {
-          "fonts": ["assets/Anta-Regular.ttf"]
+          "fonts": [
+            "node_modules/@expo-google-fonts/orbitron/Obritron_400Regular.ttf",
+            "node_modules/@expo-google-fonts/orbitron/Obritron_500Medium.ttf",
+            "node_modules/@expo-google-fonts/orbitron/Obritron_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/orbitron/Obritron_700Bold.ttf",
+            "node_modules/@expo-google-fonts/orbitron/Obritron_800ExtraBold.ttf",
+            "node_modules/@expo-google-fonts/orbitron/Obritron_900Black.ttf"
+          ]
         }
-      ],
-      "expo-router"
+      ]
     ],
     "ios": {
       "supportsTablet": true

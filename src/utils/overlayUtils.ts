@@ -1,4 +1,4 @@
-import { Point } from '../stores/useOverlayStore';
+import { Point } from '../types/Point';
 
 /**
  * Orders an array of points according to the Corner enum.
@@ -76,7 +76,7 @@ export function getLargestRectangle(sortedPoints: Point[]): {
  * @param rectangle - Object with topLeft and bottomRight points
  * @returns Array of 4 points in Corner enum order
  */
-export function rectangleToPoints(rectangle: {
+export function getPoints(rectangle: {
   topLeft: Point;
   bottomRight: Point;
 }): Point[] {
@@ -89,3 +89,22 @@ export function rectangleToPoints(rectangle: {
     { x: topLeft.x, y: bottomRight.y }, // Bottom-left
   ];
 }
+
+/**
+ * Converts relative points to absolute points based on the given width and height.
+ *
+ * @param points - Array of points to convert
+ * @param width - Width of the image
+ * @param height - Height of the image
+ * @returns Array of points with absolute coordinates
+ */
+export const getAbsolutePoints = (
+  points: Point[],
+  width: number,
+  height: number
+): Point[] => {
+  return points.map((point) => ({
+    x: point.x * width,
+    y: point.y * height,
+  }));
+};

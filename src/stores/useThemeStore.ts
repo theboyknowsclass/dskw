@@ -1,61 +1,47 @@
 import { DefaultTheme, Theme } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
+import { AsyncStorageService } from '../services/AsyncStorageService';
 
-export type ThemeType = 'light' | 'dark' | 'system';
-export type ThemeColors = {
-  primary: string;
-  background: string;
-  card: string;
-  text: string;
-  border: string;
-  notification: string;
-};
-
-type ThemeFontStyle = {
-  fontFamily: string;
-  fontWeight:
-    | 'normal'
-    | 'bold'
-    | '100'
-    | '200'
-    | '300'
-    | '400'
-    | '500'
-    | '600'
-    | '700'
-    | '800'
-    | '900';
-};
-
-export type ThemeFonts = {
-  regular: ThemeFontStyle;
-  medium: ThemeFontStyle;
-  bold: ThemeFontStyle;
-  heavy: ThemeFontStyle;
-};
+/**
+ * Represents the state of the theme store.
+ * @property theme - The current theme
+ * @property setTheme - Function to set the theme
+ */
 interface ThemeState {
   theme: Theme;
+  primaryColor: string;
   setTheme: (theme: Theme) => void;
+  setPrimaryColor: (color: string) => void;
 }
 
-const THEME_KEY = 'theme';
-
+/**
+ * Creates the theme store using the Zustand library.
+ */
 export const useThemeStore = create<ThemeState>((set, get) => ({
   theme: DefaultTheme,
+  primaryColor: '#20C997',
   setTheme: (theme: Theme) => {
-    AsyncStorage.setItem(THEME_KEY, JSON.stringify(theme));
-    set({ theme });
+    const themeWithPrimaryColor = overridePrimaryColour(
+      theme,
+      get().primaryColor
+    );
+    AsyncStorageService.storeTheme(themeWithPrimaryColor);
+    set({ theme: themeWithPrimaryColor });
+  },
+  setPrimaryColor: (color: string) => {
+    set({ primaryColor: color });
+    const themeWithPrimaryColor = overridePrimaryColour(get().theme, color);
+    AsyncStorageService.storeTheme(themeWithPrimaryColor);
+    set({ theme: themeWithPrimaryColor });
   },
 }));
 
-export const getStoredTheme = async (): Promise<Theme | undefined> => {
-  try {
-    const jsonValue = await AsyncStorage.getItem(THEME_KEY);
-    return jsonValue != null ? JSON.parse(jsonValue) : undefined;
-  } catch (e) {
-    console.error(e);
-    // error reading value
-    return undefined;
-  }
+const overridePrimaryColour = (theme: Theme, primaryColor: string) => {
+  return {
+    ...theme,
+    colors: {
+      ...theme.colors,
+      primary: primaryColor,
+    },
+  };
 };

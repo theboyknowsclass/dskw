@@ -1,25 +1,22 @@
 import { create } from 'zustand';
+import { Corner, Point } from '../types';
 
-export enum Corner {
-  Top_Left = 0,
-  Top_Right = 1,
-  Bottom_Right = 2,
-  Bottom_Left = 3,
-}
-
-export type Point = {
-  x: number;
-  y: number;
-};
-
+/**
+ * Represents the state of the overlay store.
+ * @property points - The points of the overlay
+ * @property activePointIndex - The index of the active point
+ * @property setPoints - Function to set the points of the overlay
+ * @property setActivePointIndex - Function to set the active point index
+ * @property updatePoint - Function to update a specific point
+ * @property resetPoints - Function to reset the points to the initial state
+ */
 type OverlayState = {
   points: Point[];
   activePointIndex: Corner | null;
-  zoomLevel: number;
   setPoints: (points: Point[]) => void;
   setActivePointIndex: (corner: Corner | null) => void;
   updatePoint: (corner: Corner, point: Point) => void;
-  setZoomLevel: (level: number) => void;
+  resetPoints: () => void;
 };
 
 // Initialize with default points forming a rectangle in the center
@@ -30,10 +27,14 @@ const initialPoints: Point[] = [
   { x: 0.25, y: 0.75 }, // Bottom-left
 ];
 
+/**
+ * Creates the overlay store using the Zustand library.
+ * @param set - The set function from Zustand
+ * @returns The overlay store
+ */
 export const useOverlayStore = create<OverlayState>()((set) => ({
   points: initialPoints,
   activePointIndex: null,
-  zoomLevel: 5, // Default zoom level
   setPoints: (points: Point[]) => set({ points }),
   setActivePointIndex: (corner: Corner | null) =>
     set({ activePointIndex: corner }),
@@ -43,5 +44,5 @@ export const useOverlayStore = create<OverlayState>()((set) => ({
       newPoints[corner] = point;
       return { points: newPoints };
     }),
-  setZoomLevel: (level: number) => set({ zoomLevel: level }),
+  resetPoints: () => set({ points: initialPoints }),
 }));

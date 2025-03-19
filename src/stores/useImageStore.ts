@@ -1,10 +1,21 @@
 import { create } from 'zustand';
+import { ImageDimensions } from '../types';
 
-type ImageDimensions = {
-  width: number;
-  height: number;
-};
-
+/**
+ * Represents the state of the image store.
+ * @property uri - The URI of the selected image
+ * @property destinationUri - The URI of the transformed image
+ * @property originalDimensions - The original dimensions of the image
+ * @property scaledDimensions - The scaled dimensions of the image
+ * @property isLoading - Whether the image is loading
+ * @property error - The error message if the image fails to load
+ * @property setUri - Function to set the URI of the selected image
+ * @property setDestinationUri - Function to set the URI of the transformed image
+ * @property setDimensions - Function to set the original and scaled dimensions of the image
+ * @property setLoading - Function to set the loading state
+ * @property setError - Function to set the error message
+ * @property clearImage - Function to clear the image state
+ */
 type ImageState = {
   uri: string | null;
   destinationUri: string | null;
@@ -20,6 +31,11 @@ type ImageState = {
   clearImage: () => void;
 };
 
+/**
+ * Creates the image store using the Zustand library.
+ * @param set - The set function from Zustand
+ * @returns The image store
+ */
 export const useImageStore = create<ImageState>()((set) => ({
   uri: null,
   destinationUri: null,
