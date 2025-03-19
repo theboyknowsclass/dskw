@@ -4,25 +4,13 @@ import { useImageStore } from '../stores/useImageStore';
 import { ImagePickerButton } from './ImagePickerButton';
 import { ImageProcessButton } from './ImageProcessButton';
 
-type ImageControlsProps = {
-  width: number;
-  height: number;
-};
-
-export const ImageControls: React.FC<ImageControlsProps> = ({
-  width,
-  height,
-}) => {
+export const ImageControls: React.FC = () => {
   const { error } = useImageStore();
 
   return (
     <View style={styles.buttonContainer}>
       <View style={styles.buttonsColumn}>
-        <ImagePickerButton
-          width={width}
-          height={height}
-          style={styles.button}
-        />
+        <ImagePickerButton style={styles.button} />
         <ImageProcessButton style={styles.button} />
       </View>
 

@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useWindowDimensions } from 'react-native';
 import { ImagePreview } from '../components/ImagePreview';
 import { ImageControls } from '../components/ImageControls';
 import { ZoomPreview } from '../components/ZoomPreview';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { useImageStore } from '../stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
+import { useScreenDimensions } from '../hooks/useScreenDimensions';
 
 /**
  * Home component
@@ -16,15 +16,12 @@ import { useTheme } from '@react-navigation/native';
 export const Home: React.FC = () => {
   // Use our custom hooks for theme
   const { colors } = useTheme();
-  const { width, height } = useWindowDimensions();
+  const { isLandscape } = useScreenDimensions();
   const insets = useSafeAreaInsets();
   const { activePointIndex } = useOverlayStore();
-  const { scaledDimensions, uri } = useImageStore();
+  const { uri } = useImageStore();
 
   const isDragging = activePointIndex != null;
-
-  // Determine if the screen is in landscape orientation
-  const isLandscape = width > height;
 
   // Calculate content style based on orientation and screen size
   const contentStyle = [
@@ -51,19 +48,11 @@ export const Home: React.FC = () => {
         {/* only show preview if there's a selected image */}
         {shouldShowPreview && (
           <View style={[styles.section]}>
-            <ImagePreview
-              imageUri={uri}
-              displayWidth={scaledDimensions.width}
-              displayHeight={scaledDimensions.height}
-            />
+            <ImagePreview />
           </View>
         )}
         <View style={[styles.section]}>
-          {isDragging ? (
-            <ZoomPreview width={width} height={height} />
-          ) : (
-            <ImageControls width={width} height={height} />
-          )}
+          {isDragging ? <ZoomPreview /> : <ImageControls />}
         </View>
       </View>
     </View>

@@ -1,9 +1,14 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { DownloadButton } from '../components/DownloadButton';
+import { BackButton } from '../components/BackButton';
+import { ShareButton } from '../components/ShareButton';
 
 export const Settings: React.FC = () => {
   return (
     <View>
-      <Text>Settings</Text>
+      <DownloadButton />
+      <BackButton />
+      <ShareButton />
     </View>
   );
 };

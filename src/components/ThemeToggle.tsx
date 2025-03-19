@@ -1,5 +1,5 @@
 import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useThemeStore } from '../stores/useThemeStore';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { Button } from './Button';
@@ -22,8 +22,8 @@ export const ThemeToggle: React.FC = () => {
     <Button
       variant="iconButton"
       icon={
-        <Ionicons
-          name={dark ? 'sunny' : 'moon'}
+        <MaterialIcons
+          name={dark ? 'light-mode' : 'dark-mode'}
           size={24}
           color={colors.primary}
         />

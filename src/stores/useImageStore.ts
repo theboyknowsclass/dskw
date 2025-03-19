@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ImageDimensions } from '../types';
+import { Dimensions } from '../types';
 
 /**
  * Represents the state of the image store.
@@ -19,13 +19,13 @@ import { ImageDimensions } from '../types';
 type ImageState = {
   uri: string | null;
   destinationUri: string | null;
-  originalDimensions: ImageDimensions;
-  scaledDimensions: ImageDimensions;
+  originalDimensions: Dimensions;
+  scaledDimensions: Dimensions;
   isLoading: boolean;
   error: string | null;
   setUri: (uri: string | null) => void;
   setDestinationUri: (uri: string | null) => void;
-  setDimensions: (original: ImageDimensions, scaled: ImageDimensions) => void;
+  setDimensions: (original: Dimensions, scaled: Dimensions) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   clearImage: () => void;
@@ -45,7 +45,7 @@ export const useImageStore = create<ImageState>()((set) => ({
   error: null,
   setUri: (uri: string | null) => set({ uri }),
   setDestinationUri: (destinationUri: string | null) => set({ destinationUri }),
-  setDimensions: (original: ImageDimensions, scaled: ImageDimensions) =>
+  setDimensions: (original: Dimensions, scaled: Dimensions) =>
     set({ originalDimensions: original, scaledDimensions: scaled }),
   setLoading: (isLoading: boolean) => set({ isLoading }),
   setError: (error: string | null) => set({ error }),

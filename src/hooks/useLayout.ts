@@ -1,26 +1,37 @@
+import { Dimensions } from '../types';
 import { useScreenDimensions } from './useScreenDimensions';
 
-export const useLayout = () => {
+type Layout = {
+  imageMax: Dimensions;
+  zoomView: Dimensions;
+  logo: Dimensions;
+};
+
+export const useLayout = (): Layout => {
   const {
     width: screenWidth,
     height: screenHeight,
     isLandscape,
   } = useScreenDimensions();
 
-  const imagePreviewDimensions = {
-    width: isLandscape ? screenWidth * 0.5 : screenWidth,
-    height: isLandscape ? screenHeight : screenHeight * 0.7,
+  const imageMax = {
+    width: isLandscape ? screenWidth * 0.4 : screenWidth * 0.8,
+    height: isLandscape ? screenHeight * 0.8 : screenHeight * 0.4,
   };
 
-  const zoomPreviewDimensions = {
-    width: isLandscape ? screenWidth * 0.5 : screenWidth,
-    height: isLandscape ? screenHeight : screenHeight * 0.3,
+  const zoomView = {
+    width: Math.max(screenWidth, screenHeight) * 0.4,
+    height: Math.max(screenWidth, screenHeight) * 0.4,
   };
 
-  const logoDimensions = {
+  const logo = {
     width: isLandscape ? screenWidth * 0.35 : screenWidth * 0.8,
     height: isLandscape ? screenWidth * 0.35 : screenWidth * 0.8,
   };
 
-  return { imagePreviewDimensions, zoomPreviewDimensions, logoDimensions };
+  return {
+    imageMax,
+    zoomView,
+    logo,
+  };
 };

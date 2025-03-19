@@ -4,14 +4,10 @@ import { useOverlayStore } from '../stores/useOverlayStore';
 import { useImageStore } from '../stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
 import { Image } from 'react-native';
+import { useLayout } from '../hooks/useLayout';
 
 // Import the checkerboard pattern
 const checkerboardPattern = require('../../assets/checkerboard.png');
-
-type ZoomPreviewProps = {
-  width: number;
-  height: number;
-};
 
 /**
  * ZoomPreview Component
@@ -19,23 +15,19 @@ type ZoomPreviewProps = {
  * Shows a magnified view of the image around the currently active corner point.
  * Completely redesigned with minimal state updates for maximum stability.
  */
-export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ width, height }) => {
+export const ZoomPreview: React.FC = () => {
   // Direct store access - no intermediate state
   const { points, activePointIndex } = useOverlayStore();
   const { uri, originalDimensions } = useImageStore();
   const { colors } = useTheme();
 
   // Calculate preview size once
-  const previewSize = Math.max(width, height) * 0.4;
+  const {
+    zoomView: { width: zoomWindowSize },
+  } = useLayout();
 
   // Early return for missing data - pure logic, no state updates
-  if (
-    activePointIndex === null ||
-    !points?.[activePointIndex] ||
-    !uri ||
-    !originalDimensions.width ||
-    !originalDimensions.height
-  ) {
+  if (activePointIndex === null || !points?.[activePointIndex] || !uri) {
     console.debug(
       'ZoomPreview early return',
       activePointIndex,
@@ -54,8 +46,8 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ width, height }) => {
   const pointY = Math.max(0, Math.min(1, activePoint.y));
 
   // Calculate transform directly in render method - no state or memo
-  const startX = previewSize / 2;
-  const startY = previewSize / 2;
+  const startX = zoomWindowSize / 2;
+  const startY = zoomWindowSize / 2;
 
   const transform = [
     { translateX: startX - pointX * originalDimensions.width },
@@ -72,7 +64,7 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ width, height }) => {
       <View
         style={[
           styles.previewContainer,
-          { width: previewSize, height: previewSize },
+          { width: zoomWindowSize, height: zoomWindowSize },
         ]}
         testID="zoom-preview-background"
       >

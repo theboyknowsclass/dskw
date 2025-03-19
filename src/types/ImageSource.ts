@@ -1,4 +1,4 @@
-import { ImageDimensions } from './ImageDimensions';
+import { Dimensions } from './Dimensions';
 
 /**
  * Represents an image source with its URI and dimensions.
@@ -7,6 +7,6 @@ import { ImageDimensions } from './ImageDimensions';
  */
 export type ImageSource = {
   uri: string | null;
-  dimensions: ImageDimensions;
+  dimensions: Dimensions;
   // extension: string;
 };

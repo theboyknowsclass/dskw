@@ -1,11 +1,12 @@
 import { ImagePickerService } from '../services/ImagePickerService';
 import { useImageStore } from '../stores/useImageStore';
+import { useLayout } from './useLayout';
 
 /**
  * Custom hook for image selection following the Dependency Inversion Principle
  * The hook depends on abstractions (interfaces) rather than concrete implementations
  */
-export const useImagePicker = (screenWidth: number, screenHeight: number) => {
+export const useImagePicker = () => {
   const {
     uri: selectedImage,
     isLoading,
@@ -16,6 +17,10 @@ export const useImagePicker = (screenWidth: number, screenHeight: number) => {
     setError,
     clearImage,
   } = useImageStore();
+
+  const {
+    imageMax: { width: maxWidth, height: maxHeight },
+  } = useLayout();
 
   /**
    * Function to handle image selection
@@ -33,18 +38,6 @@ export const useImagePicker = (screenWidth: number, screenHeight: number) => {
           uri,
           dimensions: { width, height },
         } = data;
-
-        // Calculate dimensions that maintain aspect ratio and fit the screen
-        const isScreenLandscape = screenWidth > screenHeight;
-
-        // Determine the maximum allowed dimensions based on screen orientation
-        const maxWidth = isScreenLandscape
-          ? screenWidth * 0.4 // In landscape, use 40% of screen width
-          : screenWidth * 0.8; // In portrait, use 80% of screen width
-
-        const maxHeight = isScreenLandscape
-          ? screenHeight * 0.8 // In landscape, use 80% of screen height
-          : screenHeight * 0.4; // In portrait, use 40% of screen height
 
         // Calculate scale factors for both dimensions
         const widthScale = maxWidth / width;

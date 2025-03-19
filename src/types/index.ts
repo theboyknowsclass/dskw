@@ -1,6 +1,6 @@
 export * from './Corner';
 export * from './ImageSource';
-export * from './ImageDimensions';
+export * from './Dimensions';
 export * from './Point';
 export * from './ThemeColors';
 export * from './ThemeFonts';

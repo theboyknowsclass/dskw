@@ -5,7 +5,7 @@ import { useLayout } from '../hooks/useLayout';
 export const Logo = () => {
   const { dark, colors } = useTheme();
   const {
-    logoDimensions: { width, height },
+    logo: { width, height },
   } = useLayout();
 
   const foreground = dark ? colors.background : colors.primary;

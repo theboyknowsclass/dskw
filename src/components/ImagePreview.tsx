@@ -1,28 +1,24 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { Overlay } from './Overlay';
+import { useImageStore } from '../stores/useImageStore';
 
-type ImagePreviewProps = {
-  imageUri: string;
-  displayWidth: number; // width of the image in the preview
-  displayHeight: number; // height of the image in the preview
-};
+export const ImagePreview: React.FC = () => {
+  const {
+    scaledDimensions: { width, height },
+    uri,
+  } = useImageStore();
 
-export const ImagePreview: React.FC<ImagePreviewProps> = ({
-  imageUri,
-  displayWidth,
-  displayHeight,
-}) => {
-  if (!imageUri) return null;
+  if (!uri) return null;
 
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: imageUri }}
-        style={[styles.image, { width: displayWidth, height: displayHeight }]}
+        source={{ uri: uri }}
+        style={[styles.image, { width, height }]}
         resizeMode="contain"
       ></Image>
-      <Overlay imageWidth={displayWidth} imageHeight={displayHeight} />
+      <Overlay imageWidth={width} imageHeight={height} />
     </View>
   );
 };
