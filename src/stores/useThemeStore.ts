@@ -19,7 +19,7 @@ interface ThemeState {
  */
 export const useThemeStore = create<ThemeState>((set, get) => ({
   theme: DefaultTheme,
-  primaryColor: '#20C997',
+  primaryColor: '#00BCD4',
   setTheme: (theme: Theme) => {
     const themeWithPrimaryColor = overridePrimaryColour(
       theme,

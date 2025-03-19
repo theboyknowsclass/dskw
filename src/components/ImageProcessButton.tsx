@@ -53,7 +53,7 @@ export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
       onPress={runOnJS(handleProcess)}
       disabled={!hasSelectedImage}
       size="large"
-      buttonStyle={style}
+      style={style}
     />
   );
 };

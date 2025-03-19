@@ -13,9 +13,13 @@ export const DrawerNavigation = () => {
         drawerStyle: {
           backgroundColor: theme.colors.background,
         },
+        drawerLabelStyle: {
+          fontFamily: 'Orbitron_400Regular',
+        },
         headerStyle: {
           backgroundColor: theme.colors.background,
           borderBottomWidth: 0,
+          shadowColor: 'transparent',
         },
         overlayColor: theme.dark
           ? styles.drawerOverlayDark.backgroundColor
@@ -26,9 +30,19 @@ export const DrawerNavigation = () => {
         headerTitleAlign: 'center',
         headerTitleStyle: {
           fontFamily: 'Orbitron_600SemiBold',
+          color: theme.colors.primary,
         },
+        headerTintColor: theme.colors.primary,
       }}
-    />
+    >
+      <Drawer.Screen name="index" options={{ title: 'Home' }} />
+      <Drawer.Screen
+        name="export"
+        options={{ title: 'Export', drawerItemStyle: { display: 'none' } }}
+      />
+      <Drawer.Screen name="settings" options={{ title: 'Settings' }} />
+      <Drawer.Screen name="about" options={{ title: 'About' }} />
+    </Drawer>
   );
 };
 

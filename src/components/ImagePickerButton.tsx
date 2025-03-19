@@ -25,7 +25,7 @@ export const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
       onPress={pickImage}
       loading={isLoading}
       size="large"
-      buttonStyle={style}
+      style={style}
     />
   );
 };

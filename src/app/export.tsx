@@ -69,21 +69,21 @@ export const ExportImageScreen: React.FC = () => {
           onPress={handleBack}
           variant="primary"
           size="large"
-          buttonStyle={styles.button}
+          style={styles.button}
         />
         <Button
           title="Share"
           onPress={handleShare}
           variant="primary"
           size="large"
-          buttonStyle={styles.button}
+          style={styles.button}
         />
         <Button
           title="Save"
           onPress={handleSave}
           variant="primary"
           size="large"
-          buttonStyle={styles.button}
+          style={styles.button}
         />
       </View>
     </View>

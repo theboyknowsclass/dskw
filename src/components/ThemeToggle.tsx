@@ -1,9 +1,13 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeStore } from '../stores/useThemeStore';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { Button } from './Button';
 
+/**
+ * A toggle button component that switches between light and dark themes.
+ * Uses the Button component with an icon variant for consistent styling.
+ */
 export const ThemeToggle: React.FC = () => {
   const {
     setTheme,
@@ -15,21 +19,18 @@ export const ThemeToggle: React.FC = () => {
   };
 
   return (
-    <TouchableOpacity
-      style={styles.themeButton}
+    <Button
+      variant="iconButton"
+      icon={
+        <Ionicons
+          name={dark ? 'sunny' : 'moon'}
+          size={24}
+          color={colors.primary}
+        />
+      }
       onPress={toggleTheme}
       accessibilityLabel={`Switch to ${dark ? 'light' : 'dark'} mode`}
-    >
-      <Ionicons name={dark ? 'sunny' : 'moon'} size={24} color={colors.text} />
-    </TouchableOpacity>
+      title=""
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  themeButton: {
-    padding: 8,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

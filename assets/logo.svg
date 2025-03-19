@@ -1,13 +1,19 @@
 <svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg" >
    <defs>
-   <style type="text/css">
-      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
-   </style>
+      <style type="text/css">
+         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+      </style>
+      <linearGradient id="foreground">
+         <stop stop-color="#20C997"/>
+      </linearGradient>
+      <linearGradient id="background">
+         <stop stop-color="#FFFFFF"/>
+      </linearGradient>
    </defs>
-   <polygon points="150,150 875,200 800,700 250,875" style="fill:purple;stroke:purple;stroke-width:30" />
-   <circle r="80" cx="150" cy="150" fill="purple" stroke="white" stroke-width="30" />
-   <circle r="80" cx="875" cy="200" fill="purple" stroke="white" stroke-width="30" />
-   <circle r="80" cx="800" cy="700" fill="purple" stroke="white" stroke-width="30" />
-   <circle r="80" cx="250" cy="875" fill="purple" stroke="white" stroke-width="30" />
-   <text x="50%" y="48%" dominant-baseline="middle" text-anchor="middle" fill="white" stroke="white" font-size="160" font-family="Orbitron" font-weight="500">dSkw</text>
+   <polygon points="150,150 875,200 800,700 250,875" fill="url(#foreground)" stroke="url(#foreground)" stroke-width="30" />
+   <circle r="80" cx="150" cy="150" fill="url(#foreground)" stroke="url(#background)" stroke-width="30" />
+   <circle r="80" cx="875" cy="200" fill="url(#foreground)" stroke="url(#background)" stroke-width="30" />
+   <circle r="80" cx="800" cy="700" fill="url(#foreground)" stroke="url(#background)" stroke-width="30" />
+   <circle r="80" cx="250" cy="875" fill="url(#foreground)" stroke="url(#background)" stroke-width="30" />
+   <text x="50%" y="48%" dominant-baseline="middle" text-anchor="middle" fill="url(#background)" stroke="url(#background)" font-size="160" font-family="Orbitron" font-weight="500">dSkw</text>
 </svg> 
