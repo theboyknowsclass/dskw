@@ -5,8 +5,8 @@ import { useImageStore } from '../stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
 import * as Sharing from 'expo-sharing';
-import { Image } from 'expo-image';
 import { Button } from '../components/Button';
+import { Image } from 'react-native';
 /**
  * Process Image screen component
  * This screen displays the processed image
@@ -45,7 +45,7 @@ export const ExportImageScreen: React.FC = () => {
         {destinationUri ? (
           <View style={styles.imageContainer}>
             <Image
-              source={destinationUri}
+              source={{ uri: destinationUri }}
               style={[
                 styles.processedImage,
                 {
@@ -53,7 +53,7 @@ export const ExportImageScreen: React.FC = () => {
                   height: scaledDimensions.height,
                 },
               ]}
-              contentFit="contain"
+              resizeMode="contain"
             />
           </View>
         ) : (

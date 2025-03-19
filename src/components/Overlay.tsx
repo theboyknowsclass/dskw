@@ -5,7 +5,6 @@ import { useOverlayStore } from '../stores/useOverlayStore';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTheme } from '@react-navigation/native';
 import { throttle } from '../utils/throttleUtil';
-import { runOnJS } from 'react-native-reanimated';
 
 type OverlayProps = {
   imageWidth: number;
@@ -56,7 +55,7 @@ export const Overlay: React.FC<OverlayProps> = ({
         })
         .onUpdate((e) => {
           // Use the throttled update
-          runOnJS(throttledUpdate)(index, e.absoluteX, e.absoluteY);
+          throttledUpdate(index, e.absoluteX, e.absoluteY);
         })
         .onEnd(() => {
           setActivePointIndex(null);

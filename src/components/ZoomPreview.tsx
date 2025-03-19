@@ -3,7 +3,7 @@ import { View, StyleSheet, ImageBackground } from 'react-native';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { useImageStore } from '../stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
-import { Image } from 'expo-image';
+import { Image } from 'react-native';
 
 // Import the checkerboard pattern
 const checkerboardPattern = require('../../assets/checkerboard.png');
@@ -91,7 +91,7 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ width, height }) => {
                 transform,
               },
             ]}
-            contentFit="cover"
+            resizeMode="contain"
             testID="zoom-preview-image"
           />
         </ImageBackground>

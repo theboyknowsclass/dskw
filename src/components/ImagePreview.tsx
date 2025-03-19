@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { Overlay } from './Overlay';
-import { Image } from 'expo-image';
 
 type ImagePreviewProps = {
   imageUri: string;

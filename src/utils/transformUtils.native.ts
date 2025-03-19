@@ -4,8 +4,10 @@ import {
   InterpolationFlags,
   BorderTypes,
   DecompTypes,
+  Mat,
+  DataTypes,
 } from 'react-native-fast-opencv';
-import { Point, ImageSource } from '../types';
+import { Point, ImageSource, Corner } from '../types';
 import { toBase64 } from './imageUtils';
 import { FileSystemService } from '../services/FileSystemService';
 
@@ -87,9 +89,10 @@ export const transformImage = async (
       BorderTypes.BORDER_CONSTANT,
       scalar
     );
-
     // Convert result back to base64 format
-    const data2 = OpenCV.toJSValue(dst);
+    const data2 = OpenCV.toJSValue(
+      getCroppedImage(dst, cropToRectangle ? dstPoints : null)
+    );
     return toBase64(data2.base64);
   } catch (error) {
     console.error('Error transforming image', error);
@@ -113,4 +116,35 @@ const getVector = (points: Point[]) => {
     ObjectType.Point2fVector,
     points.map((p) => OpenCV.createObject(ObjectType.Point2f, p.x, p.y))
   );
+};
+
+const getCroppedImage = (dst: Mat, dstPoints: Point[] | null) => {
+  if (!dstPoints) {
+    return dst;
+  }
+
+  const topLeft = dstPoints[Corner.Top_Left];
+  const bottomRight = dstPoints[Corner.Bottom_Right];
+
+  const width = bottomRight.x - topLeft.x;
+  const height = bottomRight.y - topLeft.y;
+
+  const roi = OpenCV.createObject(
+    ObjectType.Rect,
+    topLeft.x,
+    topLeft.y,
+    width,
+    height
+  );
+
+  const cropped = OpenCV.createObject(
+    ObjectType.Mat,
+    width,
+    height,
+    DataTypes.CV_8UC4
+  );
+
+  OpenCV.invoke('crop', dst, cropped, roi);
+
+  return cropped;
 };
