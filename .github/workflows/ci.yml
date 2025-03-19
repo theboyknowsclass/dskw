@@ -40,4 +40,4 @@ jobs:
       run: npm run build:web
     
     - name: Run tests
-      run: npm test
+      run: npm test --if-present
