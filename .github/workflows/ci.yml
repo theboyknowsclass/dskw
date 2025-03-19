@@ -5,9 +5,11 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - '**'  # Run on all branches
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main  # Run on PRs to main
 
 jobs:
   build:
@@ -36,8 +38,8 @@ jobs:
     - name: Run ESLint
       run: npm run lint
     
-    - name: Build web project
-      run: npm run build:web
+    - name: Build project
+      run: npm run build:web --if-present
     
     - name: Run tests
-      run: npm test --if-present
+      run: npm test --if-present  
