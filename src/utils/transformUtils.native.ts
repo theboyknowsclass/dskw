@@ -1,141 +1,116 @@
 import {
-  DataTypes,
   ObjectType,
   OpenCV,
   InterpolationFlags,
   BorderTypes,
   DecompTypes,
 } from 'react-native-fast-opencv';
-import { Point } from '../stores/useOverlayStore';
-import { getLargestRectangle, orderPointsByCorner } from './overlayUtils';
+import { Point, ImageSource } from '../types';
+import { toBase64 } from './imageUtils';
+import { FileSystemService } from '../services/FileSystemService';
 
 /**
- * Transforms an image using perspective correction based on the selected overlay points.
+ * Transforms an image using OpenCV's perspective transformation in React Native.
  * This function:
- * 1. Orders the overlay points correctly
- * 2. Calculates the largest rectangle that fits in the quadrilateral
- * 3. Performs perspective transformation to "unwarp" the image
+ * 1. Loads the image from the file system as base64
+ * 2. Converts the image to OpenCV matrix format
+ * 3. Creates source and destination point vectors
+ * 4. Calculates the perspective transformation matrix
+ * 5. Applies the transformation with specified interpolation and border handling
+ * 6. Converts the result back to base64 format
  *
- * @param uri - URI of the source image
- * @param selectedOverlay - Array of 4 points defining the quadrilateral region to unwarp
- * @param cropToRectangle - If true, crops the result to just the rectangle; if false, keeps the whole image (default: true)
- * @returns Promise resolving to the URI of the transformed image
+ * @param image - The source image with its URI and dimensions
+ * @param srcPoints - Array of 4 points representing the source corners
+ * @param dstPoints - Array of 4 points representing the destination corners
+ * @param cropToRectangle - Whether to crop the result to the transformed rectangle
+ * @returns Promise resolving to the transformed image as a base64 string
  */
 export const transformImage = async (
-  uri: string,
-  imageHeight: number,
-  imageWidth: number,
-  selectedOverlay: Point[],
+  image: ImageSource,
+  srcPoints: Point[],
+  dstPoints: Point[],
   cropToRectangle: boolean = false
-): Promise<string> => {
-  // Order the points according to the Corner enum
-  const orderedPoints = orderPointsByCorner(selectedOverlay);
+) => {
+  // Clear any existing OpenCV buffers to prevent memory leaks
+  OpenCV.clearBuffers();
 
-  // Get the largest rectangle that fits within the quadrilateral
-  const largestRect = getLargestRectangle(orderedPoints);
+  try {
+    const {
+      uri,
+      dimensions: { width, height },
+    } = image;
 
-  const src = OpenCV.base64ToMat(uri);
+    // Validate input image URI
+    if (!uri) {
+      throw new Error('Image URI is null');
+    }
 
-  const cols = imageWidth;
-  const rows = imageHeight;
+    // Load image as base64 from file system
+    const base64 = await FileSystemService.getImageAsBase64(uri);
 
-  const srcTopLeft = OpenCV.createObject(
-    ObjectType.Point2f,
-    orderedPoints[0].x * cols,
-    orderedPoints[0].y * rows
+    if (!base64) {
+      throw new Error('Image base64 is null');
+    }
+
+    // Convert base64 image to OpenCV matrix
+    const src = OpenCV.base64ToMat(base64);
+
+    // Convert points to OpenCV vector format
+    const srcCVPoints = getVector(srcPoints);
+    const dstCVPoints = getVector(dstPoints);
+
+    // Calculate perspective transformation matrix using LU decomposition
+    const perspectiveMatrix = OpenCV.invoke(
+      'getPerspectiveTransform',
+      srcCVPoints,
+      dstCVPoints,
+      DecompTypes.DECOMP_LU
+    );
+
+    // Create destination matrix for transformed image
+    const dst = OpenCV.base64ToMat(base64);
+
+    // Create size object for output dimensions
+    const size = OpenCV.createObject(ObjectType.Size, width, height);
+
+    // Create scalar for border color (black)
+    const scalar = OpenCV.createObject(ObjectType.Scalar, 0);
+
+    // Apply perspective transformation with linear interpolation and constant border
+    OpenCV.invoke(
+      'warpPerspective',
+      src,
+      dst,
+      perspectiveMatrix,
+      size,
+      InterpolationFlags.INTER_LINEAR,
+      BorderTypes.BORDER_CONSTANT,
+      scalar
+    );
+
+    // Convert result back to base64 format
+    const data2 = OpenCV.toJSValue(dst);
+    return toBase64(data2.base64);
+  } catch (error) {
+    console.error('Error transforming image', error);
+    throw error;
+  } finally {
+    // Clean up OpenCV buffers
+    OpenCV.clearBuffers();
+  }
+};
+
+/**
+ * Converts an array of points into OpenCV vector format.
+ * Creates a vector of Point2f objects representing the corners.
+ * Points are ordered as: top-left, top-right, bottom-right, bottom-left.
+ *
+ * @param points - Array of 4 points to convert
+ * @returns OpenCV vector containing the points
+ */
+const getVector = (points: Point[]) => {
+  return OpenCV.createObject(
+    ObjectType.Point2fVector,
+    points.map((p) => OpenCV.createObject(ObjectType.Point2f, p.x, p.y))
   );
-
-  const srcTopRight = OpenCV.createObject(
-    ObjectType.Point2f,
-    orderedPoints[1].x * cols,
-    orderedPoints[1].y * rows
-  );
-
-  const srcBottomRight = OpenCV.createObject(
-    ObjectType.Point2f,
-    orderedPoints[2].x * cols,
-    orderedPoints[2].y * rows
-  );
-
-  const srcBottomLeft = OpenCV.createObject(
-    ObjectType.Point2f,
-    orderedPoints[3].x * cols,
-    orderedPoints[3].y * rows
-  );
-
-  const srcPoints = OpenCV.createObject(ObjectType.Point2fVector, [
-    srcTopLeft,
-    srcTopRight,
-    srcBottomRight,
-    srcBottomLeft,
-  ]);
-
-  // Calculate the actual coordinates of the largest rectangle
-  const topLeftX = largestRect.topLeft.x * cols;
-  const topLeftY = largestRect.topLeft.y * rows;
-  const bottomRightX = largestRect.bottomRight.x * cols;
-  const bottomRightY = largestRect.bottomRight.y * rows;
-
-  const dstTopLeft = OpenCV.createObject(
-    ObjectType.Point2f,
-    topLeftX,
-    topLeftY
-  );
-
-  const dstTopRight = OpenCV.createObject(
-    ObjectType.Point2f,
-    bottomRightX,
-    topLeftY
-  );
-
-  const dstBottomRight = OpenCV.createObject(
-    ObjectType.Point2f,
-    bottomRightX,
-    bottomRightY
-  );
-
-  const dstBottomLeft = OpenCV.createObject(
-    ObjectType.Point2f,
-    topLeftX,
-    bottomRightY
-  );
-
-  const dstPoints = OpenCV.createObject(ObjectType.Point2fVector, [
-    dstTopLeft,
-    dstTopRight,
-    dstBottomRight,
-    dstBottomLeft,
-  ]);
-
-  const perspectiveMatrix = OpenCV.invoke(
-    'getPerspectiveTransform',
-    srcPoints,
-    dstPoints,
-    DecompTypes.DECOMP_LU
-  );
-
-  const dst = OpenCV.createObject(
-    ObjectType.Mat,
-    rows,
-    cols,
-    DataTypes.CV_8UC3
-  );
-
-  const size = OpenCV.createObject(ObjectType.Size, cols, rows);
-
-  const scalar = OpenCV.createObject(ObjectType.Scalar, 0, 0, 0);
-
-  OpenCV.invoke(
-    'warpPerspective',
-    src,
-    dst,
-    perspectiveMatrix,
-    size,
-    InterpolationFlags.INTER_LINEAR,
-    BorderTypes.BORDER_CONSTANT,
-    scalar
-  );
-
-  const data2 = OpenCV.toJSValue(dst);
-  return data2.base64;
 };

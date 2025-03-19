@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from './Button';
 import { useImageStore } from '../stores/useImageStore';
 import { useOverlayStore } from '../stores/useOverlayStore';
-import { transformImage } from '../utils/transformUtils';
+import { TransformService } from '../services/TransformService';
 import { router } from 'expo-router';
 import { runOnJS } from 'react-native-reanimated';
 
@@ -13,14 +13,8 @@ type ImageProcessButtonProps = {
 export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
   style,
 }) => {
-  const {
-    uri,
-    base64,
-    setDestinationUri,
-    setLoading,
-    setError,
-    originalDimensions,
-  } = useImageStore();
+  const { uri, setDestinationUri, setLoading, setError, originalDimensions } =
+    useImageStore();
   const { points } = useOverlayStore();
   const hasSelectedImage = uri !== null;
 
@@ -31,12 +25,16 @@ export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
       setLoading(true);
       setError(null);
 
-      const transformedUri = await transformImage(
-        base64 ?? uri,
-        originalDimensions.height,
-        originalDimensions.width,
+      const image = {
+        uri,
+        dimensions: originalDimensions,
+      };
+
+      const transformedUri = await TransformService.transformImage(
+        image,
         points
       );
+
       setDestinationUri(transformedUri);
       router.push('export');
     } catch (err) {

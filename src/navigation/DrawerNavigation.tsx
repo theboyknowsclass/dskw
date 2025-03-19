@@ -24,6 +24,9 @@ export const DrawerNavigation = () => {
         headerRight: () => <ThemeToggle />,
         headerTitle: 'DSKW',
         headerTitleAlign: 'center',
+        headerTitleStyle: {
+          fontFamily: 'Orbitron_600SemiBold',
+        },
       }}
     />
   );

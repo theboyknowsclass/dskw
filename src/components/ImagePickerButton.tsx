@@ -14,7 +14,7 @@ export const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
   height,
   style,
 }) => {
-  const { pickImage } = useImagePicker({ width, height });
+  const { pickImage } = useImagePicker(width, height);
   const { uri, isLoading } = useImageStore();
   const hasSelectedImage = uri !== null;
 

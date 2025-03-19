@@ -102,9 +102,8 @@ export const Button: React.FC<ButtonProps> = ({
   // Determine text styles based on variant
   const getTextStyles = (): TextStyle => {
     const baseStyle: TextStyle = {
-      fontWeight: 'bold',
       textAlign: 'center',
-      fontFamily: 'Anta-Regular',
+      fontFamily: 'Orbitron_400Regular',
     };
 
     const variantTextStyles: Record<string, TextStyle> = {
