@@ -27,6 +27,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="dskw-scheme"/>
         <data android:scheme="com.ineffable.dskw"/>
+        <data android:scheme="exp+dskw"/>
       </intent-filter>
     </activity>
   </application>

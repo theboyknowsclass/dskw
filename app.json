@@ -19,18 +19,23 @@
         "expo-font",
         {
           "fonts": [
-            "node_modules/@expo-google-fonts/orbitron/Obritron_400Regular.ttf",
-            "node_modules/@expo-google-fonts/orbitron/Obritron_500Medium.ttf",
-            "node_modules/@expo-google-fonts/orbitron/Obritron_600SemiBold.ttf",
-            "node_modules/@expo-google-fonts/orbitron/Obritron_700Bold.ttf",
-            "node_modules/@expo-google-fonts/orbitron/Obritron_800ExtraBold.ttf",
-            "node_modules/@expo-google-fonts/orbitron/Obritron_900Black.ttf"
+            "node_modules/@expo-google-fonts/orbitron/Orbitron_400Regular.ttf",
+            "node_modules/@expo-google-fonts/orbitron/Orbitron_500Medium.ttf",
+            "node_modules/@expo-google-fonts/orbitron/Orbitron_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/orbitron/Orbitron_700Bold.ttf",
+            "node_modules/@expo-google-fonts/orbitron/Orbitron_800ExtraBold.ttf",
+            "node_modules/@expo-google-fonts/orbitron/Orbitron_900Black.ttf"
           ]
         }
       ]
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ineffable.dskw",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to allow you to select and upload images.",
+        "NSPhotoLibraryAddUsageDescription": "This app needs access to save photos to your library.",
+      }
     },
     "android": {
       "package": "com.ineffable.dskw",
