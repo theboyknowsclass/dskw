@@ -14,6 +14,7 @@ export const ShareButton: React.FC = () => {
       onPress={share}
       accessibilityLabel="Share"
       title=""
+      loading={false}
     />
   );
 };

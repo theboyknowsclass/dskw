@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useImageStore } from '../stores/useImageStore';
+import { useImageStore } from '@stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
 import { router } from 'expo-router';
 import * as Sharing from 'expo-sharing';
-import { Button } from '../components/Button';
+import { TextButton } from '@components/TextButton';
 import { Image } from 'react-native';
 /**
  * Process Image screen component
@@ -64,21 +64,21 @@ export const ExportImageScreen: React.FC = () => {
           </View>
         )}
 
-        <Button
+        <TextButton
           title="Back"
           onPress={handleBack}
           variant="primary"
           size="large"
           style={styles.button}
         />
-        <Button
+        <TextButton
           title="Share"
           onPress={handleShare}
           variant="primary"
           size="large"
           style={styles.button}
         />
-        <Button
+        <TextButton
           title="Save"
           onPress={handleSave}
           variant="primary"

@@ -25,7 +25,8 @@ type ImageState = {
   error: string | null;
   setUri: (uri: string | null) => void;
   setDestinationUri: (uri: string | null) => void;
-  setDimensions: (original: Dimensions, scaled: Dimensions) => void;
+  setOriginalDimensions: (dimensions: Dimensions) => void;
+  setScaledDimensions: (dimensions: Dimensions) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   clearImage: () => void;
@@ -45,8 +46,10 @@ export const useImageStore = create<ImageState>()((set) => ({
   error: null,
   setUri: (uri: string | null) => set({ uri }),
   setDestinationUri: (destinationUri: string | null) => set({ destinationUri }),
-  setDimensions: (original: Dimensions, scaled: Dimensions) =>
-    set({ originalDimensions: original, scaledDimensions: scaled }),
+  setOriginalDimensions: (dimensions: Dimensions) =>
+    set({ originalDimensions: dimensions }),
+  setScaledDimensions: (dimensions: Dimensions) =>
+    set({ scaledDimensions: dimensions }),
   setLoading: (isLoading: boolean) => set({ isLoading }),
   setError: (error: string | null) => set({ error }),
   clearImage: () =>

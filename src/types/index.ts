@@ -7,3 +7,4 @@ export * from './ThemeFonts';
 export * from './ThemeFontStyle';
 export * from './ThemeType';
 export * from './Result';
+export * from './IconType';

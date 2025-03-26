@@ -2,6 +2,18 @@
   "extends": "expo/tsconfig.base",
   "esModuleInterop": true,
   "compilerOptions": {
-    "strict": true
-  }
+    "strict": true,
+    "baseUrl" : "./src",
+    "paths": {
+      "@components/*": ["./components/*"],
+      "@services/*": ["./services/*"],
+      "@navigation/*": ["./navigation/*"],
+      "@hooks/*": ["./hooks/*"],
+      "@utils/*": ["./utils/*"],
+      "@types/*": ["./types/*"],
+      "@styles/*": ["./styles/*"],
+      "@assets/*": ["../assets/*"],
+      "@stores/*": ["./stores/*"]
+    }
+  },
 }

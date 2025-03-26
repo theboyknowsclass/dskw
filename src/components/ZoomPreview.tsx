@@ -7,6 +7,7 @@ import { Image } from 'react-native';
 import { useLayout } from '../hooks/useLayout';
 
 // Import the checkerboard pattern
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const checkerboardPattern = require('../../assets/checkerboard.png');
 
 /**

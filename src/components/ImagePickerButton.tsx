@@ -1,10 +1,11 @@
 import React from 'react';
-import { Button } from './Button';
+import { TextButton } from './TextButton';
 import { useImagePicker } from '../hooks/useImagePicker';
 import { useImageStore } from '../stores/useImageStore';
+import { StyleProp, ViewStyle } from 'react-native';
 
 type ImagePickerButtonProps = {
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
@@ -15,7 +16,7 @@ export const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({
   const hasSelectedImage = uri !== null;
 
   return (
-    <Button
+    <TextButton
       variant={hasSelectedImage ? 'outline' : 'primary'}
       title="Select Image"
       onPress={pickImage}

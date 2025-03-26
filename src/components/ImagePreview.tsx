@@ -15,7 +15,7 @@ export const ImagePreview: React.FC = () => {
     <View style={styles.container}>
       <Image
         source={{ uri: uri }}
-        style={[styles.image, { width, height }]}
+        style={{ width, height }}
         resizeMode="contain"
       ></Image>
       <Overlay imageWidth={width} imageHeight={height} />
@@ -29,5 +29,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  image: {},
 });

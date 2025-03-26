@@ -1,19 +1,19 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ImagePreview } from '../components/ImagePreview';
-import { ImageControls } from '../components/ImageControls';
-import { ZoomPreview } from '../components/ZoomPreview';
-import { useOverlayStore } from '../stores/useOverlayStore';
-import { useImageStore } from '../stores/useImageStore';
+import { ImagePreview } from '@components/ImagePreview';
+import { ImageControls } from '@components/ImageControls';
+import { ZoomPreview } from '@components/ZoomPreview';
+import { useOverlayStore } from '@stores/useOverlayStore';
+import { useImageStore } from '@stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
-import { useScreenDimensions } from '../hooks/useScreenDimensions';
+import { useScreenDimensions } from '@hooks/useScreenDimensions';
 
 /**
- * Home component
+ * Edit component
  * Follows the Interface Segregation Principle by only accepting the props it needs
  */
-export const Home: React.FC = () => {
+export const Edit: React.FC = () => {
   // Use our custom hooks for theme
   const { colors } = useTheme();
   const { isLandscape } = useScreenDimensions();
@@ -39,7 +39,11 @@ export const Home: React.FC = () => {
         {
           backgroundColor: colors.background,
           paddingBottom: insets.bottom,
-          borderWidth: 0,
+          paddingTop: insets.top,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+          borderWidth: 2,
+          borderColor: 'red',
         },
       ]}
     >
@@ -59,7 +63,7 @@ export const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Edit;
 
 const styles = StyleSheet.create({
   container: {

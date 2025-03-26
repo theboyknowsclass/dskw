@@ -1,13 +1,14 @@
 import React from 'react';
-import { Button } from './Button';
+import { TextButton } from './TextButton';
 import { useImageStore } from '../stores/useImageStore';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { TransformService } from '../services/TransformService';
 import { router } from 'expo-router';
 import { runOnJS } from 'react-native-reanimated';
+import { StyleProp, ViewStyle } from 'react-native';
 
 type ImageProcessButtonProps = {
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
@@ -47,7 +48,7 @@ export const ImageProcessButton: React.FC<ImageProcessButtonProps> = ({
   };
 
   return (
-    <Button
+    <TextButton
       variant={hasSelectedImage ? 'primary' : 'outline'}
       title="Next"
       onPress={runOnJS(handleProcess)}
