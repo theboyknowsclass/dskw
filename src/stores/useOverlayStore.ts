@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Corner, Point } from '../types';
+import { Corner, Point } from '@types';
 
 /**
  * Represents the state of the overlay store.

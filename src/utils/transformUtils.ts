@@ -1,5 +1,5 @@
 import cv, { EmscriptenEmbindInstance } from '@techstark/opencv-js';
-import { Point, ImageSource, Corner } from '../types';
+import { Point, ImageSource, Corner } from '@types';
 
 /**
  * Transforms an image using OpenCV's perspective transformation.

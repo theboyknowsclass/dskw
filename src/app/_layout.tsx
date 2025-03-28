@@ -1,10 +1,7 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
 import { ThemeProvider } from '@react-navigation/native';
-
-import { DrawerNavigation } from '../navigation/DrawerNavigation';
-import { useTheme } from '../hooks/useTheme';
-import { ErrorBoundary } from '../components/ErrorBoundary';
+import { useTheme } from '@hooks/useTheme';
 
 import {
   Orbitron_400Regular,
@@ -17,6 +14,7 @@ import {
 } from '@expo-google-fonts/orbitron';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { Stack } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,7 +22,7 @@ SplashScreen.preventAutoHideAsync();
  * Root layout component that sets up the app's navigation drawer and theme handling.
  * This component wraps the entire app and provides theme context to all child components.
  */
-export default function HomeLayout() {
+export const RootLayout = () => {
   const [loaded, error] = useFonts({
     Orbitron_400Regular,
     Orbitron_500Medium,
@@ -46,16 +44,20 @@ export default function HomeLayout() {
   }
 
   return (
-    <ErrorBoundary>
-      <ThemeProvider value={theme}>
-        {/* GestureHandlerRootView is required for gesture handling in React Native */}
-        <GestureHandlerRootView style={styles.container}>
-          <DrawerNavigation />
-        </GestureHandlerRootView>
-      </ThemeProvider>
-    </ErrorBoundary>
+    <ThemeProvider value={theme}>
+      {/* GestureHandlerRootView is required for gesture handling in React Native */}
+      <GestureHandlerRootView style={styles.container}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        ></Stack>
+      </GestureHandlerRootView>
+    </ThemeProvider>
   );
-}
+};
+
+export default RootLayout;
 
 // Styles for the layout components
 const styles = StyleSheet.create({

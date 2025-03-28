@@ -2,7 +2,7 @@ import {
   requestMediaLibraryPermissionsAsync,
   launchImageLibraryAsync,
 } from 'expo-image-picker';
-import { ImageSource, Result } from '../types';
+import { ImageSource, Result } from '@types';
 
 /**
  * Image picker service following the Single Responsibility Principle

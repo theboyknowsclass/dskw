@@ -1,40 +1,32 @@
 import React from 'react';
-import { View, StyleSheet, ImageBackground } from 'react-native';
-import { useOverlayStore } from '../stores/useOverlayStore';
-import { useImageStore } from '../stores/useImageStore';
+import { View, StyleSheet, ImageBackground, Image } from 'react-native';
+import { useOverlayStore } from '@stores/useOverlayStore';
+import { useImageStore } from '@stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
-import { Image } from 'react-native';
-import { useLayout } from '../hooks/useLayout';
 
 // Import the checkerboard pattern
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const checkerboardPattern = require('../../assets/checkerboard.png');
 
+type ZoomPreviewProps = {
+  size: number;
+};
 /**
  * ZoomPreview Component
  *
  * Shows a magnified view of the image around the currently active corner point.
  * Completely redesigned with minimal state updates for maximum stability.
  */
-export const ZoomPreview: React.FC = () => {
+export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   // Direct store access - no intermediate state
   const { points, activePointIndex } = useOverlayStore();
   const { uri, originalDimensions } = useImageStore();
   const { colors } = useTheme();
 
-  // Calculate preview size once
-  const {
-    zoomView: { width: zoomWindowSize },
-  } = useLayout();
+  const zoomWindowSize = size;
 
   // Early return for missing data - pure logic, no state updates
   if (activePointIndex === null || !points?.[activePointIndex] || !uri) {
-    console.debug(
-      'ZoomPreview early return',
-      activePointIndex,
-      points,
-      uri,
-      originalDimensions
-    );
     return null;
   }
 
@@ -54,7 +46,6 @@ export const ZoomPreview: React.FC = () => {
     { translateY: startY - pointY * originalDimensions.height },
   ];
 
-  // Pure render with no state dependencies
   return (
     <View
       style={styles.container}
@@ -92,14 +83,14 @@ export const ZoomPreview: React.FC = () => {
           <View
             style={[
               styles.crosshairLine,
-              { backgroundColor: `${colors.primary}bf` },
+              { backgroundColor: `${colors.primary}` },
             ]}
           />
           <View
             style={[
               styles.crosshairLine,
               {
-                backgroundColor: `${colors.primary}bf`,
+                backgroundColor: `${colors.primary}`,
                 transform: [{ rotate: '90deg' }],
               },
             ]}

@@ -1,8 +1,7 @@
 import React from 'react';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useThemeStore } from '../stores/useThemeStore';
+import { useThemeStore } from '@stores';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { Button } from './Button';
+import { IconButton } from '@components';
 
 /**
  * A toggle button component that switches between light and dark themes.
@@ -11,24 +10,17 @@ import { Button } from './Button';
 export const ThemeToggle: React.FC = () => {
   const {
     setTheme,
-    theme: { colors, dark },
+    theme: { dark },
   } = useThemeStore();
 
-  const toggleTheme = () => {
+  const onThemeButtonPress = () => {
     setTheme(dark ? DefaultTheme : DarkTheme);
   };
 
   return (
-    <Button
-      variant="iconButton"
-      icon={
-        <MaterialIcons
-          name={dark ? 'light-mode' : 'dark-mode'}
-          size={24}
-          color={colors.primary}
-        />
-      }
-      onPress={toggleTheme}
+    <IconButton
+      icon={dark ? 'light-mode' : 'dark-mode'}
+      onPress={onThemeButtonPress}
       accessibilityLabel={`Switch to ${dark ? 'light' : 'dark'} mode`}
       title=""
     />

@@ -1,9 +1,9 @@
 import React from 'react';
-import { IconButton } from './IconButton';
+import { IconButton } from '@components';
 
 /**
- * A button component that allows users to go back to the previous screen.
- * Uses the Button component with an icon variant for consistent styling.
+ * A button component that allows users to share the image.
+ * Uses the IconButton component with an icon variant for consistent styling.
  */
 export const ShareButton: React.FC = () => {
   const share = () => {};
@@ -14,6 +14,7 @@ export const ShareButton: React.FC = () => {
       onPress={share}
       accessibilityLabel="Share"
       title=""
+      loading={false}
     />
   );
 };
