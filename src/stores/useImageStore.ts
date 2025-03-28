@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Dimensions } from '../types';
+import { Dimensions } from '@types';
 
 /**
  * Represents the state of the image store.

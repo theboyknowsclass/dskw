@@ -1,7 +1,7 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
 import { ThemeProvider } from '@react-navigation/native';
-import { useTheme } from '../hooks/useTheme';
+import { useTheme } from '@hooks/useTheme';
 
 import {
   Orbitron_400Regular,
@@ -14,7 +14,7 @@ import {
 } from '@expo-google-fonts/orbitron';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { StackNavigation } from '@navigation/StackNavigation';
+import { Stack } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -47,7 +47,11 @@ export const RootLayout = () => {
     <ThemeProvider value={theme}>
       {/* GestureHandlerRootView is required for gesture handling in React Native */}
       <GestureHandlerRootView style={styles.container}>
-        <StackNavigation />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        ></Stack>
       </GestureHandlerRootView>
     </ThemeProvider>
   );

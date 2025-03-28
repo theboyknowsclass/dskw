@@ -90,7 +90,7 @@ export const TextButton: React.FC<TextButtonProps> = ({
       secondary: { backgroundColor: isDarkTheme ? '#2C2C2C' : '#E0E0E0' },
       outline: {
         backgroundColor: 'transparent',
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: colors.primary,
       },
     };

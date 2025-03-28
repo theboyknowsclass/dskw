@@ -1,131 +1,46 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useImageStore } from '@stores/useImageStore';
-import { useTheme } from '@react-navigation/native';
-import { router } from 'expo-router';
+import { useImageStore } from '@stores';
 import * as Sharing from 'expo-sharing';
-import { TextButton } from '@components/TextButton';
 import { Image } from 'react-native';
+import { BaseLayout } from '@components/Layout';
+import { IconButton } from '@components/IconButton';
+import { BackButton } from '@components/BackButton';
+import { DownloadButton } from '@components/DownloadButton';
 /**
  * Process Image screen component
  * This screen displays the processed image
  */
 export const ExportImageScreen: React.FC = () => {
-  const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
-  const { destinationUri, scaledDimensions } = useImageStore();
+  const { destinationUri } = useImageStore();
 
-  // Go back to the home screen
-  const handleBack = () => {
-    router.back();
-  };
-
-  const handleShare = () => {
+  const onSharePress = () => {
     if (destinationUri) {
       Sharing.shareAsync(destinationUri);
     }
   };
 
-  const handleSave = () => {
-    console.log('save');
-  };
-
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.background,
-          paddingBottom: insets.bottom,
-        },
+    <BaseLayout
+      actionItems={[
+        <BackButton />,
+        <DownloadButton />,
+        <IconButton
+          icon="share"
+          accessibilityLabel="Share"
+          onPress={onSharePress}
+        />,
       ]}
     >
-      <View style={styles.content}>
-        {destinationUri ? (
-          <View style={styles.imageContainer}>
-            <Image
-              source={{ uri: destinationUri }}
-              style={[
-                styles.processedImage,
-                {
-                  width: scaledDimensions.width,
-                  height: scaledDimensions.height,
-                },
-              ]}
-              resizeMode="contain"
-            />
-          </View>
-        ) : (
-          <View style={styles.errorContainer}>
-            <Text style={[styles.errorText, { color: colors.notification }]}>
-              Error
-            </Text>
-          </View>
-        )}
-
-        <TextButton
-          title="Back"
-          onPress={handleBack}
-          variant="primary"
-          size="large"
-          style={styles.button}
-        />
-        <TextButton
-          title="Share"
-          onPress={handleShare}
-          variant="primary"
-          size="large"
-          style={styles.button}
-        />
-        <TextButton
-          title="Save"
-          onPress={handleSave}
-          variant="primary"
-          size="large"
-          style={styles.button}
-        />
-      </View>
-    </View>
+      <Image
+        source={{ uri: destinationUri ?? '' }}
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+        resizeMode="contain"
+      />
+    </BaseLayout>
   );
 };
 
 export default ExportImageScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    alignSelf: 'center',
-  },
-  imageContainer: {
-    alignItems: 'center',
-  },
-  processedImage: {
-    width: 400,
-    height: 400,
-  },
-  errorContainer: {
-    padding: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginVertical: 30,
-  },
-  errorText: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  button: {
-    marginTop: 30,
-    width: '100%',
-    maxWidth: 300,
-  },
-});

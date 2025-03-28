@@ -1,17 +1,16 @@
 import React from 'react';
 import { View, StyleSheet, ImageBackground } from 'react-native';
-import { useOverlayStore } from '../stores/useOverlayStore';
-import { useImageStore } from '../stores/useImageStore';
+import { useOverlayStore } from '@stores/useOverlayStore';
+import { useImageStore } from '@stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
 import { Image } from 'react-native';
-import { useLayout } from '../hooks/useLayout';
 
 // Import the checkerboard pattern
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const checkerboardPattern = require('../../assets/checkerboard.png');
 
 type ZoomPreviewProps = {
-  size?: number;
+  size: number;
 };
 /**
  * ZoomPreview Component
@@ -25,12 +24,7 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   const { uri, originalDimensions } = useImageStore();
   const { colors } = useTheme();
 
-  // Calculate preview size once
-  const {
-    zoomView: { width },
-  } = useLayout();
-
-  const zoomWindowSize = size ?? width;
+  const zoomWindowSize = size;
 
   // Early return for missing data - pure logic, no state updates
   if (activePointIndex === null || !points?.[activePointIndex] || !uri) {

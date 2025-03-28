@@ -1,5 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { IconType } from '../types/IconType';
+import { IconType } from '@types';
 import { useTheme } from '@react-navigation/native';
 
 interface IconProps {

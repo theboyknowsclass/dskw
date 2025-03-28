@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * A throttle function that ensures the last call is processed
  * Uses performance.now() for more precise timing and better performance

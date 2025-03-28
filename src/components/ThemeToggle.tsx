@@ -1,5 +1,5 @@
 import React from 'react';
-import { useThemeStore } from '../stores/useThemeStore';
+import { useThemeStore } from '@stores/useThemeStore';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { IconButton } from './IconButton';
 
@@ -13,14 +13,14 @@ export const ThemeToggle: React.FC = () => {
     theme: { dark },
   } = useThemeStore();
 
-  const toggleTheme = () => {
+  const onThemeButtonPress = () => {
     setTheme(dark ? DefaultTheme : DarkTheme);
   };
 
   return (
     <IconButton
       icon={dark ? 'light-mode' : 'dark-mode'}
-      onPress={toggleTheme}
+      onPress={onThemeButtonPress}
       accessibilityLabel={`Switch to ${dark ? 'light' : 'dark'} mode`}
       title=""
     />

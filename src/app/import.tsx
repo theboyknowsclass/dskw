@@ -1,16 +1,16 @@
-import { TextButton } from '@components/TextButton';
-import { Logo } from '@components/Logo';
+import { TextButton } from '@components';
+import { Logo } from '@components';
 import { View, StyleSheet } from 'react-native';
-import { ImagePickerService } from '@services/ImagePickerService';
-import { useImageStore } from '@stores/useImageStore';
+import { ImagePickerService } from '@services';
+import { useImageStore } from '@stores';
 import { router } from 'expo-router';
-import { Layout } from '@components/Layout';
+import { BaseLayout } from '@components';
 
 export const Import = () => {
   const { isLoading, setLoading, setUri, setOriginalDimensions } =
     useImageStore();
 
-  const onStart = async () => {
+  const onStartPress = async () => {
     setLoading(true);
     try {
       const { success, error, data } = await ImagePickerService.selectImage();
@@ -18,7 +18,7 @@ export const Import = () => {
         const { uri, dimensions } = data;
         setUri(uri);
         setOriginalDimensions(dimensions);
-        router.navigate('edit2');
+        router.navigate('edit');
         return;
       }
       console.warn(error);
@@ -28,19 +28,19 @@ export const Import = () => {
   };
 
   return (
-    <Layout>
+    <BaseLayout>
       <View style={styles.container}>
-        <Logo />
+        <Logo size={200} />
         <TextButton
           size="large"
           variant="outline"
           title="Start"
           loading={isLoading}
-          onPress={onStart}
+          onPress={onStartPress}
           style={styles.button}
         />
       </View>
-    </Layout>
+    </BaseLayout>
   );
 };
 

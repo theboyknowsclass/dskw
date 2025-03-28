@@ -1,4 +1,4 @@
-import { Point } from '../types/Point';
+import { Point } from '@types';
 
 /**
  * Orders an array of points according to the Corner enum.

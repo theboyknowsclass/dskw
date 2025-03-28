@@ -7,7 +7,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-import { IconType } from '../types/IconType';
+import { IconType } from '@types';
 import { Icon } from './Icon';
 
 interface IconButtonProps extends TouchableOpacityProps {

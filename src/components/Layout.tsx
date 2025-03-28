@@ -1,35 +1,19 @@
 import { useScreenDimensions } from '@hooks/useScreenDimensions';
 import { StyleSheet, View } from 'react-native';
-import { IconButton } from './IconButton';
-import { router } from 'expo-router';
-import { useThemeStore } from '@stores/useThemeStore';
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { BackButton } from './BackButton';
+import { SettingsButton } from './SettingsButton';
+import { ThemeToggle } from './ThemeToggle';
 
-interface LayoutProps {
-  children: React.ReactNode | React.ReactNode[];
+interface BaseLayoutProps {
+  children?: React.ReactNode | React.ReactNode[];
   actionItems?: React.ReactNode | React.ReactNode[];
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, actionItems }) => {
-  const { width, height, isLandscape, deviceType } = useScreenDimensions();
-  const {
-    setTheme,
-    theme: { dark },
-  } = useThemeStore();
-
-  const showBackButton = router.canGoBack();
-
-  const onBackButtonPress = () => {
-    router.back();
-  };
-
-  const onSettingsButtonPress = () => {
-    router.push('/settings');
-  };
-
-  const onThemeButtonPress = () => {
-    setTheme(dark ? DefaultTheme : DarkTheme);
-  };
+export const BaseLayout: React.FC<BaseLayoutProps> = ({
+  children,
+  actionItems,
+}) => {
+  const { isLandscape } = useScreenDimensions();
 
   return (
     <View
@@ -45,14 +29,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, actionItems }) => {
         ]}
       >
         <View style={styles.navigationBarPrimary}>
-          {showBackButton && (
-            <IconButton
-              icon="arrow-back"
-              onPress={onBackButtonPress}
-              accessibilityLabel="Go Back"
-              title=""
-            />
-          )}
+          <BackButton />
         </View>
         <View
           style={[
@@ -60,18 +37,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, actionItems }) => {
             isLandscape ? styles.barLandscape : styles.barPortrait,
           ]}
         >
-          <IconButton
-            icon={dark ? 'light-mode' : 'dark-mode'}
-            onPress={onThemeButtonPress}
-            accessibilityLabel={`Switch to ${dark ? 'light' : 'dark'} mode`}
-            title=""
-          />
-          <IconButton
-            icon="settings"
-            onPress={onSettingsButtonPress}
-            accessibilityLabel="Settings"
-            title=""
-          />
+          <ThemeToggle />
+          <SettingsButton />
         </View>
       </View>
       <View style={styles.contentContainer}>{children}</View>

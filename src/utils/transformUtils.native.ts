@@ -7,9 +7,9 @@ import {
   Mat,
   DataTypes,
 } from 'react-native-fast-opencv';
-import { Point, ImageSource, Corner } from '../types';
+import { Point, ImageSource, Corner } from '@types';
 import { toBase64 } from './imageUtils';
-import { FileSystemService } from '../services/FileSystemService';
+import { FileSystemService } from '@services/FileSystemService';
 
 /**
  * Transforms an image using OpenCV's perspective transformation in React Native.

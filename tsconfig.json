@@ -5,14 +5,18 @@
     "strict": true,
     "baseUrl" : "./src",
     "paths": {
+      "@components": ["./components/index.ts"],
       "@components/*": ["./components/*"],
+      "@services": ["./services/index.ts"],
       "@services/*": ["./services/*"],
-      "@navigation/*": ["./navigation/*"],
+      "@hooks": ["./hooks/index.ts"],
       "@hooks/*": ["./hooks/*"],
+      "@utils": ["./utils/index.ts"],
       "@utils/*": ["./utils/*"],
+      "@types": ["./types/index.ts"],
       "@types/*": ["./types/*"],
-      "@styles/*": ["./styles/*"],
       "@assets/*": ["../assets/*"],
+      "@stores": ["./stores/index.ts"],
       "@stores/*": ["./stores/*"]
     }
   },

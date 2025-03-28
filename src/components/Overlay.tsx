@@ -1,10 +1,10 @@
 import React, { useMemo, useCallback, useRef, useState } from 'react';
 import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import Svg, { Polygon, Circle } from 'react-native-svg';
-import { useOverlayStore } from '../stores/useOverlayStore';
+import { useOverlayStore } from '@stores/useOverlayStore';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useTheme } from '@react-navigation/native';
-import { throttle } from '../utils/throttleUtil';
+import { throttle } from '@utils/throttleUtil';
 
 type OverlayProps = {
   imageWidth: number;

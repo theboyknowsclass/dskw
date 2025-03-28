@@ -1,35 +1,37 @@
-import { View } from 'react-native';
-import BackNavigation from '@navigation/BackNavigation';
-import { ThemeToggle } from '@components/ThemeToggle';
-import { ShareButton } from '@components/ShareButton';
+import { useState } from 'react';
+import { Switch, View, Text, StyleSheet } from 'react-native';
 
+// doesn't use Layout Component
 export const Settings: React.FC = () => {
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  const toggleSwitch = () => {
+    setIsEnabled((previousState: boolean) => !previousState);
+  };
+
   return (
-    <View
-      style={{
-        flex: 1,
-        padding: 0,
-        marginLeft: 0,
-      }}
-    >
-      <BackNavigation />
-      <View
-        style={{
-          flex: 1,
-          gap: 8,
-          marginTop: 24,
-          marginLeft: 46,
-        }}
-      >
-        <ThemeToggle />
-        <ShareButton />
+    <View style={styles.container}>
+      <View style={styles.toggleContainer}>
+        <Switch onValueChange={toggleSwitch} value={isEnabled} />
+        <Text>Switch</Text>
       </View>
-      {/* <Text>Settings</Text>
-      {canGoBack && <BackButton />}
-      <BackButton />
-      <ShareButton /> */}
     </View>
   );
 };
 
 export default Settings;
+
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
+    alignItems: 'center',
+    marginTop: 40,
+  },
+  toggleContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 16,
+  },
+});

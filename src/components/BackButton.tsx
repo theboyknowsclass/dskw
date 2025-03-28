@@ -16,7 +16,9 @@ export const BackButton: React.FC<BackButtonProps> = ({ ...props }) => {
     router.back();
   };
 
-  return (
+  const showBackButton = router.canGoBack();
+
+  return showBackButton ? (
     <IconButton
       {...props}
       icon="arrow-back"
@@ -24,5 +26,5 @@ export const BackButton: React.FC<BackButtonProps> = ({ ...props }) => {
       accessibilityLabel="Go Back"
       title=""
     />
-  );
+  ) : null;
 };

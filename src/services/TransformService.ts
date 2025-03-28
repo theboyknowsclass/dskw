@@ -1,11 +1,11 @@
-import { ImageSource, Point } from '../types';
+import { ImageSource, Point } from '@types';
 import {
   getAbsolutePoints,
   getLargestRectangle,
   orderPointsByCorner,
   getPoints,
-} from '../utils/overlayUtils';
-import { transformImage } from '../utils/transformUtils';
+} from '@utils/overlayUtils';
+import { transformImage } from '@utils/transformUtils';
 
 /**
  * TransformService handles the image transformation process following the Single Responsibility Principle.
