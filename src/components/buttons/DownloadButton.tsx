@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton } from './IconButton';
+import { IconButton } from '@components';
 
 /**
  * A button component that allows users to download an image.

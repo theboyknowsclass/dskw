@@ -7,4 +7,5 @@ export type IconType =
   | 'light-mode'
   | 'dark-mode'
   | 'settings'
-  | 'home';
+  | 'home'
+  | 'close';

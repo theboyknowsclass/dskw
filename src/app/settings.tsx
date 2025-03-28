@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Switch, View, Text, StyleSheet } from 'react-native';
+import { Switch, View, StyleSheet } from 'react-native';
+import { Text, CloseButton } from '@components';
 
 // doesn't use Layout Component
 export const Settings: React.FC = () => {
@@ -10,10 +11,15 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.toggleContainer}>
-        <Switch onValueChange={toggleSwitch} value={isEnabled} />
-        <Text>Switch</Text>
+    <View>
+      <View style={styles.closeButtonContainer}>
+        <CloseButton />
+      </View>
+      <View style={styles.container}>
+        <View style={styles.toggleContainer}>
+          <Switch onValueChange={toggleSwitch} value={isEnabled} />
+          <Text>Switch</Text>
+        </View>
       </View>
     </View>
   );
@@ -28,10 +34,16 @@ const styles = StyleSheet.create({
     gap: 16,
     alignItems: 'center',
     marginTop: 40,
+    borderWidth: 1,
   },
   toggleContainer: {
     display: 'flex',
     flexDirection: 'row',
     gap: 16,
+  },
+  closeButtonContainer: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
   },
 });

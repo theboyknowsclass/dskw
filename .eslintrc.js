@@ -11,6 +11,7 @@ module.exports = {
   ignorePatterns: ['/dist/*'],
   rules: {
     'prettier/prettier': 'error',
+    'no-duplicate-imports': 'error',
   },
   root: true,
 };

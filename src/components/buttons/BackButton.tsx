@@ -1,6 +1,6 @@
 import React from 'react';
 import { router } from 'expo-router';
-import { IconButton } from './IconButton';
+import { IconButton } from '@components';
 
 interface BackButtonProps {
   size?: 'small' | 'large';

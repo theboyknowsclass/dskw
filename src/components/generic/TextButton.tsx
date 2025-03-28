@@ -2,17 +2,12 @@ import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import {
   TouchableOpacity,
-  Text,
   StyleSheet,
   TouchableOpacityProps,
   ActivityIndicator,
   ViewStyle,
-  TextStyle,
-  Dimensions,
 } from 'react-native';
-
-// Get device width for responsive sizing
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+import { Text } from './Text';
 
 interface TextButtonProps extends TouchableOpacityProps {
   /** The text to display on the button */
@@ -25,20 +20,18 @@ interface TextButtonProps extends TouchableOpacityProps {
   size?: 'small' | 'medium' | 'large';
   /** Whether the button is disabled */
   disabled?: boolean;
-  /** Custom styles for the button text */
-  textStyle?: TextStyle;
 }
 
 /**
- * A button component specifically designed for text-based buttons.
- * Provides a clean, focused interface for text-only buttons with consistent styling.
+ * A button component that provides consistent styling and theming across the app.
+ * Features a custom Text component for consistent typography and automatic color handling.
  *
  * Features:
  * - Multiple visual variants (primary, secondary, outline)
  * - Three size options (small, medium, large)
  * - Loading state with activity indicator
  * - Responsive sizing based on screen width
- * - Dark/light theme support
+ * - Automatic text color handling based on variant and theme
  * - Customizable styles for both container and text
  * - Accessibility support
  *
@@ -50,7 +43,7 @@ interface TextButtonProps extends TouchableOpacityProps {
  * // With loading state
  * <TextButton title="Loading..." loading />
  *
- * // With custom styles
+ * // With custom styles and outline variant
  * <TextButton
  *   title="Custom"
  *   style={{ marginTop: 20 }}
@@ -64,7 +57,6 @@ export const TextButton: React.FC<TextButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   disabled = false,
-  textStyle,
   style,
   ...rest
 }) => {
@@ -75,7 +67,6 @@ export const TextButton: React.FC<TextButtonProps> = ({
       backgroundColor: colors.primary,
       borderRadius: 2,
       opacity: disabled ? 0.5 : 1,
-      maxWidth: SCREEN_WIDTH > 600 ? 300 : SCREEN_WIDTH * 0.8,
       alignSelf: 'center',
     };
 
@@ -102,29 +93,17 @@ export const TextButton: React.FC<TextButtonProps> = ({
     };
   };
 
-  const getTextStyles = (): TextStyle => {
-    const baseStyle: TextStyle = {
-      textAlign: 'center',
-      fontFamily: 'Orbitron_400Regular',
-    };
-
-    const variantTextStyles: Record<string, TextStyle> = {
-      primary: { color: isDarkTheme ? '#000000' : '#FFFFFF' },
-      secondary: { color: isDarkTheme ? '#000000' : '#FFFFFF' },
-      outline: { color: colors.primary },
-    };
-
-    const sizeTextStyles: Record<string, TextStyle> = {
-      small: { fontSize: 12 },
-      medium: { fontSize: 16 },
-      large: { fontSize: 18 },
-    };
-
-    return {
-      ...baseStyle,
-      ...variantTextStyles[variant],
-      ...sizeTextStyles[size],
-    };
+  const getTextColor = () => {
+    switch (variant) {
+      case 'primary':
+        return colors.text;
+      case 'secondary':
+        return colors.text;
+      case 'outline':
+        return colors.primary;
+      default:
+        return colors.text;
+    }
   };
 
   return (
@@ -137,7 +116,9 @@ export const TextButton: React.FC<TextButtonProps> = ({
       {loading ? (
         <ActivityIndicator size="small" color={colors.primary} />
       ) : (
-        <Text style={[getTextStyles(), textStyle]}>{title}</Text>
+        <Text color={getTextColor()} size={size}>
+          {title}
+        </Text>
       )}
     </TouchableOpacity>
   );

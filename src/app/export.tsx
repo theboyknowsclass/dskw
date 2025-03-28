@@ -2,16 +2,21 @@ import React from 'react';
 import { useImageStore } from '@stores';
 import * as Sharing from 'expo-sharing';
 import { Image } from 'react-native';
-import { BaseLayout } from '@components/Layout';
-import { IconButton } from '@components/IconButton';
-import { BackButton } from '@components/BackButton';
-import { DownloadButton } from '@components/DownloadButton';
+import {
+  BaseLayout,
+  IconButton,
+  BackButton,
+  DownloadButton,
+} from '@components';
+import { Redirect } from 'expo-router';
 /**
  * Process Image screen component
  * This screen displays the processed image
  */
 export const ExportImageScreen: React.FC = () => {
   const { destinationUri } = useImageStore();
+
+  if (!destinationUri) return <Redirect href="/" />;
 
   const onSharePress = () => {
     if (destinationUri) {

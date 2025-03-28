@@ -1,8 +1,14 @@
-export { BackButton } from './BackButton';
-export { IconButton } from './IconButton';
+export { IconButton, TextButton, Text, Icon } from './generic';
+export {
+  BackButton,
+  ThemeToggle,
+  DownloadButton,
+  ShareButton,
+  SettingsButton,
+  ImagePickerButton,
+  CloseButton,
+} from './buttons';
 export { BaseLayout } from './Layout';
 export { Logo } from './Logo';
-export { TextButton } from './TextButton';
-export { ThemeToggle } from './ThemeToggle';
 export { Overlay } from './Overlay';
 export { ZoomPreview } from './ZoomPreview';

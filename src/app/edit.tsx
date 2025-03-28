@@ -1,12 +1,13 @@
-import { IconButton } from '@components';
-import { BaseLayout } from '@components';
-import { Logo } from '@components';
-import { Overlay } from '@components';
-import { ZoomPreview } from '@components';
-import { useScreenDimensions } from '@hooks';
-import { useTransformImage } from '@hooks';
-import { useImageStore } from '@stores';
-import { useOverlayStore } from '@stores';
+import {
+  IconButton,
+  BaseLayout,
+  Logo,
+  Overlay,
+  ZoomPreview,
+} from '@components';
+import { useScreenDimensions, useTransformImage } from '@hooks';
+import { useImageStore, useOverlayStore } from '@stores';
+import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View, Image, LayoutChangeEvent } from 'react-native';
 
@@ -97,7 +98,7 @@ export const Edit: React.FC = () => {
     setContentContainerSize({ width, height });
   };
 
-  if (!scaledDimensions) return null;
+  if (!scaledDimensions) return <Redirect href="/" />;
 
   const { width: scaledWidth, height: scaledHeight } = scaledDimensions;
 

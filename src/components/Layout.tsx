@@ -1,8 +1,8 @@
 import { useScreenDimensions } from '@hooks/useScreenDimensions';
 import { StyleSheet, View } from 'react-native';
-import { BackButton } from './BackButton';
-import { SettingsButton } from './SettingsButton';
-import { ThemeToggle } from './ThemeToggle';
+import { BackButton } from './buttons/BackButton';
+import { SettingsButton } from './buttons/SettingsButton';
+import { ThemeToggle } from './buttons/ThemeToggle';
 
 interface BaseLayoutProps {
   children?: React.ReactNode | React.ReactNode[];
@@ -15,43 +15,44 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
 }) => {
   const { isLandscape } = useScreenDimensions();
 
+  const rootContainerStyles = [
+    styles.rootContainer,
+    isLandscape ? styles.landscapeContainer : styles.portraitContainer,
+  ];
+
+  const navigationBarStyles = [
+    styles.navigationBarBase,
+    isLandscape ? styles.barLandscape : styles.barPortrait,
+  ];
+
+  const navigationBarPrimaryStyles = [
+    styles.navigationBarPrimary,
+    isLandscape ? styles.barLandscape : styles.barPortrait,
+  ];
+
+  const navigationBarSecondaryStyles = [
+    styles.navigationBarSecondary,
+    isLandscape ? styles.barLandscape : styles.barPortrait,
+  ];
+
+  const actionBarStyles = [
+    styles.actionBarBase,
+    isLandscape ? styles.barLandscape : styles.barPortrait,
+  ];
+
   return (
-    <View
-      style={[
-        styles.rootContainer,
-        isLandscape ? styles.landscapeContainer : styles.portraitContainer,
-      ]}
-    >
-      <View
-        style={[
-          styles.navigationBarBase,
-          isLandscape ? styles.barLandscape : styles.barPortrait,
-        ]}
-      >
-        <View style={styles.navigationBarPrimary}>
+    <View style={rootContainerStyles}>
+      <View style={navigationBarStyles}>
+        <View style={navigationBarPrimaryStyles}>
           <BackButton />
         </View>
-        <View
-          style={[
-            styles.navigationBarSecondary,
-            isLandscape ? styles.barLandscape : styles.barPortrait,
-          ]}
-        >
+        <View style={navigationBarSecondaryStyles}>
           <ThemeToggle />
           <SettingsButton />
         </View>
       </View>
       <View style={styles.contentContainer}>{children}</View>
-      {actionItems && (
-        <View
-          style={[
-            styles.actionBarBase,
-            isLandscape ? styles.barLandscape : styles.barPortrait,
-          ]}
-        >
-          {actionItems}
-        </View>
-      )}
+      {actionItems && <View style={actionBarStyles}>{actionItems}</View>}
     </View>
   );
 };

@@ -1,7 +1,7 @@
 import React from 'react';
-import { useThemeStore } from '@stores/useThemeStore';
+import { useThemeStore } from '@stores';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { IconButton } from './IconButton';
+import { IconButton } from '@components';
 
 /**
  * A toggle button component that switches between light and dark themes.

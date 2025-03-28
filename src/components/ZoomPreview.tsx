@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, ImageBackground } from 'react-native';
+import { View, StyleSheet, ImageBackground, Image } from 'react-native';
 import { useOverlayStore } from '@stores/useOverlayStore';
 import { useImageStore } from '@stores/useImageStore';
 import { useTheme } from '@react-navigation/native';
-import { Image } from 'react-native';
 
 // Import the checkerboard pattern
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -28,13 +27,6 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
 
   // Early return for missing data - pure logic, no state updates
   if (activePointIndex === null || !points?.[activePointIndex] || !uri) {
-    console.debug(
-      'ZoomPreview early return',
-      activePointIndex,
-      points,
-      uri,
-      originalDimensions
-    );
     return null;
   }
 
@@ -54,7 +46,6 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
     { translateY: startY - pointY * originalDimensions.height },
   ];
 
-  // Pure render with no state dependencies
   return (
     <View
       style={styles.container}
@@ -92,14 +83,14 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
           <View
             style={[
               styles.crosshairLine,
-              { backgroundColor: `${colors.primary}bf` },
+              { backgroundColor: `${colors.primary}` },
             ]}
           />
           <View
             style={[
               styles.crosshairLine,
               {
-                backgroundColor: `${colors.primary}bf`,
+                backgroundColor: `${colors.primary}`,
                 transform: [{ rotate: '90deg' }],
               },
             ]}
