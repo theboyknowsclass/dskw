@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useRef, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import Svg, { Polygon, Circle } from 'react-native-svg';
 import { useOverlayStore } from '../stores/useOverlayStore';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -9,11 +9,13 @@ import { throttle } from '../utils/throttleUtil';
 type OverlayProps = {
   imageWidth: number;
   imageHeight: number;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const Overlay: React.FC<OverlayProps> = ({
   imageWidth,
   imageHeight,
+  style,
 }) => {
   const { points, activePointIndex, setActivePointIndex, updatePoint } =
     useOverlayStore();
@@ -80,7 +82,11 @@ export const Overlay: React.FC<OverlayProps> = ({
   return (
     <View
       ref={containerRef}
-      style={[StyleSheet.absoluteFill]}
+      style={[
+        StyleSheet.absoluteFill,
+        { width: imageWidth, height: imageHeight },
+        style ?? null,
+      ]}
       onLayout={onContainerLayout}
     >
       {/* SVG Layer (visual only) */}

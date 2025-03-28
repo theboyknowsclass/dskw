@@ -4,6 +4,7 @@ import { View, StyleSheet } from 'react-native';
 import { ImagePickerService } from '@services/ImagePickerService';
 import { useImageStore } from '@stores/useImageStore';
 import { router } from 'expo-router';
+import { Layout } from '@components/Layout';
 
 export const Import = () => {
   const { isLoading, setLoading, setUri, setOriginalDimensions } =
@@ -27,17 +28,19 @@ export const Import = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Logo />
-      <TextButton
-        size="large"
-        variant="outline"
-        title="Start"
-        loading={isLoading}
-        onPress={onStart}
-        style={styles.button}
-      />
-    </View>
+    <Layout>
+      <View style={styles.container}>
+        <Logo />
+        <TextButton
+          size="large"
+          variant="outline"
+          title="Start"
+          loading={isLoading}
+          onPress={onStart}
+          style={styles.button}
+        />
+      </View>
+    </Layout>
   );
 };
 
