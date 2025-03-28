@@ -80,7 +80,7 @@ export const Overlay: React.FC<OverlayProps> = ({
   return (
     <View
       ref={containerRef}
-      style={StyleSheet.absoluteFill}
+      style={[StyleSheet.absoluteFill]}
       onLayout={onContainerLayout}
     >
       {/* SVG Layer (visual only) */}

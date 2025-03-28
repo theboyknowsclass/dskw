@@ -2,7 +2,11 @@ import { useTheme } from '@react-navigation/native';
 import { Svg, Polygon, Circle, Text } from 'react-native-svg';
 import { useLayout } from '../hooks/useLayout';
 
-export const Logo = () => {
+type LogoProps = {
+  size?: number;
+};
+
+export const Logo: React.FC<LogoProps> = ({ size }) => {
   const { dark, colors } = useTheme();
   const {
     logo: { width, height },
@@ -13,7 +17,7 @@ export const Logo = () => {
   const stroke = colors.primary;
 
   return (
-    <Svg viewBox="0 0 1024 1024" width={width} height={height}>
+    <Svg viewBox="0 0 1024 1024" width={size ?? width} height={size ?? height}>
       <Polygon
         points="150,150 875,200 800,700 250,875"
         fill={foreground}

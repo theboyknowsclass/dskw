@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexGrow: 0,
     justifyContent: 'space-evenly',
+    padding: 10,
   },
   actionBarPortrait: {
     flexDirection: 'row',

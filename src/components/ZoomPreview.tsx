@@ -10,13 +10,16 @@ import { useLayout } from '../hooks/useLayout';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const checkerboardPattern = require('../../assets/checkerboard.png');
 
+type ZoomPreviewProps = {
+  size?: number;
+};
 /**
  * ZoomPreview Component
  *
  * Shows a magnified view of the image around the currently active corner point.
  * Completely redesigned with minimal state updates for maximum stability.
  */
-export const ZoomPreview: React.FC = () => {
+export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   // Direct store access - no intermediate state
   const { points, activePointIndex } = useOverlayStore();
   const { uri, originalDimensions } = useImageStore();
@@ -24,8 +27,10 @@ export const ZoomPreview: React.FC = () => {
 
   // Calculate preview size once
   const {
-    zoomView: { width: zoomWindowSize },
+    zoomView: { width },
   } = useLayout();
+
+  const zoomWindowSize = size ?? width;
 
   // Early return for missing data - pure logic, no state updates
   if (activePointIndex === null || !points?.[activePointIndex] || !uri) {
