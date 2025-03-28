@@ -1,4 +1,4 @@
-import { useScreenDimensions } from '@hooks/useScreenDimensions';
+import { useScreenDimensions } from '@hooks';
 import { StyleSheet, View } from 'react-native';
 import { BackButton } from './buttons/BackButton';
 import { SettingsButton } from './buttons/SettingsButton';

@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
     gap: 16,
     alignItems: 'center',
     marginTop: 40,
-    borderWidth: 1,
   },
   toggleContainer: {
     display: 'flex',

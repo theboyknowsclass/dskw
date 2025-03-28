@@ -106,6 +106,7 @@ export const Edit: React.FC = () => {
     <BaseLayout
       actionItems={[
         <IconButton
+          key="transform-image"
           icon="done"
           accessibilityLabel="Transform Image"
           onPress={onTransformImagePress}

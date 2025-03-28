@@ -8,7 +8,7 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'prettier'],
-  ignorePatterns: ['/dist/*'],
+  ignorePatterns: ['/dist/*', '/node_modules/*'],
   rules: {
     'prettier/prettier': 'error',
     'no-duplicate-imports': 'error',

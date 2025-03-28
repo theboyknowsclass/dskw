@@ -8,7 +8,7 @@ export {
   ImagePickerButton,
   CloseButton,
 } from './buttons';
-export { BaseLayout } from './Layout';
+export { BaseLayout } from './BaseLayout';
 export { Logo } from './Logo';
 export { Overlay } from './Overlay';
 export { ZoomPreview } from './ZoomPreview';

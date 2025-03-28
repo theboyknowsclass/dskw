@@ -27,9 +27,10 @@ export const ExportImageScreen: React.FC = () => {
   return (
     <BaseLayout
       actionItems={[
-        <BackButton />,
-        <DownloadButton />,
+        <BackButton key="back-button" />,
+        <DownloadButton key="download-button" />,
         <IconButton
+          key="share-button"
           icon="share"
           accessibilityLabel="Share"
           onPress={onSharePress}
