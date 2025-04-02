@@ -9,7 +9,7 @@ import {
 } from 'react-native-fast-opencv';
 import { Point, ImageSource, Corner } from '@types';
 import { toBase64 } from '@utils/imageUtils';
-import { FileSystemService } from './';
+import { FileSystemService } from './FileSystemService';
 
 export class TransformService {
   /**

@@ -2,6 +2,7 @@ import {
   useSourceImageStore,
   useTransformedImageStore,
   useOverlayStore,
+  useSettingsStore,
 } from '@stores';
 import {
   getAbsolutePoints,
@@ -11,11 +12,19 @@ import {
 } from '@utils/overlayUtils';
 import { router } from 'expo-router';
 import { TransformService } from '@services';
-export const useTransformImage = () => {
+
+type TransformImageHook = () => {
+  handleProcess: () => Promise<void>;
+  isLoading: boolean;
+  error: string | null;
+};
+
+export const useTransformImage: TransformImageHook = () => {
   const { uri, originalDimensions: dimensions } = useSourceImageStore();
   const { setDestinationUri, setLoading, setError, isLoading, error } =
     useTransformedImageStore();
   const { points: selectedOverlay } = useOverlayStore();
+  const { cropToOverlay } = useSettingsStore();
 
   const handleProcess = async () => {
     if (!uri) return;
@@ -54,7 +63,7 @@ export const useTransformImage = () => {
         { uri, dimensions },
         srcPoints,
         dstPoints,
-        false
+        cropToOverlay
       );
 
       setDestinationUri(transformedUri);
