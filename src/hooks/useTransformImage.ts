@@ -1,14 +1,21 @@
-import { TransformService } from '@services/TransformService';
-import { useImageStore } from '@stores/useImageStore';
-import { useOverlayStore } from '@stores/useOverlayStore';
+import {
+  useSourceImageStore,
+  useTransformedImageStore,
+  useOverlayStore,
+} from '@stores';
+import {
+  getAbsolutePoints,
+  getLargestRectangle,
+  getPoints,
+  orderPointsByCorner,
+} from '@utils/overlayUtils';
 import { router } from 'expo-router';
-import { useState } from 'react';
-
+import { TransformService } from '@services';
 export const useTransformImage = () => {
-  const { uri, setDestinationUri, originalDimensions } = useImageStore();
-  const { points } = useOverlayStore();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { uri, originalDimensions: dimensions } = useSourceImageStore();
+  const { setDestinationUri, setLoading, setError, isLoading, error } =
+    useTransformedImageStore();
+  const { points: selectedOverlay } = useOverlayStore();
 
   const handleProcess = async () => {
     if (!uri) return;
@@ -17,14 +24,37 @@ export const useTransformImage = () => {
       setLoading(true);
       setError(null);
 
-      const image = {
-        uri,
-        dimensions: originalDimensions,
-      };
+      // Validate input image data
+      if (!uri || !dimensions) {
+        throw new Error('Image source or dimensions are missing');
+      }
 
+      const { width, height } = dimensions;
+
+      if (width === 0 || height === 0) {
+        throw new Error('Image dimensions are invalid');
+      }
+
+      // Convert relative points to absolute coordinates
+      const absolutePoints = getAbsolutePoints(
+        selectedOverlay,
+        dimensions.width,
+        dimensions.height
+      );
+
+      // Order points to ensure proper perspective transformation
+      const srcPoints = orderPointsByCorner(absolutePoints);
+
+      // Find the largest rectangle within the selected points
+      const largestRect = getLargestRectangle(srcPoints);
+      const dstPoints = getPoints(largestRect);
+
+      // Perform the actual image transformation
       const transformedUri = await TransformService.transformImage(
-        image,
-        points
+        { uri, dimensions },
+        srcPoints,
+        dstPoints,
+        false
       );
 
       setDestinationUri(transformedUri);
@@ -38,5 +68,5 @@ export const useTransformImage = () => {
     }
   };
 
-  return { handleProcess, loading, error };
+  return { handleProcess, isLoading, error };
 };

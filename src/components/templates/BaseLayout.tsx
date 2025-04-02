@@ -1,8 +1,6 @@
 import { useScreenDimensions } from '@hooks';
 import { StyleSheet, View } from 'react-native';
-import { BackButton } from './buttons/BackButton';
-import { SettingsButton } from './buttons/SettingsButton';
-import { ThemeToggle } from './buttons/ThemeToggle';
+import { BackButton, SettingsButton, ThemeToggle } from '@molecules';
 
 interface BaseLayoutProps {
   children?: React.ReactNode | React.ReactNode[];

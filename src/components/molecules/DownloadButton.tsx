@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton } from '@components';
+import { IconButton } from '@atoms';
 
 /**
  * A button component that allows users to download an image.

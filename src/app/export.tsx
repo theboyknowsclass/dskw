@@ -1,40 +1,24 @@
 import React from 'react';
-import { useImageStore } from '@stores';
-import * as Sharing from 'expo-sharing';
+import { useTransformedImageStore } from '@stores';
 import { Image } from 'react-native';
-import {
-  BaseLayout,
-  IconButton,
-  BackButton,
-  DownloadButton,
-} from '@components';
 import { Redirect } from 'expo-router';
+import { BaseLayout } from '@templates';
+import { DownloadButton, ShareButton, BackButton } from '@molecules';
 /**
  * Process Image screen component
  * This screen displays the processed image
  */
 export const ExportImageScreen: React.FC = () => {
-  const { destinationUri } = useImageStore();
+  const { destinationUri } = useTransformedImageStore();
 
   if (!destinationUri) return <Redirect href="/" />;
-
-  const onSharePress = () => {
-    if (destinationUri) {
-      Sharing.shareAsync(destinationUri);
-    }
-  };
 
   return (
     <BaseLayout
       actionItems={[
         <BackButton key="back-button" />,
         <DownloadButton key="download-button" />,
-        <IconButton
-          key="share-button"
-          icon="share"
-          accessibilityLabel="Share"
-          onPress={onSharePress}
-        />,
+        <ShareButton key="share-button" />,
       ]}
     >
       <Image

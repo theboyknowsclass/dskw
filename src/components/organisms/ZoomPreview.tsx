@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, ImageBackground, Image } from 'react-native';
-import { useOverlayStore } from '@stores/useOverlayStore';
-import { useImageStore } from '@stores/useImageStore';
+import { useOverlayStore, useSourceImageStore } from '@stores';
 import { useTheme } from '@react-navigation/native';
 
 // Import the checkerboard pattern
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const checkerboardPattern = require('../../assets/checkerboard.png');
+const checkerboardPattern = require('@assets/checkerboard.png');
 
 type ZoomPreviewProps = {
   size: number;
@@ -20,7 +19,7 @@ type ZoomPreviewProps = {
 export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   // Direct store access - no intermediate state
   const { points, activePointIndex } = useOverlayStore();
-  const { uri, originalDimensions } = useImageStore();
+  const { uri, originalDimensions } = useSourceImageStore();
   const { colors } = useTheme();
 
   const zoomWindowSize = size;

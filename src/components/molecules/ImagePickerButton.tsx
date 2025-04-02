@@ -1,12 +1,12 @@
-import { TextButton } from '@components';
+import { TextButton } from '@atoms';
 import { ImagePickerService } from '@services';
-import { useImageStore } from '@stores';
+import { useSourceImageStore } from '@stores';
 import { router } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 export const ImagePickerButton: React.FC = () => {
   const { isLoading, setLoading, setUri, setOriginalDimensions } =
-    useImageStore();
+    useSourceImageStore();
 
   const onStartPress = async () => {
     setLoading(true);

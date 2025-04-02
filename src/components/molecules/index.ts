@@ -5,3 +5,5 @@ export { ShareButton } from './ShareButton';
 export { SettingsButton } from './SettingsButton';
 export { ImagePickerButton } from './ImagePickerButton';
 export { CloseButton } from './CloseButton';
+export { TransformImageButton } from './TransformImageButton';
+export { Logo } from './Logo';

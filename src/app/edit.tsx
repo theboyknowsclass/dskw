@@ -1,15 +1,11 @@
-import {
-  IconButton,
-  BaseLayout,
-  Logo,
-  Overlay,
-  ZoomPreview,
-} from '@components';
-import { useScreenDimensions, useTransformImage } from '@hooks';
-import { useImageStore, useOverlayStore } from '@stores';
+import { Logo, TransformImageButton } from '@molecules';
+import { useScreenDimensions } from '@hooks';
+import { useSourceImageStore, useOverlayStore } from '@stores';
 import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View, Image, LayoutChangeEvent } from 'react-native';
+import { BaseLayout } from '@templates';
+import { Overlay, ZoomPreview } from '@organisms';
 
 const MAX_ZOOM_WINDOW_SIZE = 400;
 const MAX_ZOOM_WINDOW_RATIO = 0.5;
@@ -17,7 +13,7 @@ const ZOOM_WINDOW_PADDING = 40;
 
 export const Edit: React.FC = () => {
   const { uri, originalDimensions, setScaledDimensions, scaledDimensions } =
-    useImageStore();
+    useSourceImageStore();
   const { activePointIndex } = useOverlayStore();
   const { isLandscape } = useScreenDimensions();
   const [zoomWindowSize, setZoomWindowSize] = useState<number>(0);
@@ -25,14 +21,6 @@ export const Edit: React.FC = () => {
     width: number;
     height: number;
   }>({ width: 0, height: 0 });
-  const { handleProcess, loading, error } = useTransformImage();
-
-  const onTransformImagePress = async () => {
-    await handleProcess();
-    if (error) {
-      console.error(error);
-    }
-  };
 
   const isDragging = activePointIndex != null;
 
@@ -93,28 +81,19 @@ export const Edit: React.FC = () => {
     setZoomWindowSize,
   ]);
 
+  if (!scaledDimensions) return <Redirect href="/" />;
+
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
     setContentContainerSize({ width, height });
   };
 
-  if (!scaledDimensions) return <Redirect href="/" />;
+  if (!uri) return <Redirect href="/" />;
 
   const { width: scaledWidth, height: scaledHeight } = scaledDimensions;
 
   return (
-    <BaseLayout
-      actionItems={[
-        <IconButton
-          key="transform-image"
-          icon="done"
-          accessibilityLabel="Transform Image"
-          onPress={onTransformImagePress}
-          loading={loading}
-          disabled={loading}
-        />,
-      ]}
-    >
+    <BaseLayout actionItems={[<TransformImageButton key="transform-image" />]}>
       <View
         onLayout={onLayout}
         style={{

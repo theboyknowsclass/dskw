@@ -1,6 +1,6 @@
 import { DefaultTheme, Theme } from '@react-navigation/native';
 import { create } from 'zustand';
-import { AsyncStorageService } from '@services/AsyncStorageService';
+import { AsyncStorageService } from '@services';
 
 /**
  * Represents the state of the theme store.

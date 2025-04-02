@@ -1,6 +1,7 @@
+import { CloseButton } from '@molecules';
+import { Text } from '@atoms';
 import { useState } from 'react';
 import { Switch, View, StyleSheet } from 'react-native';
-import { Text, CloseButton } from '@components';
 
 // doesn't use Layout Component
 export const Settings: React.FC = () => {

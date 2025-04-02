@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useThemeStore } from '@stores/useThemeStore';
+import { useThemeStore } from '@stores';
 import { useColorScheme } from 'react-native';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { AsyncStorageService } from '@services/AsyncStorageService';
+import { AsyncStorageService } from '@services';
 
 /**
  * Custom hook for managing the application theme following the Single Responsibility Principle.

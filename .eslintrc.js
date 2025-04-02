@@ -14,4 +14,11 @@ module.exports = {
     'no-duplicate-imports': 'error',
   },
   root: true,
+  settings: {
+    'import/resolver': {
+      typescript: {
+        project: './tsconfig.json',
+      },
+    },
+  },
 };

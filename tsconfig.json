@@ -5,7 +5,10 @@
     "strict": true,
     "baseUrl" : "./src",
     "paths": {
-      "@components": ["./components/index.ts"],
+      "@templates": ["./components/templates/index.ts"],
+      "@organisms": ["./components/organisms/index.ts"],
+      "@molecules": ["./components/molecules/index.ts"],
+      "@atoms": ["./components/atoms/index.ts"],
       "@components/*": ["./components/*"],
       "@services": ["./services/index.ts"],
       "@services/*": ["./services/*"],

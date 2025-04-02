@@ -1,8 +1,8 @@
 import React from 'react';
 import { router } from 'expo-router';
-import { IconButton } from '@components';
+import { IconButton } from '@atoms';
 
-interface BackButtonProps {
+interface CloseButtonProps {
   size?: 'small' | 'large';
   showBorder?: boolean;
 }
@@ -11,9 +11,9 @@ interface BackButtonProps {
  * A button component that allows users to go back to the previous screen.
  * Uses the Button component with an icon variant for consistent styling.
  */
-export const BackButton: React.FC<BackButtonProps> = ({ ...props }) => {
+export const CloseButton: React.FC<CloseButtonProps> = ({ ...props }) => {
   const back = () => {
-    router.back();
+    router.dismiss();
   };
 
   const showBackButton = router.canGoBack();
@@ -21,9 +21,9 @@ export const BackButton: React.FC<BackButtonProps> = ({ ...props }) => {
   return showBackButton ? (
     <IconButton
       {...props}
-      icon="arrow-back"
+      icon="close"
       onPress={back}
-      accessibilityLabel="Go Back"
+      accessibilityLabel="Close"
       title=""
     />
   ) : null;
