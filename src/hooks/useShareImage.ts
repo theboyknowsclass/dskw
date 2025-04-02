@@ -43,8 +43,9 @@ export const useShareImage = () => {
     try {
       setIsSharing(true);
 
+      const fileName = `shared-image-${Date.now()}.jpg`;
       // Create a temporary file path
-      const tempFilePath = `${FileSystemService.getCacheDirectory()}shared-image-${Date.now()}.jpg`;
+      const tempFilePath = `${FileSystemService.getCacheDirectory()}${fileName}`;
 
       // Write the base64 image to the temporary file
       await FileSystemService.writeBase64ToFile(tempFilePath, destinationUri);

@@ -3,7 +3,7 @@ import { useTransformedImageStore } from '@stores';
 import { Image } from 'react-native';
 import { Redirect } from 'expo-router';
 import { BaseLayout } from '@templates';
-import { DownloadButton, ShareButton, BackButton } from '@molecules';
+import { DownloadButton, BackButton } from '@molecules';
 /**
  * Process Image screen component
  * This screen displays the processed image
@@ -18,7 +18,6 @@ export const ExportImageScreen: React.FC = () => {
       actionItems={[
         <BackButton key="back-button" />,
         <DownloadButton key="download-button" />,
-        <ShareButton key="share-button" />,
       ]}
     >
       <Image

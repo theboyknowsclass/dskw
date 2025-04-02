@@ -1,6 +1,5 @@
-import { Logo } from '@molecules';
+import { Logo, ImagePickerButton } from '@molecules';
 import { BaseLayout } from '@templates';
-import { ImagePickerButton } from '@molecules';
 import { View, StyleSheet } from 'react-native';
 import { useScreenDimensions } from '@hooks';
 
