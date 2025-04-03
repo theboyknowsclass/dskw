@@ -13,10 +13,7 @@ export class FileSystemService {
    * @returns The path to the cache directory
    */
   static getCacheDirectory(): string {
-    console.log('Getting cache directory...');
     if (!FileSystem.cacheDirectory) {
-      console.log(FileSystem.documentDirectory);
-
       throw new Error('Cache directory is not available');
     }
     return FileSystem.cacheDirectory;

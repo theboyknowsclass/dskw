@@ -6,3 +6,4 @@ export { ImagePickerButton } from './ImagePickerButton';
 export { CloseButton } from './CloseButton';
 export { TransformImageButton } from './TransformImageButton';
 export { Logo } from './Logo';
+export { SettingsToggle } from './SettingsToggle';

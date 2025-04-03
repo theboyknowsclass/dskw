@@ -16,6 +16,6 @@ type SettingsState = {
  * @returns The settings store
  */
 export const useSettingsStore = create<SettingsState>()((set) => ({
-  cropToOverlay: true,
+  cropToOverlay: false,
   setCropToOverlay: (cropToOverlay: boolean) => set({ cropToOverlay }),
 }));

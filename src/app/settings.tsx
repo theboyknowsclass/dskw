@@ -1,15 +1,10 @@
-import { CloseButton } from '@molecules';
-import { Text } from '@atoms';
-import { useState } from 'react';
-import { Switch, View, StyleSheet } from 'react-native';
+import { CloseButton, SettingsToggle } from '@molecules';
+import { useSettingsStore } from '@stores';
+import { View, StyleSheet } from 'react-native';
 
 // doesn't use Layout Component
 export const Settings: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-
-  const toggleSwitch = () => {
-    setIsEnabled((previousState: boolean) => !previousState);
-  };
+  const { cropToOverlay, setCropToOverlay } = useSettingsStore();
 
   return (
     <View>
@@ -17,10 +12,11 @@ export const Settings: React.FC = () => {
         <CloseButton />
       </View>
       <View style={styles.container}>
-        <View style={styles.toggleContainer}>
-          <Switch onValueChange={toggleSwitch} value={isEnabled} />
-          <Text>Switch</Text>
-        </View>
+        <SettingsToggle
+          title="Crop to overlay"
+          isEnabled={cropToOverlay}
+          onToggle={setCropToOverlay}
+        />
       </View>
     </View>
   );
@@ -35,11 +31,6 @@ const styles = StyleSheet.create({
     gap: 16,
     alignItems: 'center',
     marginTop: 40,
-  },
-  toggleContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 16,
   },
   closeButtonContainer: {
     position: 'absolute',
