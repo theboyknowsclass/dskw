@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ImageBackground, Image } from 'react-native';
 import { useOverlayStore, useSourceImageStore } from '@stores';
 import { useTheme } from '@react-navigation/native';
+import { getZoomTransform } from '@utils/zoomUtils';
 
 // Import the checkerboard pattern
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -25,25 +26,17 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   const zoomWindowSize = size;
 
   // Early return for missing data - pure logic, no state updates
-  if (activePointIndex === null || !points?.[activePointIndex] || !uri) {
+  if (activePointIndex === null || points.length < 4 || !uri) {
     return null;
   }
-
   // Get active point directly from store
   const activePoint = points[activePointIndex];
 
-  // Bound checking for the point coordinates
-  const pointX = Math.max(0, Math.min(1, activePoint.x));
-  const pointY = Math.max(0, Math.min(1, activePoint.y));
-
-  // Calculate transform directly in render method - no state or memo
-  const startX = zoomWindowSize / 2;
-  const startY = zoomWindowSize / 2;
-
-  const transform = [
-    { translateX: startX - pointX * originalDimensions.width },
-    { translateY: startY - pointY * originalDimensions.height },
-  ];
+  const transform = getZoomTransform(
+    zoomWindowSize,
+    activePoint,
+    originalDimensions
+  );
 
   return (
     <View

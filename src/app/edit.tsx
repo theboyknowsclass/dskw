@@ -3,7 +3,7 @@ import { useScreenDimensions } from '@hooks';
 import { useSourceImageStore, useOverlayStore } from '@stores';
 import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { View, Image, LayoutChangeEvent } from 'react-native';
+import { View, Image, LayoutChangeEvent, ImageBackground } from 'react-native';
 import { BaseLayout } from '@templates';
 import { Overlay, ZoomPreview } from '@organisms';
 
@@ -106,8 +106,6 @@ export const Edit: React.FC = () => {
           style={{
             flex: 0,
             position: 'relative',
-            alignItems: 'center',
-            justifyContent: 'center',
             alignSelf: 'center',
             minWidth: zoomWindowSize,
             minHeight: zoomWindowSize,
@@ -124,22 +122,21 @@ export const Edit: React.FC = () => {
         <View style={{ flex: 1 }}>
           <View
             style={{
-              alignItems: 'center',
-              justifyContent: 'center',
               alignSelf: 'center',
               width: scaledWidth,
               height: scaledHeight,
             }}
           >
-            <Image
+            <ImageBackground
               source={{ uri: uri ?? '' }}
               style={{
                 width: scaledWidth,
                 height: scaledHeight,
               }}
               resizeMode="contain"
-            ></Image>
-            <Overlay imageWidth={scaledWidth} imageHeight={scaledHeight} />
+            >
+              <Overlay imageWidth={scaledWidth} imageHeight={scaledHeight} />
+            </ImageBackground>
           </View>
         </View>
       </View>
