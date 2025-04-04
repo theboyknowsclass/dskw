@@ -25,25 +25,21 @@ export const OverlaySvg: React.FC<OverlaySvgProps> = ({
 
   const isDragging = activePointIndex != null;
 
+  const strokeWidth = isDragging ? '3' : '2';
+  const strokeColor = isDragging ? `${colors.primary}90` : colors.primary;
+  const pointFill = isDragging ? `${colors.primary}90` : colors.primary;
+
   return (
     <Svg width={imageWidth} height={imageHeight}>
       <Polygon
         points={polygonPoints}
         fill="none"
-        stroke={isDragging ? colors.primary : `${colors.primary}`}
-        strokeWidth={isDragging ? '3' : '2'}
+        stroke={strokeColor}
+        strokeWidth={strokeWidth}
       />
 
       {screenPoints.map((point, index) => (
-        <Circle
-          key={index}
-          cx={point.x}
-          cy={point.y}
-          r="15"
-          fill={
-            activePointIndex === index ? colors.primary : `${colors.primary}`
-          }
-        />
+        <Circle key={index} cx={point.x} cy={point.y} r="15" fill={pointFill} />
       ))}
     </Svg>
   );

@@ -22,9 +22,9 @@ export const Overlay: React.FC<OverlayProps> = ({
 
   // Convert relative coordinates to screen coordinates
   const screenPoints = useMemo(() => {
-    return points.map((point) => ({
-      x: point.x * imageWidth,
-      y: point.y * imageHeight,
+    return points.map(({ x, y }) => ({
+      x: x * imageWidth,
+      y: y * imageHeight,
     }));
   }, [points, imageWidth, imageHeight]);
 
@@ -38,8 +38,8 @@ export const Overlay: React.FC<OverlayProps> = ({
     <View
       ref={containerRef}
       style={[
-        StyleSheet.absoluteFill,
-        { width: imageWidth, height: imageHeight },
+        // StyleSheet.absoluteFill,
+        //{ width: imageWidth, height: imageHeight },
         style ?? null,
       ]}
       onLayout={onContainerLayout}
