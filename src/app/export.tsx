@@ -3,7 +3,7 @@ import { useTransformedImageStore } from '@stores';
 import { Image } from 'react-native';
 import { Redirect } from 'expo-router';
 import { BaseLayout } from '@templates';
-import { DownloadButton, BackButton } from '@molecules';
+import { DownloadButton } from '@molecules';
 /**
  * Process Image screen component
  * This screen displays the processed image
@@ -14,12 +14,7 @@ export const ExportImageScreen: React.FC = () => {
   if (!destinationUri) return <Redirect href="/" />;
 
   return (
-    <BaseLayout
-      actionItems={[
-        <BackButton key="back-button" />,
-        <DownloadButton key="download-button" />,
-      ]}
-    >
+    <BaseLayout actionItems={[<DownloadButton key="download-button" />]}>
       <Image
         source={{ uri: destinationUri ?? '' }}
         style={{

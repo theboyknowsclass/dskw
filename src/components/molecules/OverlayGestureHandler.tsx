@@ -1,19 +1,15 @@
 import React, { useCallback, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { useOverlayStore } from '@stores';
+import { useOverlayStore, useSourceImageStore } from '@stores';
 import { throttle } from '@utils/throttleUtil';
 import { Corner, Point } from '@types';
 
 type OverlayGestureHandlerProps = {
-  imageWidth: number;
-  imageHeight: number;
   containerSize: { pageX: number; pageY: number };
 };
 
 export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
-  imageWidth,
-  imageHeight,
   containerSize,
 }) => {
   // Use selectors from the store for better performance
@@ -22,6 +18,9 @@ export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
   );
   const updatePoint = useOverlayStore((state) => state.updatePoint);
   const points = useOverlayStore((state) => state.points);
+  const { width: imageWidth, height: imageHeight } = useSourceImageStore(
+    (state) => state.scaledDimensions
+  );
 
   // Convert relative coordinates to screen coordinates
   const screenPoints = useMemo(() => {
@@ -32,22 +31,25 @@ export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
   }, [points, imageWidth, imageHeight]);
 
   // Create a throttled update function
-  const throttledUpdate = throttle(
-    (index: Corner, absoluteX: number, absoluteY: number) => {
-      // Get the container's position
-      const { pageX, pageY } = containerSize;
-      // Calculate coordinates relative to the container
-      const relativeX = (absoluteX - pageX) / imageWidth;
-      const relativeY = (absoluteY - pageY) / imageHeight;
+  const throttledUpdate = useCallback(
+    throttle(
+      (index: Corner, absoluteX: number, absoluteY: number) => {
+        // Get the container's position
+        const { pageX, pageY } = containerSize;
+        // Calculate coordinates relative to the container
+        const relativeX = (absoluteX - pageX) / imageWidth;
+        const relativeY = (absoluteY - pageY) / imageHeight;
 
-      const clampedPoint: Point = {
-        x: Math.max(0, Math.min(1, relativeX)),
-        y: Math.max(0, Math.min(1, relativeY)),
-      };
+        const clampedPoint: Point = {
+          x: Math.max(0, Math.min(1, relativeX)),
+          y: Math.max(0, Math.min(1, relativeY)),
+        };
 
-      updatePoint(index, clampedPoint);
-    },
-    18 // ~60fps
+        updatePoint(index, clampedPoint);
+      },
+      18 // ~60fps
+    ),
+    [containerSize, imageWidth, imageHeight, updatePoint]
   );
 
   // Create a pan gesture for a point
@@ -68,6 +70,10 @@ export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
     },
     [setActivePointIndex, throttledUpdate]
   );
+
+  if (imageWidth === 0 || imageHeight === 0) {
+    return null;
+  }
 
   return (
     <>

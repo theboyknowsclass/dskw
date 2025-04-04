@@ -3,7 +3,12 @@ import { useScreenDimensions } from '@hooks';
 import { useSourceImageStore, useOverlayStore } from '@stores';
 import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { View, Image, LayoutChangeEvent, ImageBackground } from 'react-native';
+import {
+  View,
+  LayoutChangeEvent,
+  ImageBackground,
+  StyleSheet,
+} from 'react-native';
 import { BaseLayout } from '@templates';
 import { Overlay, ZoomPreview } from '@organisms';
 
@@ -81,8 +86,6 @@ export const Edit: React.FC = () => {
     setZoomWindowSize,
   ]);
 
-  if (!scaledDimensions) return <Redirect href="/" />;
-
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
     setContentContainerSize({ width, height });
@@ -91,6 +94,8 @@ export const Edit: React.FC = () => {
   if (!uri) return <Redirect href="/" />;
 
   const { width: scaledWidth, height: scaledHeight } = scaledDimensions;
+
+  if (!scaledWidth || !scaledHeight) return null;
 
   return (
     <BaseLayout actionItems={[<TransformImageButton key="transform-image" />]}>
@@ -119,25 +124,17 @@ export const Edit: React.FC = () => {
             <Logo size={zoomWindowSize} />
           )}
         </View>
-        <View style={{ flex: 1 }}>
-          <View
-            style={{
-              alignSelf: 'center',
+        <View style={styles.imagePreview}>
+          <ImageBackground
+            source={{ uri: uri }}
+            imageStyle={{
               width: scaledWidth,
               height: scaledHeight,
             }}
+            resizeMode="contain"
           >
-            <ImageBackground
-              source={{ uri: uri ?? '' }}
-              style={{
-                width: scaledWidth,
-                height: scaledHeight,
-              }}
-              resizeMode="contain"
-            >
-              <Overlay imageWidth={scaledWidth} imageHeight={scaledHeight} />
-            </ImageBackground>
-          </View>
+            <Overlay />
+          </ImageBackground>
         </View>
       </View>
     </BaseLayout>
@@ -145,3 +142,10 @@ export const Edit: React.FC = () => {
 };
 
 export default Edit;
+
+const styles = StyleSheet.create({
+  imagePreview: {
+    flex: 1,
+    alignSelf: 'center',
+  },
+});

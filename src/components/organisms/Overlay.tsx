@@ -3,16 +3,10 @@ import { View, StyleProp, ViewStyle } from 'react-native';
 import { OverlaySvg, OverlayGestureHandler } from '@molecules';
 
 type OverlayProps = {
-  imageWidth: number;
-  imageHeight: number;
   style?: StyleProp<ViewStyle>;
 };
 
-export const Overlay: React.FC<OverlayProps> = ({
-  imageWidth,
-  imageHeight,
-  style,
-}) => {
+export const Overlay: React.FC<OverlayProps> = ({ style }) => {
   const [containerSize, setContainerSize] = useState({ pageX: 0, pageY: 0 });
   const containerRef = useRef<View>(null); // Ref to track the container's position
 
@@ -34,14 +28,10 @@ export const Overlay: React.FC<OverlayProps> = ({
       onLayout={onContainerLayout}
     >
       {/* SVG Layer (visual only) */}
-      <OverlaySvg imageWidth={imageWidth} imageHeight={imageHeight} />
+      <OverlaySvg />
 
       {/* Separate interaction layer */}
-      <OverlayGestureHandler
-        imageWidth={imageWidth}
-        imageHeight={imageHeight}
-        containerSize={containerSize}
-      />
+      <OverlayGestureHandler containerSize={containerSize} />
     </View>
   );
 };
