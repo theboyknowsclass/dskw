@@ -6,18 +6,25 @@ import { useOverlayStore } from '@stores';
 type OverlaySvgProps = {
   imageWidth: number;
   imageHeight: number;
-  screenPoints: { x: number; y: number }[];
 };
 
 export const OverlaySvg: React.FC<OverlaySvgProps> = ({
   imageWidth,
   imageHeight,
-  screenPoints,
 }) => {
   const { colors } = useTheme();
 
   // Use selectors from the store for better performance
   const activePointIndex = useOverlayStore((state) => state.activePointIndex);
+  const points = useOverlayStore((state) => state.points);
+
+  // Convert relative coordinates to screen coordinates
+  const screenPoints = useMemo(() => {
+    return points.map(({ x, y }) => ({
+      x: x * imageWidth,
+      y: y * imageHeight,
+    }));
+  }, [points, imageWidth, imageHeight]);
 
   const polygonPoints = useMemo(() => {
     return screenPoints.map((point) => `${point.x},${point.y}`).join(' ');

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useOverlayStore } from '@stores';
@@ -8,14 +8,12 @@ import { Corner, Point } from '@types';
 type OverlayGestureHandlerProps = {
   imageWidth: number;
   imageHeight: number;
-  screenPoints: { x: number; y: number }[];
   containerSize: { pageX: number; pageY: number };
 };
 
 export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
   imageWidth,
   imageHeight,
-  screenPoints,
   containerSize,
 }) => {
   // Use selectors from the store for better performance
@@ -23,6 +21,15 @@ export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
     (state) => state.setActivePointIndex
   );
   const updatePoint = useOverlayStore((state) => state.updatePoint);
+  const points = useOverlayStore((state) => state.points);
+
+  // Convert relative coordinates to screen coordinates
+  const screenPoints = useMemo(() => {
+    return points.map(({ x, y }) => ({
+      x: x * imageWidth,
+      y: y * imageHeight,
+    }));
+  }, [points, imageWidth, imageHeight]);
 
   // Create a throttled update function
   const throttledUpdate = throttle(

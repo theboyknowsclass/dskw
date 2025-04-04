@@ -1,6 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { useOverlayStore } from '@stores';
+import React, { useRef, useState } from 'react';
+import { View, StyleProp, ViewStyle } from 'react-native';
 import { OverlaySvg, OverlayGestureHandler } from '@molecules';
 
 type OverlayProps = {
@@ -17,17 +16,6 @@ export const Overlay: React.FC<OverlayProps> = ({
   const [containerSize, setContainerSize] = useState({ pageX: 0, pageY: 0 });
   const containerRef = useRef<View>(null); // Ref to track the container's position
 
-  // Use a selector for better performance
-  const points = useOverlayStore((state) => state.points);
-
-  // Convert relative coordinates to screen coordinates
-  const screenPoints = useMemo(() => {
-    return points.map(({ x, y }) => ({
-      x: x * imageWidth,
-      y: y * imageHeight,
-    }));
-  }, [points, imageWidth, imageHeight]);
-
   const onContainerLayout = () => {
     containerRef.current?.measure((_, __, ___, ____, pageX, pageY) => {
       setContainerSize({ pageX, pageY });
@@ -38,24 +26,20 @@ export const Overlay: React.FC<OverlayProps> = ({
     <View
       ref={containerRef}
       style={[
+        // Note: The absoluteFill and explicit dimensions were commented out by user
         // StyleSheet.absoluteFill,
-        //{ width: imageWidth, height: imageHeight },
+        // { width: imageWidth, height: imageHeight },
         style ?? null,
       ]}
       onLayout={onContainerLayout}
     >
       {/* SVG Layer (visual only) */}
-      <OverlaySvg
-        imageWidth={imageWidth}
-        imageHeight={imageHeight}
-        screenPoints={screenPoints}
-      />
+      <OverlaySvg imageWidth={imageWidth} imageHeight={imageHeight} />
 
       {/* Separate interaction layer */}
       <OverlayGestureHandler
         imageWidth={imageWidth}
         imageHeight={imageHeight}
-        screenPoints={screenPoints}
         containerSize={containerSize}
       />
     </View>
