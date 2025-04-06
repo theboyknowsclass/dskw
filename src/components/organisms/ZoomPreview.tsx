@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, StyleSheet, ImageBackground, Image } from 'react-native';
 import { useOverlayStore, useSourceImageStore } from '@stores';
-import { useTheme } from '@react-navigation/native';
 import { getZoomTransform } from '@utils/zoomUtils';
 import { Logo } from '@molecules';
+import { Crosshair } from '@atoms';
 
 // Import the checkerboard pattern
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -25,7 +25,6 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
     (state) => activePointIndex && state.points[activePointIndex]
   );
   const { uri, originalDimensions } = useSourceImageStore();
-  const { colors } = useTheme();
 
   const zoomWindowSize = size;
 
@@ -72,23 +71,7 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
           />
         </ImageBackground>
 
-        <View style={styles.crosshair} testID="zoom-preview-crosshair">
-          <View
-            style={[
-              styles.crosshairLine,
-              { backgroundColor: `${colors.primary}` },
-            ]}
-          />
-          <View
-            style={[
-              styles.crosshairLine,
-              {
-                backgroundColor: `${colors.primary}`,
-                transform: [{ rotate: '90deg' }],
-              },
-            ]}
-          />
-        </View>
+        <Crosshair testID="zoom-preview-crosshair" />
       </View>
     </View>
   );
@@ -113,22 +96,5 @@ const styles = StyleSheet.create({
   },
   previewImage: {
     position: 'absolute',
-  },
-  crosshair: {
-    position: 'absolute',
-    width: 48,
-    height: 48,
-    top: '50%',
-    left: '50%',
-    marginLeft: -24,
-    marginTop: -24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  crosshairLine: {
-    position: 'absolute',
-    width: 2,
-    height: 48,
-    backgroundColor: 'transparent',
   },
 });
