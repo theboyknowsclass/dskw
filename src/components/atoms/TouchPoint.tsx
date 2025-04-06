@@ -1,9 +1,16 @@
-import React, { useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useDerivedValue,
+  withTiming,
+  runOnJS,
+} from 'react-native-reanimated';
 import { useOverlayStore, useSourceImageStore } from '@stores';
-import { throttle } from '@utils/throttleUtil';
-import { Corner } from '@types';
+import { Corner, Point } from '@types';
+import { useTheme } from '@react-navigation/native';
 
 type TouchPointProps = {
   index: Corner;
@@ -14,70 +21,108 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   index,
   containerSize,
 }) => {
-  // Get data from stores
+  const updatePoint = useOverlayStore((state) => state.updatePoint);
   const setActivePointIndex = useOverlayStore(
     (state) => state.setActivePointIndex
   );
-  const updatePoint = useOverlayStore((state) => state.updatePoint);
-  const point = useOverlayStore((state) => state.points[index]);
+  const theme = useTheme();
+  const points = useOverlayStore((state) => state.points);
+  const point = points[index];
+  const { pageX, pageY } = containerSize;
 
   const { width: imageWidth, height: imageHeight } = useSourceImageStore(
     (state) => state.scaledDimensions
   );
 
-  // Convert relative point to screen coordinates
-  const screenPoint = {
-    x: point.x * imageWidth,
-    y: point.y * imageHeight,
-  };
+  // Create shared values for position in relative coordinates (0-1)
+  const relativeX = useSharedValue(point.x);
+  const relativeY = useSharedValue(point.y);
+  const scale = useSharedValue(1);
+  const isActive = useSharedValue(false);
+  const needsStoreUpdate = useSharedValue(false);
 
-  // Create a throttled update function
-  const throttledUpdate = useCallback(
-    throttle(
-      (cornerIndex: Corner, absoluteX: number, absoluteY: number) => {
-        // Get the container's position
-        const { pageX, pageY } = containerSize;
-        // Calculate coordinates relative to the container
-        const relativeX = (absoluteX - pageX) / imageWidth;
-        const relativeY = (absoluteY - pageY) / imageHeight;
+  // Use derived values to convert to screen coordinates
+  const screenX = useDerivedValue(() => relativeX.value * imageWidth);
+  const screenY = useDerivedValue(() => relativeY.value * imageHeight);
 
-        const clampedPoint = {
-          x: Math.max(0, Math.min(1, relativeX)),
-          y: Math.max(0, Math.min(1, relativeY)),
-        };
+  // Update shared values when points change from outside
+  useEffect(() => {
+    relativeX.value = point.x;
+    relativeY.value = point.y;
+  }, [point.x, point.y]);
 
-        updatePoint(cornerIndex, clampedPoint);
-      },
-      18 // ~60fps
-    ),
-    [containerSize, imageWidth, imageHeight, updatePoint]
+  const convertToRelative = useCallback(
+    (absoluteX: number, absoluteY: number): Point => {
+      'worklet';
+      return {
+        x: Math.max(0, Math.min(1, (absoluteX - pageX) / imageWidth)),
+        y: Math.max(0, Math.min(1, (absoluteY - pageY) / imageHeight)),
+      };
+    },
+    [pageX, pageY, imageWidth, imageHeight]
   );
+
+  const updateStore = useCallback(
+    (x: number, y: number) => {
+      setActivePointIndex(isActive.value ? index : null);
+      updatePoint(index, { x, y });
+    },
+    [index, updatePoint, setActivePointIndex, isActive]
+  );
+
+  // Use effect to batch store updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (needsStoreUpdate.value) {
+        updateStore(relativeX.value, relativeY.value);
+        needsStoreUpdate.value = false;
+      }
+    }, 8); // ~60fps
+
+    return () => clearInterval(interval);
+  }, [updateStore, relativeX, relativeY, needsStoreUpdate]);
 
   // Create a pan gesture for a point
   const panGesture = Gesture.Pan()
+    .maxPointers(1)
+    .runOnJS(false)
     .onStart(() => {
-      setActivePointIndex(index);
+      'worklet';
+      isActive.value = true;
+      scale.value = withTiming(1.2, { duration: 100 });
     })
     .onUpdate((e) => {
-      // Use the throttled update
-      throttledUpdate(index, e.absoluteX, e.absoluteY);
+      'worklet';
+      // Calculate and update relative position directly on UI thread
+      const newPoint = convertToRelative(e.absoluteX, e.absoluteY);
+      relativeX.value = newPoint.x;
+      relativeY.value = newPoint.y;
+
+      // Mark for store update instead of calling immediately
+      needsStoreUpdate.value = true;
     })
     .onEnd(() => {
-      setActivePointIndex(null);
-    })
-    .runOnJS(true);
+      'worklet';
+      isActive.value = false;
+      scale.value = withTiming(1, { duration: 100 });
+      needsStoreUpdate.value = true;
+    });
+
+  const animatedStyles = useAnimatedStyle(() => {
+    'worklet';
+    return {
+      transform: [{ scale: scale.value }],
+      left: screenX.value - 25,
+      top: screenY.value - 25,
+      borderColor: isActive.value
+        ? `${theme.colors.primary}90`
+        : 'rgba(255, 255, 255, 0.5)',
+    };
+  }, [screenX, screenY, isActive, theme.colors.primary]);
 
   return (
     <GestureDetector gesture={panGesture}>
-      <View
-        style={[
-          styles.touchPoint,
-          {
-            left: screenPoint.x - 25,
-            top: screenPoint.y - 25,
-          },
-        ]}
-      />
+      <Animated.View style={[styles.touchPoint, animatedStyles]} />
     </GestureDetector>
   );
 };
@@ -90,6 +135,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderRadius: 25,
     borderWidth: 10,
-    borderColor: `rgba(255, 255, 255, 0.5)`,
   },
 });

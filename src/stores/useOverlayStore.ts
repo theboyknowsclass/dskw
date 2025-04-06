@@ -20,7 +20,7 @@ type OverlayState = {
 };
 
 // Initialize with default points forming a rectangle in the center
-const initialPoints: Point[] = [
+export const initialPoints: Point[] = [
   { x: 0.25, y: 0.25 }, // Top-left
   { x: 0.75, y: 0.25 }, // Top-right
   { x: 0.75, y: 0.75 }, // Bottom-right
@@ -36,7 +36,7 @@ export const useOverlayStore = create<OverlayState>()((set) => ({
   points: initialPoints,
   activePointIndex: null,
   setPoints: (points: Point[]) => set({ points }),
-  setActivePointIndex: (corner: Corner | null) =>
+  setActivePointIndex: (corner: Corner | number | null) =>
     set({ activePointIndex: corner }),
   updatePoint: (corner: Corner, point: Point) =>
     set((state) => {
