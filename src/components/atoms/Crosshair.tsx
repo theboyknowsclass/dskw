@@ -1,11 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 
 type CrosshairProps = {
-  size?: number;
-  color?: string;
-  lineWidth?: number;
   testID?: string;
 };
 
@@ -13,28 +10,28 @@ type CrosshairProps = {
  * Crosshair Component
  *
  * Displays a crosshair overlay that can be used for targeting or marking positions.
- * The crosshair is centered at its container's center point.
- * Uses theme's primary color by default or accepts custom color.
+ * The crosshair is centered at its container's center point and uses the theme's
+ * primary color by default.
+ *
+ * Component is memoized to prevent unnecessary re-renders.
  */
-export const Crosshair: React.FC<CrosshairProps> = ({
-  size = 48,
-  color,
-  lineWidth = 2,
+const CrosshairComponent: React.FC<CrosshairProps> = ({
   testID = 'crosshair',
 }) => {
   const { colors } = useTheme();
-  const crosshairColor = color || colors.primary;
+  const SIZE = 50;
+  const LINE_WIDTH = 2;
 
   // Calculate negative half of size for proper centering
-  const offset = size / 2;
+  const offset = SIZE / 2;
 
   return (
     <View
       style={[
         styles.crosshair,
         {
-          width: size,
-          height: size,
+          width: SIZE,
+          height: SIZE,
           marginLeft: -offset,
           marginTop: -offset,
         },
@@ -45,8 +42,8 @@ export const Crosshair: React.FC<CrosshairProps> = ({
         style={[
           styles.crosshairLine,
           {
-            backgroundColor: crosshairColor,
-            width: lineWidth,
+            backgroundColor: colors.primary,
+            width: LINE_WIDTH,
           },
         ]}
       />
@@ -54,8 +51,8 @@ export const Crosshair: React.FC<CrosshairProps> = ({
         style={[
           styles.crosshairLine,
           {
-            backgroundColor: crosshairColor,
-            width: lineWidth,
+            backgroundColor: colors.primary,
+            width: LINE_WIDTH,
             transform: [{ rotate: '90deg' }],
           },
         ]}
@@ -63,6 +60,9 @@ export const Crosshair: React.FC<CrosshairProps> = ({
     </View>
   );
 };
+
+// Export a memoized version of the component
+export const Crosshair = memo(CrosshairComponent);
 
 const styles = StyleSheet.create({
   crosshair: {
