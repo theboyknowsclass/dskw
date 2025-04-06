@@ -13,11 +13,7 @@ export const Overlay: React.FC = () => {
   };
 
   return (
-    <View
-      ref={containerRef}
-      style={[{ borderWidth: 1, borderColor: 'red' }]}
-      onLayout={onContainerLayout}
-    >
+    <View ref={containerRef} onLayout={onContainerLayout}>
       {/* SVG Layer (visual only) */}
       <OverlaySvg />
 
