@@ -3,6 +3,7 @@ import { View, StyleSheet, ImageBackground, Image } from 'react-native';
 import { useOverlayStore, useSourceImageStore } from '@stores';
 import { useTheme } from '@react-navigation/native';
 import { getZoomTransform } from '@utils/zoomUtils';
+import { Logo } from '@molecules';
 
 // Import the checkerboard pattern
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -19,18 +20,18 @@ type ZoomPreviewProps = {
  */
 export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   // Direct store access - no intermediate state
-  const { points, activePointIndex } = useOverlayStore();
+  const activePointIndex = useOverlayStore((state) => state.activePointIndex);
+  const activePoint = useOverlayStore(
+    (state) => activePointIndex && state.points[activePointIndex]
+  );
   const { uri, originalDimensions } = useSourceImageStore();
   const { colors } = useTheme();
 
   const zoomWindowSize = size;
 
-  // Early return for missing data - pure logic, no state updates
-  if (activePointIndex === null || points.length < 4 || !uri) {
-    return null;
+  if (!activePoint || !uri) {
+    return <Logo size={zoomWindowSize} />;
   }
-  // Get active point directly from store
-  const activePoint = points[activePointIndex];
 
   const transform = getZoomTransform(
     zoomWindowSize,

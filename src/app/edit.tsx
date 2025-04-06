@@ -19,15 +19,12 @@ const ZOOM_WINDOW_PADDING = 40;
 export const Edit: React.FC = () => {
   const { uri, originalDimensions, setScaledDimensions, scaledDimensions } =
     useSourceImageStore();
-  const { activePointIndex } = useOverlayStore();
   const { isLandscape } = useScreenDimensions();
   const [zoomWindowSize, setZoomWindowSize] = useState<number>(0);
   const [contentContainerSize, setContentContainerSize] = useState<{
     width: number;
     height: number;
   }>({ width: 0, height: 0 });
-
-  const isDragging = activePointIndex != null;
 
   useEffect(() => {
     if (!contentContainerSize || !originalDimensions) return;
@@ -118,11 +115,7 @@ export const Edit: React.FC = () => {
             marginBottom: isLandscape ? 0 : ZOOM_WINDOW_PADDING,
           }}
         >
-          {isDragging ? (
-            <ZoomPreview size={zoomWindowSize} />
-          ) : (
-            <Logo size={zoomWindowSize} />
-          )}
+          <ZoomPreview size={zoomWindowSize} />
         </View>
         <View style={styles.imagePreview}>
           <ImageBackground
