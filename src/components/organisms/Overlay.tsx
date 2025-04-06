@@ -1,12 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleProp, ViewStyle } from 'react-native';
+import { View } from 'react-native';
 import { OverlaySvg, OverlayGestureHandler } from '@molecules';
 
-type OverlayProps = {
-  style?: StyleProp<ViewStyle>;
-};
-
-export const Overlay: React.FC<OverlayProps> = ({ style }) => {
+export const Overlay: React.FC = () => {
   const [containerSize, setContainerSize] = useState({ pageX: 0, pageY: 0 });
   const containerRef = useRef<View>(null); // Ref to track the container's position
 
@@ -19,12 +15,7 @@ export const Overlay: React.FC<OverlayProps> = ({ style }) => {
   return (
     <View
       ref={containerRef}
-      style={[
-        // Note: The absoluteFill and explicit dimensions were commented out by user
-        // StyleSheet.absoluteFill,
-        // { width: imageWidth, height: imageHeight },
-        style ?? null,
-      ]}
+      style={[{ borderWidth: 1, borderColor: 'red' }]}
       onLayout={onContainerLayout}
     >
       {/* SVG Layer (visual only) */}

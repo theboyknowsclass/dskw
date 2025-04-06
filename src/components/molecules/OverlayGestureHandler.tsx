@@ -86,8 +86,8 @@ export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
             style={[
               styles.touchPoint,
               {
-                left: point.x - 20,
-                top: point.y - 20,
+                left: point.x - 25,
+                top: point.y - 25,
               },
             ]}
           />
@@ -100,8 +100,11 @@ export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
 const styles = StyleSheet.create({
   touchPoint: {
     position: 'absolute',
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     backgroundColor: 'transparent',
+    borderRadius: 25,
+    borderWidth: 10,
+    borderColor: `rgba(255, 255, 255, 0.5)`,
   },
 });
