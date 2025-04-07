@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   ImageBackground,
-  Image,
   Animated,
   Easing,
 } from 'react-native';
@@ -37,10 +36,12 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   const zoomWindowSize = size;
   const logoOpacity = useRef(new Animated.Value(1)).current;
   const previewOpacity = useRef(new Animated.Value(0)).current;
+  const translateX = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
 
+  // Handle opacity transitions
   useEffect(() => {
     const hasActivePoint = activePointIndex !== null;
-
     Animated.parallel([
       Animated.timing(logoOpacity, {
         toValue: hasActivePoint ? 0 : 1,
@@ -57,13 +58,29 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
     ]).start();
   }, [activePointIndex, logoOpacity, previewOpacity]);
 
-  if (!uri) return <Redirect href="/" />;
+  // Handle translations
+  useEffect(() => {
+    const transform = getZoomTransform(
+      zoomWindowSize,
+      activePoint,
+      originalDimensions
+    );
 
-  const transform = getZoomTransform(
-    zoomWindowSize,
+    const targetX = transform[0]?.translateX ?? 0;
+    const targetY = transform[1]?.translateY ?? 0;
+
+    translateX.setValue(targetX);
+    translateY.setValue(targetY);
+  }, [
+    activePointIndex,
+    translateX,
+    translateY,
     activePoint,
-    originalDimensions
-  );
+    originalDimensions,
+    zoomWindowSize,
+  ]);
+
+  if (!uri) return <Redirect href="/" />;
 
   return (
     <View
@@ -90,14 +107,14 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
           resizeMode="repeat"
           style={styles.checkerboard}
         >
-          <Image
+          <Animated.Image
             source={{ uri }}
             style={[
               styles.previewImage,
               {
                 width: originalDimensions.width,
                 height: originalDimensions.height,
-                transform,
+                transform: [{ translateX }, { translateY }],
               },
             ]}
             resizeMode="contain"
