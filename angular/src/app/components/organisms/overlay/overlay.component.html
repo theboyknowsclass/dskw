@@ -1,0 +1,33 @@
+<div
+  class="overlay-container"
+  (mousedown)="onBackgroundClick($event)"
+  (mousemove)="onMouseMove($event)"
+  (mouseup)="onPointerUp()"
+  (mouseleave)="onPointerUp()"
+  (touchstart)="onTouchStart($event)"
+  (touchmove)="onTouchMove($event)"
+  (touchend)="onPointerUp()"
+  (touchcancel)="onPointerUp()"
+>
+  <!-- Points -->
+  <div
+    *ngFor="let point of points(); let i = index"
+    class="point"
+    [class.active]="i === activePointIndex()"
+    [style.left.px]="point.x"
+    [style.top.px]="point.y"
+    (mousedown)="onPointMouseDown($event, i)"
+    (touchstart)="onPointTouchStart($event, i)"
+  ></div>
+
+  <!-- Lines connecting the points -->
+  <svg class="lines" [attr.width]="imageWidth" [attr.height]="imageHeight">
+    <polygon
+      [attr.points]="polygonPoints()"
+      class="polygon"
+      stroke="white"
+      stroke-width="2"
+      fill="none"
+    />
+  </svg>
+</div> 

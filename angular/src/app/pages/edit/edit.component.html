@@ -1,0 +1,42 @@
+<div class="edit-container" [ngClass]="{ landscape: isLandscape() }">
+  <div class="toolbar">
+    <button routerLink="/">Back</button>
+    <button routerLink="/export">Transform Image</button>
+  </div>
+
+  <div class="content-container">
+    <div
+      class="zoom-preview-container"
+      [style.width.px]="zoomWindowSize()"
+      [style.height.px]="zoomWindowSize()"
+    >
+      <ng-container *ngIf="isDragging(); else logo">
+        <app-zoom-preview [size]="zoomWindowSize()"></app-zoom-preview>
+      </ng-container>
+      <ng-template #logo>
+        <div class="logo">DSKW</div>
+      </ng-template>
+    </div>
+
+    <div class="image-container">
+      <div
+        class="image-wrapper"
+        [style.width.px]="scaledWidth()"
+        [style.height.px]="scaledHeight()"
+      >
+        <img
+          *ngIf="sourceUri()"
+          [src]="sourceUri()"
+          [style.width.px]="scaledWidth()"
+          [style.height.px]="scaledHeight()"
+        />
+
+        <!-- Overlay for image points -->
+        <app-overlay 
+          [imageWidth]="scaledWidth()"
+          [imageHeight]="scaledHeight()">
+        </app-overlay>
+      </div>
+    </div>
+  </div>
+</div> 

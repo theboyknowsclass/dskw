@@ -1,0 +1,28 @@
+<div class="export-container">
+  <div class="toolbar">
+    <button routerLink="/edit">Back</button>
+  </div>
+
+  <div class="content">
+    <h2>Transform Result</h2>
+
+    <div class="result-container">
+      <div *ngIf="isTransforming" class="loading">
+        <p>Transforming image...</p>
+      </div>
+
+      <div *ngIf="!isTransforming && transformedImageUrl" class="transformed-image">
+        <img [src]="transformedImageUrl" alt="Transformed Image" />
+        <button (click)="downloadImage()">Download Image</button>
+      </div>
+
+      <div *ngIf="!isTransforming && !transformedImageUrl" class="error">
+        <p>Failed to transform image.</p>
+        <button routerLink="/edit">Go Back to Edit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden canvas for image processing -->
+  <canvas #canvas style="display: none;"></canvas>
+</div> 

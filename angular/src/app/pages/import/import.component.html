@@ -1,0 +1,37 @@
+<div class="import-container">
+  <div class="toolbar">
+    <button routerLink="/">Back</button>
+  </div>
+
+  <div class="content">
+    <h2>Import Image</h2>
+
+    <div
+      class="drop-area"
+      [class.dragging]="isDragging"
+      (dragover)="onDragOver($event)"
+      (dragleave)="isDragging = false"
+      (drop)="onDrop($event)"
+    >
+      <input
+        type="file"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        #fileInput
+        style="display: none"
+      />
+
+      <div class="drop-message">
+        <p>Drag and drop an image here</p>
+        <p>or</p>
+        <button (click)="fileInput.click()">
+          Select from your computer
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div> 

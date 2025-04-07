@@ -1,0 +1,62 @@
+.zoom-preview {
+  background-color: #f5f5f5;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  position: relative;
+  will-change: contents; /* Optimization hint */
+}
+
+.zoom-content {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  position: relative;
+  will-change: background-position;
+  background-origin: content-box;
+}
+
+.crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.crosshair::before,
+.crosshair::after {
+  content: '';
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.8);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.crosshair::before {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+.crosshair::after {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+}
+
+.no-point {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 1rem;
+  color: #666;
+  text-align: center;
+  padding: 1rem;
+} 

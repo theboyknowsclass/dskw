@@ -1,0 +1,14 @@
+<div class="zoom-preview" [style.width.px]="size" [style.height.px]="size">
+  <div
+    *ngIf="activePoint() && imageUrl()"
+    class="zoom-content"
+    [style.backgroundImage]="'url(' + imageUrl() + ')'"
+    [style.backgroundPosition]="backgroundPosition()"
+    [style.backgroundSize]="backgroundSize()"
+  >
+    <div class="crosshair"></div>
+  </div>
+  <div *ngIf="!activePoint() || !imageUrl()" class="no-point">
+    Select a point to zoom
+  </div>
+</div> 
