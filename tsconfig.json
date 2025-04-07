@@ -9,6 +9,7 @@
       "@organisms": ["./components/organisms/index.ts"],
       "@molecules": ["./components/molecules/index.ts"],
       "@atoms": ["./components/atoms/index.ts"],
+      "@pages": ["./components/pages/index.ts"],
       "@components/*": ["./components/*"],
       "@services": ["./services/index.ts"],
       "@services/*": ["./services/*"],

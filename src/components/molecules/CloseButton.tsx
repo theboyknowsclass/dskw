@@ -12,7 +12,7 @@ interface CloseButtonProps {
  * Uses the Button component with an icon variant for consistent styling.
  */
 export const CloseButton: React.FC<CloseButtonProps> = ({ ...props }) => {
-  const back = () => {
+  const close = () => {
     router.dismiss();
   };
 
@@ -22,7 +22,7 @@ export const CloseButton: React.FC<CloseButtonProps> = ({ ...props }) => {
     <IconButton
       {...props}
       icon="close"
-      onPress={back}
+      onPress={close}
       accessibilityLabel="Close"
       title=""
     />

@@ -1,28 +1,7 @@
-import { Logo, ImagePickerButton } from '@molecules';
-import { BaseLayout } from '@templates';
-import { View, StyleSheet } from 'react-native';
-import { useScreenDimensions } from '@hooks';
+import { Import } from '@pages';
 
-export const Import = () => {
-  const { width, height } = useScreenDimensions();
-  const logoSize = Math.min(width, height) * 0.6;
-
-  return (
-    <BaseLayout>
-      <View style={styles.container}>
-        <Logo size={logoSize} />
-        <ImagePickerButton />
-      </View>
-    </BaseLayout>
-  );
+export const ImportRoute = () => {
+  return <Import />;
 };
 
-export default Import;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+export default ImportRoute;

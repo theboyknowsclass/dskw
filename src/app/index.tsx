@@ -1,3 +1,3 @@
-import { Import } from './import';
+import { ImportRoute } from './import';
 
-export default Import;
+export default ImportRoute;

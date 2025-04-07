@@ -12,6 +12,7 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'no-duplicate-imports': 'error',
+    'no-console': ['error', { allow: ['warn', 'error'] }],
   },
   root: true,
   settings: {
