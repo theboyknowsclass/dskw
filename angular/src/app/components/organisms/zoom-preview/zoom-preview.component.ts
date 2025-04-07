@@ -11,7 +11,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { OverlayStore } from '../../../stores/overlay.store';
 import { SourceImageStore } from '../../../stores/source-image.store';
-import { Point } from '../../../models/point.model';
 
 /** The zoom factor applied to the preview image */
 const ZOOM_FACTOR = 4;
