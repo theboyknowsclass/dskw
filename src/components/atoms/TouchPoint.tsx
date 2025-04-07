@@ -6,7 +6,6 @@ import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   withTiming,
-  runOnJS,
 } from 'react-native-reanimated';
 import { useOverlayStore, useSourceImageStore } from '@stores';
 import { Corner, Point } from '@types';
@@ -26,8 +25,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     (state) => state.setActivePointIndex
   );
   const theme = useTheme();
-  const points = useOverlayStore((state) => state.points);
-  const point = points[index];
+  const point = useOverlayStore((state) => state.points[index]);
   const { pageX, pageY } = containerSize;
 
   const { width: imageWidth, height: imageHeight } = useSourceImageStore(
@@ -37,7 +35,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   // Create shared values for position in relative coordinates (0-1)
   const relativeX = useSharedValue(point.x);
   const relativeY = useSharedValue(point.y);
-  const scale = useSharedValue(1);
+  const scale = useSharedValue(1); // allows for animating the point to be larger when active
   const isActive = useSharedValue(false);
   const needsStoreUpdate = useSharedValue(false);
 
@@ -49,7 +47,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   useEffect(() => {
     relativeX.value = point.x;
     relativeY.value = point.y;
-  }, [point.x, point.y]);
+  }, [point.x, point.y, relativeX, relativeY]);
 
   const convertToRelative = useCallback(
     (absoluteX: number, absoluteY: number): Point => {
@@ -108,6 +106,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
       needsStoreUpdate.value = true;
     });
 
+  // Animated styles for the point
   const animatedStyles = useAnimatedStyle(() => {
     'worklet';
     return {

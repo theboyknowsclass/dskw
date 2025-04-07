@@ -29,7 +29,7 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   // Direct store access - no intermediate state
   const activePointIndex = useOverlayStore((state) => state.activePointIndex);
   const activePoint = useOverlayStore((state) =>
-    activePointIndex ? state.points[activePointIndex] : null
+    state.activePointIndex != null ? state.points[state.activePointIndex] : null
   );
   const { uri, originalDimensions } = useSourceImageStore();
 
@@ -41,7 +41,7 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
 
   // Handle opacity transitions
   useEffect(() => {
-    const hasActivePoint = activePointIndex !== null;
+    const hasActivePoint = activePointIndex != null;
     Animated.parallel([
       Animated.timing(logoOpacity, {
         toValue: hasActivePoint ? 0 : 1,
@@ -66,19 +66,14 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
       originalDimensions
     );
 
+    console.log('transform', transform);
+
     const targetX = transform[0]?.translateX ?? 0;
     const targetY = transform[1]?.translateY ?? 0;
 
     translateX.setValue(targetX);
     translateY.setValue(targetY);
-  }, [
-    activePointIndex,
-    translateX,
-    translateY,
-    activePoint,
-    originalDimensions,
-    zoomWindowSize,
-  ]);
+  }, [translateX, translateY, activePoint, originalDimensions, zoomWindowSize]);
 
   if (!uri) return <Redirect href="/" />;
 
