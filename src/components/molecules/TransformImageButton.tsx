@@ -31,15 +31,15 @@ const styles = StyleSheet.create({
   button: {
     width: 36,
     height: 36,
-    paddingVertical: 24,
-    paddingHorizontal: 24,
+    paddingVertical: 28,
+    paddingHorizontal: 28,
     borderWidth: 2,
     borderRadius: '50%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: 'bold',
   },
 });

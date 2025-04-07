@@ -1,4 +1,4 @@
-import { TransformImageButton } from '@molecules';
+import { BackButton, TransformImageButton } from '@molecules';
 import { useScreenDimensions } from '@hooks';
 import { useSourceImageStore } from '@stores';
 import { useEffect, useState } from 'react';
