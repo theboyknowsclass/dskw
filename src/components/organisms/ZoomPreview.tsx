@@ -66,8 +66,6 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
       originalDimensions
     );
 
-    console.log('transform', transform);
-
     const targetX = transform[0]?.translateX ?? 0;
     const targetY = transform[1]?.translateY ?? 0;
 
