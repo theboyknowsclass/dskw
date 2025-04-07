@@ -1,8 +1,14 @@
+import { Point } from '@types';
+
 export const getZoomTransform = (
   zoomWindowSize: number,
-  activePoint: { x: number; y: number },
+  activePoint: Point | null,
   originalDimensions: { width: number; height: number }
 ) => {
+  if (!activePoint) {
+    return [];
+  }
+
   // Bound checking for the point coordinates
   const pointX = Math.max(0, Math.min(1, activePoint.x));
   const pointY = Math.max(0, Math.min(1, activePoint.y));

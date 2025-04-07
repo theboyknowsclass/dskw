@@ -1,9 +1,17 @@
-import React from 'react';
-import { View, StyleSheet, ImageBackground, Image } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import {
+  View,
+  StyleSheet,
+  ImageBackground,
+  Image,
+  Animated,
+  Easing,
+} from 'react-native';
 import { useOverlayStore, useSourceImageStore } from '@stores';
 import { getZoomTransform } from '@utils/zoomUtils';
 import { Logo } from '@molecules';
 import { Crosshair } from '@atoms';
+import { Redirect } from 'expo-router';
 
 // Import the checkerboard pattern
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -21,16 +29,35 @@ type ZoomPreviewProps = {
 export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   // Direct store access - no intermediate state
   const activePointIndex = useOverlayStore((state) => state.activePointIndex);
-  const activePoint = useOverlayStore(
-    (state) => activePointIndex && state.points[activePointIndex]
+  const activePoint = useOverlayStore((state) =>
+    activePointIndex ? state.points[activePointIndex] : null
   );
   const { uri, originalDimensions } = useSourceImageStore();
 
   const zoomWindowSize = size;
+  const logoOpacity = useRef(new Animated.Value(1)).current;
+  const previewOpacity = useRef(new Animated.Value(0)).current;
 
-  if (!activePoint || !uri) {
-    return <Logo size={zoomWindowSize} />;
-  }
+  useEffect(() => {
+    const hasActivePoint = activePointIndex !== null;
+
+    Animated.parallel([
+      Animated.timing(logoOpacity, {
+        toValue: hasActivePoint ? 0 : 1,
+        duration: 300,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }),
+      Animated.timing(previewOpacity, {
+        toValue: hasActivePoint ? 1 : 0,
+        duration: 300,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [activePointIndex, logoOpacity, previewOpacity]);
+
+  if (!uri) return <Redirect href="/" />;
 
   const transform = getZoomTransform(
     zoomWindowSize,
@@ -44,10 +71,17 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
       testID="zoom-preview-container"
       pointerEvents="none"
     >
-      <View
+      <Animated.View style={[{ opacity: logoOpacity }]}>
+        <Logo size={zoomWindowSize} />
+      </Animated.View>
+      <Animated.View
         style={[
           styles.previewContainer,
-          { width: zoomWindowSize, height: zoomWindowSize },
+          {
+            width: zoomWindowSize,
+            height: zoomWindowSize,
+            opacity: previewOpacity,
+          },
         ]}
         testID="zoom-preview-background"
       >
@@ -72,7 +106,7 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
         </ImageBackground>
 
         <Crosshair testID="zoom-preview-crosshair" />
-      </View>
+      </Animated.View>
     </View>
   );
 };
@@ -85,7 +119,7 @@ const styles = StyleSheet.create({
   },
   previewContainer: {
     overflow: 'hidden',
-    position: 'relative',
+    position: 'absolute',
     borderRadius: '50%',
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.3)',
