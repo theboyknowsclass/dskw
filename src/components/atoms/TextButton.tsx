@@ -6,6 +6,8 @@ import {
   TouchableOpacityProps,
   ActivityIndicator,
   ViewStyle,
+  TextStyle,
+  StyleProp,
 } from 'react-native';
 import { Text } from './Text';
 
@@ -18,6 +20,8 @@ interface TextButtonProps extends TouchableOpacityProps {
   variant?: 'primary' | 'secondary' | 'outline';
   /** The size of the button */
   size?: 'small' | 'medium' | 'large';
+  /** The size of the text */
+  textStyle?: StyleProp<TextStyle>;
   /** Whether the button is disabled */
   disabled?: boolean;
 }
@@ -57,6 +61,7 @@ export const TextButton: React.FC<TextButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   disabled = false,
+  textStyle,
   style,
   ...rest
 }) => {
@@ -116,7 +121,7 @@ export const TextButton: React.FC<TextButtonProps> = ({
       {loading ? (
         <ActivityIndicator size="small" color={colors.primary} />
       ) : (
-        <Text color={getTextColor()} size={size}>
+        <Text color={getTextColor()} size={size} style={textStyle}>
           {title}
         </Text>
       )}

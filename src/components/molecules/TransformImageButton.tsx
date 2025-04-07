@@ -1,6 +1,6 @@
-import { IconButton } from '@atoms';
+import { TextButton } from '@atoms';
 import { useTransformImage } from '@hooks';
-
+import { StyleSheet } from 'react-native';
 export const TransformImageButton: React.FC = () => {
   const { handleProcess, isLoading, error } = useTransformImage();
 
@@ -12,13 +12,34 @@ export const TransformImageButton: React.FC = () => {
   };
 
   return (
-    <IconButton
+    <TextButton
       key="transform-image"
-      icon="done"
-      accessibilityLabel="Transform Image"
+      accessibilityLabel="Go"
       onPress={onTransformImagePress}
       loading={isLoading}
       disabled={isLoading}
+      title="Go"
+      variant="outline"
+      style={styles.button}
+      size="medium"
+      textStyle={styles.text}
     />
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    width: 36,
+    height: 36,
+    paddingVertical: 24,
+    paddingHorizontal: 24,
+    borderWidth: 2,
+    borderRadius: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});

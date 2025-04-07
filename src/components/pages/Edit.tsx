@@ -82,7 +82,10 @@ export const Edit: React.FC = () => {
   if (!scaledWidth || !scaledHeight) return null;
 
   return (
-    <BaseLayout actionItems={[<TransformImageButton key="transform-image" />]}>
+    <BaseLayout>
+      <BaseLayout.ActionItems>
+        <TransformImageButton key="transform-image" />
+      </BaseLayout.ActionItems>
       <View
         onLayout={onLayout}
         style={{

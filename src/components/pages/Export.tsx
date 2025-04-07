@@ -10,7 +10,10 @@ export const Export: React.FC = () => {
   if (!destinationUri) return null;
 
   return (
-    <BaseLayout actionItems={[<DownloadButton key="download-button" />]}>
+    <BaseLayout>
+      <BaseLayout.ActionItems>
+        <DownloadButton key="download-button" />
+      </BaseLayout.ActionItems>
       <Image
         source={{ uri: destinationUri }}
         style={{
