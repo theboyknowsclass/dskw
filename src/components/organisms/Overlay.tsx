@@ -1,24 +1,29 @@
 import React, { useRef, useState } from 'react';
 import { View } from 'react-native';
 import { OverlaySvg, OverlayGestureHandler } from '@molecules';
+import { Dimensions } from '@types';
 
-export const Overlay: React.FC = () => {
-  const [containerSize, setContainerSize] = useState({ pageX: 0, pageY: 0 });
+interface OverlayProps {
+  dimensions: Dimensions;
+}
+
+export const Overlay: React.FC<OverlayProps> = ({ dimensions }) => {
+  const [offset, setOffset] = useState({ xOffset: 0, yOffset: 0 });
   const containerRef = useRef<View>(null); // Ref to track the container's position
 
   const onContainerLayout = () => {
     containerRef.current?.measure((_, __, ___, ____, pageX, pageY) => {
-      setContainerSize({ pageX, pageY });
+      setOffset({ xOffset: pageX, yOffset: pageY });
     });
   };
 
   return (
     <View ref={containerRef} onLayout={onContainerLayout}>
       {/* SVG Layer (visual only) */}
-      <OverlaySvg />
+      <OverlaySvg dimensions={dimensions} />
 
       {/* Separate interaction layer */}
-      <OverlayGestureHandler containerSize={containerSize} />
+      <OverlayGestureHandler offset={offset} dimensions={dimensions} />
     </View>
   );
 };

@@ -1,5 +1,5 @@
 import { Logo, ImagePickerButton } from '@molecules';
-import { BaseLayout } from '@templates';
+import { AppShellLayout } from '@templates';
 import { View, StyleSheet } from 'react-native';
 import { useScreenDimensions } from '@hooks';
 
@@ -8,12 +8,12 @@ export const Import: React.FC = () => {
   const logoSize = Math.min(width, height) * 0.6;
 
   return (
-    <BaseLayout>
+    <AppShellLayout>
       <View style={styles.container}>
         <Logo size={logoSize} />
         <ImagePickerButton />
       </View>
-    </BaseLayout>
+    </AppShellLayout>
   );
 };
 

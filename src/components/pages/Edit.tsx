@@ -1,126 +1,109 @@
-import { BackButton, TransformImageButton } from '@molecules';
+import { TransformImageButton } from '@molecules';
 import { useScreenDimensions } from '@hooks';
 import { useSourceImageStore } from '@stores';
-import { useEffect, useState } from 'react';
-import {
-  View,
-  LayoutChangeEvent,
-  ImageBackground,
-  StyleSheet,
-} from 'react-native';
-import { BaseLayout } from '@templates';
+import { View, ImageBackground, StyleSheet } from 'react-native';
+import { AppShellLayout } from '@templates';
 import { Overlay, ZoomPreview } from '@organisms';
+import { useContentMeasurements } from 'contexts/ContentMeasurementsContext';
+import { Text } from '@atoms';
 
 const MAX_ZOOM_WINDOW_SIZE = 400;
 const MAX_ZOOM_WINDOW_RATIO = 0.5;
 const ZOOM_WINDOW_PADDING = 40;
 
-export const Edit: React.FC = () => {
-  const { uri, originalDimensions, setScaledDimensions, scaledDimensions } =
-    useSourceImageStore();
+const EditContent: React.FC = () => {
+  const { uri, originalDimensions } = useSourceImageStore();
   const { isLandscape } = useScreenDimensions();
-  const [zoomWindowSize, setZoomWindowSize] = useState<number>(0);
-  const [contentContainerSize, setContentContainerSize] = useState<{
-    width: number;
-    height: number;
-  }>({ width: 0, height: 0 });
 
-  useEffect(() => {
-    if (!contentContainerSize || !originalDimensions) return;
-    const { width: contentWidth, height: contentHeight } = contentContainerSize;
+  const { dimensions: contentContainerSize, isLoading } =
+    useContentMeasurements();
 
-    let zoomWindowSize = 0;
-    let maxImageWidth = 0;
-    let maxImageHeight = 0;
+  if (isLoading) return <Text>Loading...</Text>;
 
-    if (isLandscape) {
-      zoomWindowSize = Math.min(
-        contentWidth * MAX_ZOOM_WINDOW_RATIO,
-        MAX_ZOOM_WINDOW_SIZE
-      );
+  // calculates the layout of the screen based on orientation and screen size
+  const { width: contentWidth, height: contentHeight } = contentContainerSize;
 
-      maxImageWidth = contentWidth - zoomWindowSize - ZOOM_WINDOW_PADDING;
-      maxImageHeight = contentHeight;
-    } else {
-      zoomWindowSize = Math.min(
-        contentHeight * MAX_ZOOM_WINDOW_RATIO,
-        MAX_ZOOM_WINDOW_SIZE
-      );
+  let zoomWindowSize = 0;
+  let maxImageWidth = 0;
+  let maxImageHeight = 0;
 
-      maxImageWidth = contentWidth;
-      maxImageHeight = contentHeight - zoomWindowSize - ZOOM_WINDOW_PADDING;
-    }
+  if (isLandscape) {
+    zoomWindowSize = Math.min(
+      contentWidth * MAX_ZOOM_WINDOW_RATIO,
+      MAX_ZOOM_WINDOW_SIZE
+    );
 
-    const { width: imageWidth, height: imageHeight } = originalDimensions;
+    maxImageWidth = contentWidth - zoomWindowSize - ZOOM_WINDOW_PADDING;
+    maxImageHeight = contentHeight;
+  } else {
+    zoomWindowSize = Math.min(
+      contentHeight * MAX_ZOOM_WINDOW_RATIO,
+      MAX_ZOOM_WINDOW_SIZE
+    );
 
-    const widthScale = maxImageWidth / imageWidth;
-    const heightScale = maxImageHeight / imageHeight;
+    maxImageWidth = contentWidth;
+    maxImageHeight = contentHeight - zoomWindowSize - ZOOM_WINDOW_PADDING;
+  }
 
-    const scaleFactor = Math.min(widthScale, heightScale);
+  const { width: imageWidth, height: imageHeight } = originalDimensions;
 
-    setScaledDimensions({
-      width: imageWidth * scaleFactor,
-      height: imageHeight * scaleFactor,
-    });
+  const widthScale = maxImageWidth / imageWidth;
+  const heightScale = maxImageHeight / imageHeight;
 
-    setZoomWindowSize(zoomWindowSize);
-  }, [
-    contentContainerSize,
-    isLandscape,
-    originalDimensions,
-    setScaledDimensions,
-    setZoomWindowSize,
-  ]);
+  const scaleFactor = Math.min(widthScale, heightScale);
 
-  const onLayout = (event: LayoutChangeEvent) => {
-    const { width, height } = event.nativeEvent.layout;
-    setContentContainerSize({ width, height });
-  };
-
-  const { width: scaledWidth, height: scaledHeight } = scaledDimensions;
-
-  if (!scaledWidth || !scaledHeight) return null;
+  const scaledWidth = imageWidth * scaleFactor;
+  const scaledHeight = imageHeight * scaleFactor;
 
   return (
-    <BaseLayout>
-      <BaseLayout.ActionItems>
-        <TransformImageButton key="transform-image" />
-      </BaseLayout.ActionItems>
+    <View
+      style={{
+        width: '100%',
+        height: '100%',
+        flexDirection: isLandscape ? 'row' : 'column',
+      }}
+    >
       <View
-        onLayout={onLayout}
         style={{
-          width: '100%',
-          height: '100%',
-          flexDirection: isLandscape ? 'row' : 'column',
+          flex: 0,
+          position: 'relative',
+          alignSelf: 'center',
+          minWidth: zoomWindowSize,
+          minHeight: zoomWindowSize,
+          marginRight: isLandscape ? ZOOM_WINDOW_PADDING : 0,
+          marginBottom: isLandscape ? 0 : ZOOM_WINDOW_PADDING,
         }}
       >
-        <View
-          style={{
-            flex: 0,
-            position: 'relative',
-            alignSelf: 'center',
-            minWidth: zoomWindowSize,
-            minHeight: zoomWindowSize,
-            marginRight: isLandscape ? ZOOM_WINDOW_PADDING : 0,
-            marginBottom: isLandscape ? 0 : ZOOM_WINDOW_PADDING,
-          }}
-        >
-          <ZoomPreview size={zoomWindowSize} />
-        </View>
-        <View style={styles.imagePreview}>
-          <ImageBackground
-            source={uri ? { uri } : undefined}
-            imageStyle={{
-              width: scaledWidth,
-              height: scaledHeight,
-            }}
-            resizeMode="contain"
-          >
-            <Overlay />
-          </ImageBackground>
-        </View>
+        <ZoomPreview size={zoomWindowSize} />
       </View>
-    </BaseLayout>
+      <View style={styles.imagePreview}>
+        <ImageBackground
+          source={uri ? { uri } : undefined}
+          imageStyle={{
+            width: scaledWidth,
+            height: scaledHeight,
+          }}
+          resizeMode="contain"
+        >
+          <Overlay dimensions={{ width: scaledWidth, height: scaledHeight }} />
+        </ImageBackground>
+      </View>
+    </View>
+  );
+};
+
+const EditActionItems: React.FC = () => {
+  return <TransformImageButton />;
+};
+
+export const Edit: React.FC = () => {
+  return (
+    <AppShellLayout>
+      <AppShellLayout.ActionItems>
+        <EditActionItems />
+      </AppShellLayout.ActionItems>
+      <EditContent />
+    </AppShellLayout>
   );
 };
 

@@ -1,14 +1,16 @@
 import React, { useMemo } from 'react';
 import { useOverlayStore } from '@stores';
-import { Corner } from '@types';
+import { Corner, Dimensions } from '@types';
 import { TouchPoint } from '../atoms';
 
 type OverlayGestureHandlerProps = {
-  containerSize: { pageX: number; pageY: number };
+  offset: { xOffset: number; yOffset: number };
+  dimensions: Dimensions;
 };
 
 export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
-  containerSize,
+  offset,
+  dimensions,
 }) => {
   // Use selectors from the store for better performance
   const pointsLength = useOverlayStore((state) => state.points.length);
@@ -23,7 +25,8 @@ export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
         <TouchPoint
           key={`point-${index}`}
           index={index as Corner}
-          containerSize={containerSize}
+          parentOffset={offset}
+          parentDimensions={dimensions}
         />
       ))}
     </>

@@ -1,9 +1,13 @@
 import { useScreenDimensions } from '@hooks';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
 import { BackButton, SettingsButton, ThemeToggle } from '@molecules';
 import React, { ReactNode } from 'react';
+import {
+  ContentMeasurementsProvider,
+  useContentMeasurements,
+} from '../../contexts/ContentMeasurementsContext';
 
-interface BaseLayoutProps {
+interface AppShellLayoutProps {
   children?: React.ReactNode | React.ReactNode[];
 }
 
@@ -14,14 +18,15 @@ interface ActionItemsProps {
 // ActionItems component that will be used as a compound component
 const ActionItems: React.FC<ActionItemsProps> = () => null;
 
-// Define the type for the BaseLayout component with its static properties
-interface BaseLayoutComponent extends React.FC<BaseLayoutProps> {
+// Define the type for the AppShellLayout component with its static properties
+interface AppShellLayoutComponent extends React.FC<AppShellLayoutProps> {
   ActionItems: React.FC<ActionItemsProps>;
 }
 
-// Create the BaseLayout component
-export const BaseLayout: BaseLayoutComponent = ({ children }) => {
+// Create the AppShellLayout component
+const AppShell: AppShellLayoutComponent = ({ children }) => {
   const { isLandscape } = useScreenDimensions();
+  const { setIsLoading, setDimensions } = useContentMeasurements();
 
   // Extract action items from children
   const actionItems: ReactNode[] = [];
@@ -65,6 +70,12 @@ export const BaseLayout: BaseLayoutComponent = ({ children }) => {
     isLandscape ? styles.barLandscape : styles.barPortrait,
   ];
 
+  const onLayout = (event: LayoutChangeEvent) => {
+    const { width, height } = event.nativeEvent.layout;
+    setDimensions({ width, height });
+    setIsLoading(false);
+  };
+
   return (
     <View style={rootContainerStyles}>
       <View style={navigationBarStyles}>
@@ -76,7 +87,9 @@ export const BaseLayout: BaseLayoutComponent = ({ children }) => {
           <SettingsButton />
         </View>
       </View>
-      <View style={styles.contentContainer}>{otherChildren}</View>
+      <View style={styles.contentContainer} onLayout={onLayout}>
+        {otherChildren}
+      </View>
       {actionItems.length > 0 && (
         <View style={actionBarStyles}>{actionItems}</View>
       )}
@@ -84,8 +97,19 @@ export const BaseLayout: BaseLayoutComponent = ({ children }) => {
   );
 };
 
-// Attach ActionItems as a static property to BaseLayout
-BaseLayout.ActionItems = ActionItems;
+AppShell.ActionItems = ActionItems;
+
+// Export a wrapped version of AppShellLayout with ContentMeasurementsProvider
+export const AppShellLayout: AppShellLayoutComponent = (props) => {
+  return (
+    <ContentMeasurementsProvider>
+      <AppShell {...props} />
+    </ContentMeasurementsProvider>
+  );
+};
+
+// Attach ActionItems to the wrapped component
+AppShellLayout.ActionItems = ActionItems;
 
 const styles = StyleSheet.create({
   rootContainer: {

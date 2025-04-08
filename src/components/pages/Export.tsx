@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTransformedImageStore } from '@stores';
 import { Image } from 'react-native';
-import { BaseLayout } from '@templates';
+import { AppShellLayout } from '@templates';
 import { DownloadButton } from '@molecules';
 
 export const Export: React.FC = () => {
@@ -10,10 +10,10 @@ export const Export: React.FC = () => {
   if (!destinationUri) return null;
 
   return (
-    <BaseLayout>
-      <BaseLayout.ActionItems>
+    <AppShellLayout>
+      <AppShellLayout.ActionItems>
         <DownloadButton key="download-button" />
-      </BaseLayout.ActionItems>
+      </AppShellLayout.ActionItems>
       <Image
         source={{ uri: destinationUri }}
         style={{
@@ -22,6 +22,6 @@ export const Export: React.FC = () => {
         }}
         resizeMode="contain"
       />
-    </BaseLayout>
+    </AppShellLayout>
   );
 };
