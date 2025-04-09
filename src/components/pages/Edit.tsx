@@ -14,11 +14,7 @@ const ZOOM_WINDOW_PADDING = 40;
 const EditContent: React.FC = () => {
   const { uri, originalDimensions } = useSourceImageStore();
   const { isLandscape } = useScreenDimensions();
-
-  const { dimensions: contentContainerSize, isLoading } =
-    useContentMeasurements();
-
-  if (isLoading) return <Text>Loading...</Text>;
+  const { dimensions: contentContainerSize } = useContentMeasurements();
 
   // calculates the layout of the screen based on orientation and screen size
   const { width: contentWidth, height: contentHeight } = contentContainerSize;

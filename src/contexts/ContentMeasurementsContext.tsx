@@ -23,7 +23,7 @@ export const ContentMeasurementsProvider: React.FC<
     width: 0,
     height: 0,
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const value = {
     dimensions,

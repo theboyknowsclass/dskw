@@ -12,8 +12,11 @@ export const Logo: React.FC<LogoProps> = ({ size }) => {
   const background = dark ? colors.primary : colors.background;
   const stroke = colors.primary;
 
+  const width = Math.max(size, 0);
+  const height = Math.max(size, 0);
+
   return (
-    <Svg viewBox="0 0 1024 1024" width={size} height={size}>
+    <Svg viewBox="0 0 1024 1024" width={width} height={height}>
       <Polygon
         points="150,150 875,200 800,700 250,875"
         fill={foreground}
@@ -59,11 +62,11 @@ export const Logo: React.FC<LogoProps> = ({ size }) => {
         textAnchor="middle"
         fill={background}
         stroke={background}
-        fontSize="160"
+        fontSize="130"
         fontFamily="Orbitron_500Medium"
         fontWeight="500"
       >
-        dSkw
+        DSKW
       </Text>
     </Svg>
   );

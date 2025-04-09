@@ -1,14 +1,23 @@
 import { useScreenDimensions } from '@hooks';
 import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
+import Animated, {
+  useSharedValue,
+  withTiming,
+  useAnimatedStyle,
+  Easing,
+} from 'react-native-reanimated';
 import { BackButton, SettingsButton, ThemeToggle } from '@molecules';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import {
   ContentMeasurementsProvider,
   useContentMeasurements,
 } from '../../contexts/ContentMeasurementsContext';
+import { LoadingSpinner } from '@atoms';
 
 interface AppShellLayoutProps {
   children?: React.ReactNode | React.ReactNode[];
+  isLoading?: boolean;
+  loadingText?: string;
 }
 
 interface ActionItemsProps {
@@ -25,26 +34,41 @@ interface AppShellLayoutComponent extends React.FC<AppShellLayoutProps> {
 
 // Create the AppShellLayout component
 const AppShell: AppShellLayoutComponent = ({ children }) => {
-  const { isLandscape } = useScreenDimensions();
-  const { setIsLoading, setDimensions } = useContentMeasurements();
+  const { isLandscape, width, height } = useScreenDimensions();
+  const { setIsLoading, setDimensions, isLoading } = useContentMeasurements();
+
+  // Create shared values for opacity
+  const contentOpacity = useSharedValue(0);
+  const loadingOpacity = useSharedValue(1);
+
+  // Create animated styles
+  const contentAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: contentOpacity.value,
+  }));
+
+  const loadingAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: loadingOpacity.value,
+  }));
+
+  // Update animations when isLoading changes
+  useEffect(() => {
+    contentOpacity.value = withTiming(isLoading ? 0 : 1, {
+      duration: 800,
+      easing: isLoading ? Easing.out(Easing.ease) : Easing.in(Easing.ease),
+    });
+
+    loadingOpacity.value = withTiming(isLoading ? 1 : 0, {
+      duration: 800,
+      easing: isLoading ? Easing.in(Easing.ease) : Easing.out(Easing.ease),
+    });
+  }, [isLoading, contentOpacity, loadingOpacity]);
+
+  const loadingAnimationSize = (isLandscape ? width : height) * 0.3;
 
   // Extract action items from children
-  const actionItems: ReactNode[] = [];
-  const otherChildren: ReactNode[] = [];
+  const { otherChildren, actionItems } = seperateChildren(children);
 
-  React.Children.forEach(children, (child) => {
-    if (React.isValidElement(child) && child.type === ActionItems) {
-      // Collect action items
-      if (child.props.children) {
-        const items = React.Children.toArray(child.props.children);
-        actionItems.push(...items);
-      }
-    } else {
-      // Collect other children
-      otherChildren.push(child);
-    }
-  });
-
+  // responsive styles for orientation
   const rootContainerStyles = [
     styles.rootContainer,
     isLandscape ? styles.landscapeContainer : styles.portraitContainer,
@@ -87,12 +111,17 @@ const AppShell: AppShellLayoutComponent = ({ children }) => {
           <SettingsButton />
         </View>
       </View>
-      <View style={styles.contentContainer} onLayout={onLayout}>
-        {otherChildren}
+      <View style={styles.mainContent} onLayout={onLayout}>
+        <View style={styles.animatedContainer}>
+          <Animated.View style={[styles.loading, loadingAnimatedStyle]}>
+            <LoadingSpinner size={loadingAnimationSize} animating={isLoading} />
+          </Animated.View>
+          <Animated.View style={[styles.content, contentAnimatedStyle]}>
+            {otherChildren}
+          </Animated.View>
+        </View>
       </View>
-      {actionItems.length > 0 && (
-        <View style={actionBarStyles}>{actionItems}</View>
-      )}
+      <View style={actionBarStyles}>{actionItems}</View>
     </View>
   );
 };
@@ -123,9 +152,14 @@ const styles = StyleSheet.create({
   landscapeContainer: {
     flexDirection: 'row',
   },
-  contentContainer: {
+  mainContent: {
     flex: 1,
     margin: 10,
+    position: 'relative',
+  },
+  animatedContainer: {
+    flex: 1,
+    position: 'relative',
   },
   navigationBarBase: {
     display: 'flex',
@@ -154,4 +188,52 @@ const styles = StyleSheet.create({
   barLandscape: {
     flexDirection: 'column',
   },
+  content: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+  loading: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: -1,
+  },
 });
+
+const seperateChildren = (
+  children:
+    | string
+    | number
+    | boolean
+    | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
+    | Iterable<React.ReactNode>
+    | React.ReactPortal
+    | React.ReactNode[]
+    | null
+    | undefined
+): { actionItems: ReactNode[]; otherChildren: ReactNode[] } => {
+  const actionItems: ReactNode[] = [];
+  const otherChildren: ReactNode[] = [];
+
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child) && child.type === ActionItems) {
+      // Collect action items
+      if (child.props.children) {
+        const items = React.Children.toArray(child.props.children);
+        actionItems.push(...items);
+      }
+    } else {
+      // Collect other children
+      otherChildren.push(child);
+    }
+  });
+  return { otherChildren, actionItems };
+};
