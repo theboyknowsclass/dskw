@@ -3,14 +3,18 @@ import { Dimensions } from '@types';
 
 interface ContentMeasurementsContextType {
   dimensions: Dimensions;
-  isLoading: boolean;
+  isReady: boolean;
   setDimensions: (dimensions: Dimensions) => void;
-  setIsLoading: (isLoading: boolean) => void;
+  setIsReady: (isReady: boolean) => void;
 }
 
-const ContentMeasurementsContext = createContext<
-  ContentMeasurementsContextType | undefined
->(undefined);
+export const ContentMeasurementsContext =
+  createContext<ContentMeasurementsContextType>({
+    dimensions: { width: 0, height: 0 },
+    setDimensions: () => {},
+    isReady: false,
+    setIsReady: () => {},
+  });
 
 interface ContentMeasurementsProviderProps {
   children: ReactNode;
@@ -23,13 +27,13 @@ export const ContentMeasurementsProvider: React.FC<
     width: 0,
     height: 0,
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   const value = {
     dimensions,
-    isLoading,
+    isReady,
     setDimensions,
-    setIsLoading,
+    setIsReady,
   };
 
   return (

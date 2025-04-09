@@ -35,7 +35,7 @@ interface AppShellLayoutComponent extends React.FC<AppShellLayoutProps> {
 // Create the AppShellLayout component
 const AppShell: AppShellLayoutComponent = ({ children }) => {
   const { isLandscape, width, height } = useScreenDimensions();
-  const { setIsLoading, setDimensions, isLoading } = useContentMeasurements();
+  const { setIsReady, setDimensions, isReady } = useContentMeasurements();
 
   // Create shared values for opacity
   const contentOpacity = useSharedValue(0);
@@ -50,18 +50,18 @@ const AppShell: AppShellLayoutComponent = ({ children }) => {
     opacity: loadingOpacity.value,
   }));
 
-  // Update animations when isLoading changes
+  // Update animations when isReady changes
   useEffect(() => {
-    contentOpacity.value = withTiming(isLoading ? 0 : 1, {
+    contentOpacity.value = withTiming(isReady ? 1 : 0, {
       duration: 800,
-      easing: isLoading ? Easing.out(Easing.ease) : Easing.in(Easing.ease),
+      easing: Easing.inOut(Easing.ease),
     });
 
-    loadingOpacity.value = withTiming(isLoading ? 1 : 0, {
+    loadingOpacity.value = withTiming(isReady ? 0 : 1, {
       duration: 800,
-      easing: isLoading ? Easing.in(Easing.ease) : Easing.out(Easing.ease),
+      easing: Easing.inOut(Easing.ease),
     });
-  }, [isLoading, contentOpacity, loadingOpacity]);
+  }, [isReady, contentOpacity, loadingOpacity]);
 
   const loadingAnimationSize = (isLandscape ? width : height) * 0.3;
 
@@ -97,7 +97,7 @@ const AppShell: AppShellLayoutComponent = ({ children }) => {
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
     setDimensions({ width, height });
-    setIsLoading(false);
+    setIsReady(true);
   };
 
   return (
@@ -114,7 +114,7 @@ const AppShell: AppShellLayoutComponent = ({ children }) => {
       <View style={styles.mainContent} onLayout={onLayout}>
         <View style={styles.animatedContainer}>
           <Animated.View style={[styles.loading, loadingAnimatedStyle]}>
-            <LoadingSpinner size={loadingAnimationSize} animating={isLoading} />
+            <LoadingSpinner size={loadingAnimationSize} animating={!isReady} />
           </Animated.View>
           <Animated.View style={[styles.content, contentAnimatedStyle]}>
             {otherChildren}
