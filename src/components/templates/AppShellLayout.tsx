@@ -208,7 +208,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const seperateChildren = (
+// Separate children into action items and other children
+const separateChildren = (
   children:
     | string
     | number
