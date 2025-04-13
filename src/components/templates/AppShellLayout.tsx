@@ -66,7 +66,7 @@ const AppShell: React.FC<AppShellLayoutProps> = ({ children }) => {
   const loadingAnimationSize = (isLandscape ? width : height) * 0.3;
 
   // Extract action items from children
-  const { otherChildren, actionItems } = seperateChildren(children);
+  const { otherChildren, actionItems } = separateChildren(children);
 
   // responsive styles for orientation
   const rootContainerStyles = [
