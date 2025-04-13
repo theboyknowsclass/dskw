@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   closeButtonContainer: {
     position: 'absolute',
-    top: 10,
-    left: 10,
+    top: 16,
+    left: 16,
   },
 });

@@ -5,7 +5,6 @@ import { View, ImageBackground, StyleSheet } from 'react-native';
 import { AppShellLayout } from '@templates';
 import { Overlay, ZoomPreview } from '@organisms';
 import { useContentMeasurements } from 'contexts/ContentMeasurementsContext';
-import { Text } from '@atoms';
 
 const MAX_ZOOM_WINDOW_SIZE = 400;
 const MAX_ZOOM_WINDOW_RATIO = 0.5;

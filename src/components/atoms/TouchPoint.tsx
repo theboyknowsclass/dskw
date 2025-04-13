@@ -111,8 +111,8 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     'worklet';
     return {
       transform: [{ scale: scale.value }],
-      left: screenX.value - 25,
-      top: screenY.value - 25,
+      left: screenX.value - 24,
+      top: screenY.value - 24,
       borderColor: isActive.value
         ? `${theme.colors.primary}90`
         : 'rgba(255, 255, 255, 0.5)',
@@ -129,10 +129,10 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
 const styles = StyleSheet.create({
   touchPoint: {
     position: 'absolute',
-    width: 50,
-    height: 50,
+    width: 48,
+    height: 48,
     backgroundColor: 'transparent',
-    borderRadius: 25,
-    borderWidth: 10,
+    borderRadius: 24,
+    borderWidth: 8,
   },
 });

@@ -19,7 +19,7 @@ const CrosshairComponent: React.FC<CrosshairProps> = ({
   testID = 'crosshair',
 }) => {
   const { colors } = useTheme();
-  const SIZE = 50;
+  const SIZE = 48;
   const LINE_WIDTH = 2;
 
   // Calculate negative half of size for proper centering

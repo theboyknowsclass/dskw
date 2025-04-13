@@ -33,7 +33,7 @@ interface AppShellLayoutComponent extends React.FC<AppShellLayoutProps> {
 }
 
 // Create the AppShellLayout component
-const AppShell: AppShellLayoutComponent = ({ children }) => {
+const AppShell: React.FC<AppShellLayoutProps> = ({ children }) => {
   const { isLandscape, width, height } = useScreenDimensions();
   const { setIsReady, setDimensions, isReady } = useContentMeasurements();
 
@@ -126,7 +126,7 @@ const AppShell: AppShellLayoutComponent = ({ children }) => {
   );
 };
 
-AppShell.ActionItems = ActionItems;
+//AppShell.ActionItems = ActionItems;
 
 // Export a wrapped version of AppShellLayout with ContentMeasurementsProvider
 export const AppShellLayout: AppShellLayoutComponent = (props) => {
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    margin: 10,
+    margin: 16,
     position: 'relative',
   },
   animatedContainer: {
@@ -164,23 +164,23 @@ const styles = StyleSheet.create({
   navigationBarBase: {
     display: 'flex',
     flexGrow: 0,
-    padding: 10,
-    gap: 10,
+    padding: 16,
+    gap: 16,
   },
   navigationBarPrimary: {
     flexGrow: 1,
-    gap: 10,
+    gap: 16,
   },
   navigationBarSecondary: {
     display: 'flex',
     flexGrow: 0,
-    gap: 10,
+    gap: 16,
   },
   actionBarBase: {
     display: 'flex',
     flexGrow: 0,
     justifyContent: 'space-evenly',
-    padding: 10,
+    padding: 16,
   },
   barPortrait: {
     flexDirection: 'row',
