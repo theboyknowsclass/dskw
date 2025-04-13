@@ -1,16 +1,19 @@
 import React, { useMemo } from 'react';
 import { Svg, Polygon } from 'react-native-svg';
 import { useTheme } from '@react-navigation/native';
-import { useOverlayStore, useSourceImageStore } from '@stores';
+import { useOverlayStore } from '@stores';
+import { Dimensions } from '@types';
 
-export const OverlaySvg: React.FC = () => {
+interface OverlaySvgProps {
+  dimensions: Dimensions;
+}
+
+export const OverlaySvg: React.FC<OverlaySvgProps> = ({ dimensions }) => {
   const { colors } = useTheme();
 
   // Use selectors from the store for better performance
   const points = useOverlayStore((state) => state.points);
-  const { width: imageWidth, height: imageHeight } = useSourceImageStore(
-    (state) => state.scaledDimensions
-  );
+  const { width: imageWidth, height: imageHeight } = dimensions;
 
   // Convert relative coordinates to screen coordinates
   const polygonPoints = useMemo(() => {

@@ -1,18 +1,20 @@
 import { TextButton } from '@atoms';
 import { ImagePickerService } from '@services';
-import { useSourceImageStore } from '@stores';
+import { useOverlayStore, useSourceImageStore } from '@stores';
 import { router } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 export const ImagePickerButton: React.FC = () => {
   const { isLoading, setLoading, setUri, setOriginalDimensions } =
     useSourceImageStore();
+  const { resetPoints } = useOverlayStore();
 
   const onStartPress = async () => {
     setLoading(true);
     try {
       const { success, error, data } = await ImagePickerService.selectImage();
       if (success && data) {
+        resetPoints();
         const { uri, dimensions } = data;
         setUri(uri);
         setOriginalDimensions(dimensions);

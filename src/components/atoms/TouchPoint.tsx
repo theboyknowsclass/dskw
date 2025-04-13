@@ -7,18 +7,20 @@ import Animated, {
   useDerivedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { useOverlayStore, useSourceImageStore } from '@stores';
-import { Corner, Point } from '@types';
+import { useOverlayStore } from '@stores';
+import { Corner, Point, Dimensions } from '@types';
 import { useTheme } from '@react-navigation/native';
 
 type TouchPointProps = {
   index: Corner;
-  containerSize: { pageX: number; pageY: number };
+  parentOffset: { xOffset: number; yOffset: number }; // used to calculate the relative position of the point
+  parentDimensions: Dimensions; // used to calculate the relative position of the point
 };
 
 export const TouchPoint: React.FC<TouchPointProps> = ({
   index,
-  containerSize,
+  parentOffset: offset,
+  parentDimensions: dimensions,
 }) => {
   const updatePoint = useOverlayStore((state) => state.updatePoint);
   const setActivePointIndex = useOverlayStore(
@@ -26,11 +28,9 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   );
   const theme = useTheme();
   const point = useOverlayStore((state) => state.points[index]);
-  const { pageX, pageY } = containerSize;
+  const { xOffset, yOffset } = offset;
 
-  const { width: imageWidth, height: imageHeight } = useSourceImageStore(
-    (state) => state.scaledDimensions
-  );
+  const { width: imageWidth, height: imageHeight } = dimensions;
 
   // Create shared values for position in relative coordinates (0-1)
   const relativeX = useSharedValue(point.x);
@@ -53,11 +53,11 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     (absoluteX: number, absoluteY: number): Point => {
       'worklet';
       return {
-        x: Math.max(0, Math.min(1, (absoluteX - pageX) / imageWidth)),
-        y: Math.max(0, Math.min(1, (absoluteY - pageY) / imageHeight)),
+        x: Math.max(0, Math.min(1, (absoluteX - xOffset) / imageWidth)),
+        y: Math.max(0, Math.min(1, (absoluteY - yOffset) / imageHeight)),
       };
     },
-    [pageX, pageY, imageWidth, imageHeight]
+    [xOffset, yOffset, imageWidth, imageHeight]
   );
 
   const updateStore = useCallback(
@@ -111,8 +111,8 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     'worklet';
     return {
       transform: [{ scale: scale.value }],
-      left: screenX.value - 25,
-      top: screenY.value - 25,
+      left: screenX.value - 24,
+      top: screenY.value - 24,
       borderColor: isActive.value
         ? `${theme.colors.primary}90`
         : 'rgba(255, 255, 255, 0.5)',
@@ -129,10 +129,10 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
 const styles = StyleSheet.create({
   touchPoint: {
     position: 'absolute',
-    width: 50,
-    height: 50,
+    width: 48,
+    height: 48,
     backgroundColor: 'transparent',
-    borderRadius: 25,
-    borderWidth: 10,
+    borderRadius: 24,
+    borderWidth: 8,
   },
 });

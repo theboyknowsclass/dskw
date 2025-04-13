@@ -1,1 +1,1 @@
-export { BaseLayout } from './BaseLayout';
+export { AppShellLayout } from './AppShellLayout';
