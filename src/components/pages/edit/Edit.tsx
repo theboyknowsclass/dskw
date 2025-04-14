@@ -1,4 +1,4 @@
-import { TransformImageButton } from '@molecules';
+import { BackButton, TransformImageButton } from '@molecules';
 import { View, ImageBackground, StyleSheet } from 'react-native';
 import { AppShellLayout } from '@templates';
 import { Overlay, ZoomPreview } from '@organisms';
@@ -15,7 +15,7 @@ const EditContent: React.FC = () => {
         flexDirection: isLandscape ? 'row' : 'column',
       }}
     >
-      {zoomWindowSize && (
+      {zoomWindowSize ? (
         <View
           style={{
             flex: 0,
@@ -29,7 +29,7 @@ const EditContent: React.FC = () => {
         >
           <ZoomPreview size={zoomWindowSize} />
         </View>
-      )}
+      ) : null}
       <View style={styles.imagePreview}>
         <ImageBackground
           source={uri ? { uri } : undefined}
@@ -51,6 +51,7 @@ export const Edit: React.FC = () => {
     <AppShellLayout>
       <AppShellLayout.ActionItems>
         <TransformImageButton />
+        <BackButton />
       </AppShellLayout.ActionItems>
       <EditContent />
     </AppShellLayout>

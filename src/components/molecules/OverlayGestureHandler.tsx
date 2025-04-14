@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { useOverlayStore } from '@stores';
 import { Corner, Dimensions } from '@types';
 import { TouchPoint } from '../atoms';
@@ -20,7 +21,7 @@ export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
   }, [pointsLength]);
 
   return (
-    <>
+    <View style={styles.container}>
       {pointsIndices.map((_, index) => (
         <TouchPoint
           key={`point-${index}`}
@@ -29,6 +30,16 @@ export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
           parentDimensions={dimensions}
         />
       ))}
-    </>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+});
