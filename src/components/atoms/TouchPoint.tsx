@@ -10,6 +10,8 @@ import Animated, {
 import { useOverlayStore } from '@stores';
 import { Corner, Point, Dimensions } from '@types';
 import { useTheme } from '@react-navigation/native';
+import { DeviceType } from 'expo-device';
+import { useScreenDimensions } from '@hooks';
 
 type TouchPointProps = {
   index: Corner;
@@ -23,9 +25,11 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   parentDimensions: dimensions,
 }) => {
   const updatePoint = useOverlayStore((state) => state.updatePoint);
+  const { deviceType } = useScreenDimensions();
   const setActivePointIndex = useOverlayStore(
     (state) => state.setActivePointIndex
   );
+  const activePointIndex = useOverlayStore((state) => state.activePointIndex);
   const theme = useTheme();
   const point = useOverlayStore((state) => state.points[index]);
   const { xOffset, yOffset } = offset;
@@ -48,6 +52,16 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     relativeX.value = point.x;
     relativeY.value = point.y;
   }, [point.x, point.y, relativeX, relativeY]);
+
+  useEffect(() => {
+    if (activePointIndex === index) {
+      scale.value = withTiming(1.2, { duration: 100 });
+      isActive.value = true;
+    } else {
+      scale.value = withTiming(1, { duration: 100 });
+      isActive.value = false;
+    }
+  }, [activePointIndex, index, isActive, scale]);
 
   const convertToRelative = useCallback(
     (absoluteX: number, absoluteY: number): Point => {
@@ -106,6 +120,14 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
       needsStoreUpdate.value = true;
     });
 
+  const pressGesture = Gesture.LongPress()
+    .runOnJS(false)
+    .onStart(() => {
+      'worklet';
+      isActive.value = true;
+      needsStoreUpdate.value = true;
+    });
+
   // Animated styles for the point
   const animatedStyles = useAnimatedStyle(() => {
     'worklet';
@@ -119,8 +141,10 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     };
   }, [screenX, screenY, isActive, theme.colors.primary]);
 
+  const gesture = deviceType === DeviceType.PHONE ? pressGesture : panGesture;
+
   return (
-    <GestureDetector gesture={panGesture}>
+    <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.touchPoint, animatedStyles]} />
     </GestureDetector>
   );

@@ -95,6 +95,7 @@ export const TextButton: React.FC<TextButtonProps> = ({
       ...baseStyle,
       ...sizeStyles[size],
       ...variantStyles[variant],
+      ...(style as ViewStyle),
     };
   };
 
@@ -113,7 +114,7 @@ export const TextButton: React.FC<TextButtonProps> = ({
 
   return (
     <TouchableOpacity
-      style={[styles.button, getButtonStyles(), style]}
+      style={[styles.button, getButtonStyles()]}
       disabled={disabled || loading}
       accessibilityRole="button"
       {...rest}
