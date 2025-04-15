@@ -8,4 +8,6 @@ export type IconType =
   | 'dark-mode'
   | 'settings'
   | 'home'
-  | 'close';
+  | 'close'
+  | 'zoom-in'
+  | 'zoom-out';

@@ -5,10 +5,11 @@ import Animated, {
   withTiming,
   useSharedValue,
   Easing,
+  runOnJS,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useOverlayStore, useSourceImageStore } from '@stores';
-import { getZoomTransform } from '@utils/zoomUtils';
+import { getActivePoint, getZoomTransform } from '@utils/zoomUtils';
 import { Logo } from '@molecules';
 import { Crosshair } from '@atoms';
 import { Redirect } from 'expo-router';
@@ -32,6 +33,7 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   const activePoint = useOverlayStore((state) =>
     state.activePointIndex != null ? state.points[state.activePointIndex] : null
   );
+  const updatePoint = useOverlayStore((state) => state.updatePoint);
   const { uri, originalDimensions } = useSourceImageStore();
 
   const zoomWindowSize = size;
@@ -82,6 +84,16 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
     ],
   }));
 
+  const updatePointOnEnd = () => {
+    if (activePointIndex != null) {
+      const newPoint = getActivePoint(
+        zoomWindowSize,
+        { translateX: translateX.value, translateY: translateY.value },
+        originalDimensions
+      );
+      updatePoint(activePointIndex, newPoint);
+    }
+  };
   // Add pan gesture handler
   const panGesture = Gesture.Pan()
     .onStart(() => {
@@ -92,6 +104,11 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
     .onUpdate((e) => {
       translateX.value = savedTranslateX.value + e.translationX;
       translateY.value = savedTranslateY.value + e.translationY;
+    })
+    .onEnd(() => {
+      savedTranslateX.value = translateX.value;
+      savedTranslateY.value = translateY.value;
+      runOnJS(updatePointOnEnd)();
     });
 
   if (!uri) return <Redirect href="/" />;

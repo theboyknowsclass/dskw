@@ -1,8 +1,9 @@
-import { TransformImageButton } from '@molecules';
+import { TransformImageButton, ZoomButton } from '@molecules';
 import { View, ImageBackground, StyleSheet } from 'react-native';
 import { PageTemplate } from '@templates';
 import { Overlay, ZoomPreview } from '@organisms';
 import { useEdit, ZOOM_WINDOW_PADDING } from './useEdit';
+import { DeviceType, deviceType } from 'expo-device';
 
 const EditContent: React.FC = () => {
   const { uri, isLandscape, zoomWindowSize, scaledWidth, scaledHeight } =
@@ -50,6 +51,7 @@ export const Edit: React.FC = () => {
   return (
     <PageTemplate>
       <PageTemplate.ActionItems>
+        {deviceType === DeviceType.PHONE ? <ZoomButton /> : null}
         <TransformImageButton />
       </PageTemplate.ActionItems>
       <EditContent />

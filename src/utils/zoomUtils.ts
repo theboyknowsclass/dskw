@@ -43,3 +43,36 @@ export const getZoomTransform = (
 
   return transform;
 };
+
+/**
+ * Calculates the active point coordinates from transform values.
+ * This is the inverse operation of getZoomTransform.
+ *
+ * @param zoomWindowSize - The size of the zoom preview window (width and height in pixels)
+ * @param transform - The transform object containing translateX and translateY values
+ * @param originalDimensions - The original dimensions of the source image
+ * @returns A Point object with x and y coordinates in relative values (0-1)
+ *
+ * @example
+ * // For a 200x200 zoom window and transform values of -300:
+ * const point = getActivePoint(200, { translateX: -300, translateY: -300 }, { width: 1000, height: 1000 });
+ * // Returns: { x: 0.5, y: 0.5 }
+ */
+export const getActivePoint = (
+  zoomWindowSize: number,
+  transform: { translateX: number; translateY: number },
+  originalDimensions: { width: number; height: number }
+): Point => {
+  const startX = zoomWindowSize / 2;
+  const startY = zoomWindowSize / 2;
+
+  // Calculate the point coordinates in relative values (0-1)
+  const x = (startX - transform.translateX) / originalDimensions.width;
+  const y = (startY - transform.translateY) / originalDimensions.height;
+
+  // Ensure the point coordinates are within bounds
+  return {
+    x: Math.max(0, Math.min(1, x)),
+    y: Math.max(0, Math.min(1, y)),
+  };
+};

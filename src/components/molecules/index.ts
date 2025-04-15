@@ -9,3 +9,4 @@ export { Logo } from './Logo';
 export { OverlaySvg } from './OverlaySvg';
 export { OverlayGestureHandler } from './OverlayGestureHandler';
 export { LoadingContainer } from './LoadingContainer';
+export { ZoomButton } from './ZoomButton';
