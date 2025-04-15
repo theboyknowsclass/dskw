@@ -6,6 +6,6 @@ export { ImagePickerButton } from './ImagePickerButton';
 export { CloseButton } from './CloseButton';
 export { TransformImageButton } from './TransformImageButton';
 export { Logo } from './Logo';
-export { SettingsToggle } from './SettingsToggle';
 export { OverlaySvg } from './OverlaySvg';
 export { OverlayGestureHandler } from './OverlayGestureHandler';
+export { LoadingContainer } from './LoadingContainer';

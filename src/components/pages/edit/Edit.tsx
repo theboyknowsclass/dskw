@@ -1,6 +1,6 @@
-import { BackButton, TransformImageButton } from '@molecules';
+import { TransformImageButton } from '@molecules';
 import { View, ImageBackground, StyleSheet } from 'react-native';
-import { AppShellLayout } from '@templates';
+import { PageTemplate } from '@templates';
 import { Overlay, ZoomPreview } from '@organisms';
 import { useEdit, ZOOM_WINDOW_PADDING } from './useEdit';
 
@@ -48,13 +48,12 @@ const EditContent: React.FC = () => {
 
 export const Edit: React.FC = () => {
   return (
-    <AppShellLayout>
-      <AppShellLayout.ActionItems>
+    <PageTemplate>
+      <PageTemplate.ActionItems>
         <TransformImageButton />
-        <BackButton />
-      </AppShellLayout.ActionItems>
+      </PageTemplate.ActionItems>
       <EditContent />
-    </AppShellLayout>
+    </PageTemplate>
   );
 };
 

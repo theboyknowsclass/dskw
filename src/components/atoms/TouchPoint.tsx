@@ -12,6 +12,7 @@ import { Corner, Point, Dimensions } from '@types';
 import { useTheme } from '@react-navigation/native';
 import { DeviceType } from 'expo-device';
 import { useScreenDimensions } from '@hooks';
+import { router } from 'expo-router';
 
 type TouchPointProps = {
   index: Corner;
@@ -57,11 +58,14 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     if (activePointIndex === index) {
       scale.value = withTiming(1.2, { duration: 100 });
       isActive.value = true;
+      if (deviceType === DeviceType.PHONE) {
+        router.navigate('zoom');
+      }
     } else {
       scale.value = withTiming(1, { duration: 100 });
       isActive.value = false;
     }
-  }, [activePointIndex, index, isActive, scale]);
+  }, [activePointIndex, index, isActive, scale, deviceType]);
 
   const convertToRelative = useCallback(
     (absoluteX: number, absoluteY: number): Point => {
@@ -95,38 +99,40 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   }, [updateStore, relativeX, relativeY, needsStoreUpdate]);
 
   // Create a pan gesture for a point
-  const panGesture = Gesture.Pan()
-    .maxPointers(1)
-    .runOnJS(false)
-    .onStart(() => {
-      'worklet';
-      isActive.value = true;
-      scale.value = withTiming(1.2, { duration: 100 });
-    })
-    .onUpdate((e) => {
-      'worklet';
-      // Calculate and update relative position directly on UI thread
-      const newPoint = convertToRelative(e.absoluteX, e.absoluteY);
-      relativeX.value = newPoint.x;
-      relativeY.value = newPoint.y;
+  const createPanGesture = () =>
+    Gesture.Pan()
+      .maxPointers(1)
+      .runOnJS(false)
+      .onStart(() => {
+        'worklet';
+        isActive.value = true;
+        scale.value = withTiming(1.2, { duration: 100 });
+      })
+      .onUpdate((e) => {
+        'worklet';
+        // Calculate and update relative position directly on UI thread
+        const newPoint = convertToRelative(e.absoluteX, e.absoluteY);
+        relativeX.value = newPoint.x;
+        relativeY.value = newPoint.y;
 
-      // Mark for store update instead of calling immediately
-      needsStoreUpdate.value = true;
-    })
-    .onEnd(() => {
-      'worklet';
-      isActive.value = false;
-      scale.value = withTiming(1, { duration: 100 });
-      needsStoreUpdate.value = true;
-    });
+        // Mark for store update instead of calling immediately
+        needsStoreUpdate.value = true;
+      })
+      .onEnd(() => {
+        'worklet';
+        isActive.value = false;
+        scale.value = withTiming(1, { duration: 100 });
+        needsStoreUpdate.value = true;
+      });
 
-  const pressGesture = Gesture.LongPress()
-    .runOnJS(false)
-    .onStart(() => {
-      'worklet';
-      isActive.value = true;
-      needsStoreUpdate.value = true;
-    });
+  const createPressGesture = () =>
+    Gesture.LongPress()
+      .runOnJS(false)
+      .onStart(() => {
+        'worklet';
+        isActive.value = true;
+        needsStoreUpdate.value = true;
+      });
 
   // Animated styles for the point
   const animatedStyles = useAnimatedStyle(() => {
@@ -141,7 +147,8 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     };
   }, [screenX, screenY, isActive, theme.colors.primary]);
 
-  const gesture = deviceType === DeviceType.PHONE ? pressGesture : panGesture;
+  const gesture =
+    deviceType === DeviceType.PHONE ? createPressGesture() : createPanGesture();
 
   return (
     <GestureDetector gesture={gesture}>

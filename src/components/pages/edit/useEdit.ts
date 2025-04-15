@@ -1,7 +1,6 @@
-import { useScreenDimensions } from '@hooks';
+import { useContentMeasurements, useScreenDimensions } from '@hooks';
 import { useSourceImageStore } from '@stores';
 import { Dimensions } from '@types';
-import { useContentMeasurements } from 'contexts/ContentMeasurementsContext';
 import { DeviceType } from 'expo-device';
 
 /**

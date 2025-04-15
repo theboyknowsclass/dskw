@@ -47,11 +47,16 @@ export const RootLayout = () => {
     <ThemeProvider value={theme}>
       {/* GestureHandlerRootView is required for gesture handling in React Native */}
       <GestureHandlerRootView style={styles.container}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        ></Stack>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="edit" options={{ headerShown: false }} />
+          <Stack.Screen name="export" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="settings"
+            options={{ headerShown: false, presentation: 'modal' }}
+          />
+          <Stack.Screen name="zoom" options={{ headerShown: false }} />
+        </Stack>
       </GestureHandlerRootView>
     </ThemeProvider>
   );

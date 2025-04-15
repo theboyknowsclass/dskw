@@ -1,20 +1,15 @@
-import { useScreenDimensions } from '@hooks';
+import { useContentMeasurements, useScreenDimensions } from '@hooks';
 import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
-import Animated, {
-  useSharedValue,
-  withTiming,
-  useAnimatedStyle,
-  Easing,
-} from 'react-native-reanimated';
-import { BackButton, SettingsButton, ThemeToggle } from '@molecules';
-import React, { ReactNode, useEffect } from 'react';
 import {
-  ContentMeasurementsProvider,
-  useContentMeasurements,
-} from '../../contexts/ContentMeasurementsContext';
-import { LoadingSpinner } from '@atoms';
+  BackButton,
+  LoadingContainer,
+  SettingsButton,
+  ThemeToggle,
+} from '@molecules';
+import React, { ReactNode } from 'react';
+import { ContentMeasurementsProvider } from '../../contexts/ContentMeasurementsContext';
 
-interface AppShellLayoutProps {
+interface PageTemplateProps {
   children?: React.ReactNode | React.ReactNode[];
   isLoading?: boolean;
   loadingText?: string;
@@ -27,41 +22,15 @@ interface ActionItemsProps {
 // ActionItems component that will be used as a compound component
 const ActionItems: React.FC<ActionItemsProps> = () => null;
 
-// Define the type for the AppShellLayout component with its static properties
-interface AppShellLayoutComponent extends React.FC<AppShellLayoutProps> {
+// Define the type for the PageTemplate component with its static properties
+interface PageTemplateComponent extends React.FC<PageTemplateProps> {
   ActionItems: React.FC<ActionItemsProps>;
 }
 
-// Create the AppShellLayout component
-const AppShell: React.FC<AppShellLayoutProps> = ({ children }) => {
+// Create the Page component
+const Page: React.FC<PageTemplateProps> = ({ children }) => {
   const { isLandscape, width, height } = useScreenDimensions();
   const { setIsReady, setDimensions, isReady } = useContentMeasurements();
-
-  // Create shared values for opacity
-  const contentOpacity = useSharedValue(0);
-  const loadingOpacity = useSharedValue(1);
-
-  // Create animated styles
-  const contentAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: contentOpacity.value,
-  }));
-
-  const loadingAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: loadingOpacity.value,
-  }));
-
-  // Update animations when isReady changes
-  useEffect(() => {
-    contentOpacity.value = withTiming(isReady ? 1 : 0, {
-      duration: 800,
-      easing: Easing.inOut(Easing.ease),
-    });
-
-    loadingOpacity.value = withTiming(isReady ? 0 : 1, {
-      duration: 800,
-      easing: Easing.inOut(Easing.ease),
-    });
-  }, [isReady, contentOpacity, loadingOpacity]);
 
   const loadingAnimationSize = (isLandscape ? width : height) * 0.3;
 
@@ -112,33 +81,29 @@ const AppShell: React.FC<AppShellLayoutProps> = ({ children }) => {
         </View>
       </View>
       <View style={styles.mainContent} onLayout={onLayout}>
-        <View style={styles.animatedContainer}>
-          <Animated.View style={[styles.loading, loadingAnimatedStyle]}>
-            <LoadingSpinner size={loadingAnimationSize} animating={!isReady} />
-          </Animated.View>
-          <Animated.View style={[styles.content, contentAnimatedStyle]}>
-            {otherChildren}
-          </Animated.View>
-        </View>
+        <LoadingContainer
+          isReady={isReady}
+          loadingAnimationSize={loadingAnimationSize}
+        >
+          {otherChildren}
+        </LoadingContainer>
       </View>
       <View style={actionBarStyles}>{actionItems}</View>
     </View>
   );
 };
 
-//AppShell.ActionItems = ActionItems;
-
 // Export a wrapped version of AppShellLayout with ContentMeasurementsProvider
-export const AppShellLayout: AppShellLayoutComponent = (props) => {
+export const PageTemplate: PageTemplateComponent = (props) => {
   return (
     <ContentMeasurementsProvider>
-      <AppShell {...props} />
+      <Page {...props} />
     </ContentMeasurementsProvider>
   );
 };
 
 // Attach ActionItems to the wrapped component
-AppShellLayout.ActionItems = ActionItems;
+PageTemplate.ActionItems = ActionItems;
 
 const styles = StyleSheet.create({
   rootContainer: {
@@ -155,10 +120,6 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     margin: 16,
-    position: 'relative',
-  },
-  animatedContainer: {
-    flex: 1,
     position: 'relative',
   },
   navigationBarBase: {
@@ -187,24 +148,6 @@ const styles = StyleSheet.create({
   },
   barLandscape: {
     flexDirection: 'column',
-  },
-  content: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1,
-  },
-  loading: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: -1,
   },
 });
 

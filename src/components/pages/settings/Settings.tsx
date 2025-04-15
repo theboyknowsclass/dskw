@@ -1,4 +1,5 @@
-import { CloseButton, SettingsToggle } from '@molecules';
+import { SettingsToggle } from '@atoms';
+import { CloseButton } from '@molecules';
 import { useSettingsStore } from '@stores';
 import { View, StyleSheet } from 'react-native';
 
