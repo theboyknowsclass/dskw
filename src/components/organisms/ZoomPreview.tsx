@@ -6,6 +6,7 @@ import Animated, {
   useSharedValue,
   Easing,
 } from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useOverlayStore, useSourceImageStore } from '@stores';
 import { getZoomTransform } from '@utils/zoomUtils';
 import { Logo } from '@molecules';
@@ -38,6 +39,8 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   const previewOpacity = useSharedValue(0);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
+  const savedTranslateX = useSharedValue(0);
+  const savedTranslateY = useSharedValue(0);
 
   // Handle opacity transitions
   useEffect(() => {
@@ -79,51 +82,61 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
     ],
   }));
 
+  // Add pan gesture handler
+  const panGesture = Gesture.Pan()
+    .onStart(() => {
+      // Save the current position when gesture starts
+      savedTranslateX.value = translateX.value;
+      savedTranslateY.value = translateY.value;
+    })
+    .onUpdate((e) => {
+      translateX.value = savedTranslateX.value + e.translationX;
+      translateY.value = savedTranslateY.value + e.translationY;
+    });
+
   if (!uri) return <Redirect href="/" />;
 
   return (
-    <View
-      style={styles.container}
-      testID="zoom-preview-container"
-      pointerEvents="none"
-    >
-      <Animated.View style={logoStyle}>
-        <Logo size={zoomWindowSize} />
-      </Animated.View>
-      <Animated.View
-        style={[
-          styles.previewContainer,
-          {
-            width: zoomWindowSize,
-            height: zoomWindowSize,
-          },
-          { opacity: previewOpacity },
-        ]}
-        testID="zoom-preview-background"
-      >
-        <ImageBackground
-          source={checkerboardPattern}
-          resizeMode="repeat"
-          style={styles.checkerboard}
+    <GestureDetector gesture={panGesture}>
+      <View style={styles.container} testID="zoom-preview-container">
+        <Animated.View style={logoStyle}>
+          <Logo size={zoomWindowSize} />
+        </Animated.View>
+        <Animated.View
+          style={[
+            styles.previewContainer,
+            {
+              width: zoomWindowSize,
+              height: zoomWindowSize,
+            },
+            { opacity: previewOpacity },
+          ]}
+          testID="zoom-preview-background"
         >
-          <Animated.Image
-            source={{ uri }}
-            style={[
-              styles.previewImage,
-              {
-                width: originalDimensions.width,
-                height: originalDimensions.height,
-              },
-              previewStyle,
-            ]}
-            resizeMode="contain"
-            testID="zoom-preview-image"
-          />
-        </ImageBackground>
+          <ImageBackground
+            source={checkerboardPattern}
+            resizeMode="repeat"
+            style={styles.checkerboard}
+          >
+            <Animated.Image
+              source={{ uri }}
+              style={[
+                styles.previewImage,
+                {
+                  width: originalDimensions.width,
+                  height: originalDimensions.height,
+                },
+                previewStyle,
+              ]}
+              resizeMode="contain"
+              testID="zoom-preview-image"
+            />
+          </ImageBackground>
 
-        <Crosshair testID="zoom-preview-crosshair" />
-      </Animated.View>
-    </View>
+          <Crosshair testID="zoom-preview-crosshair" />
+        </Animated.View>
+      </View>
+    </GestureDetector>
   );
 };
 
