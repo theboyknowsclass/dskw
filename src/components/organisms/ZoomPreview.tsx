@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  View,
-  StyleSheet,
-  ImageBackground,
-  Animated,
+import React, { useEffect } from 'react';
+import { View, StyleSheet, ImageBackground } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  useSharedValue,
   Easing,
-} from 'react-native';
+} from 'react-native-reanimated';
 import { useOverlayStore, useSourceImageStore } from '@stores';
 import { getZoomTransform } from '@utils/zoomUtils';
 import { Logo } from '@molecules';
@@ -34,28 +34,22 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
   const { uri, originalDimensions } = useSourceImageStore();
 
   const zoomWindowSize = size;
-  const logoOpacity = useRef(new Animated.Value(1)).current;
-  const previewOpacity = useRef(new Animated.Value(0)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(0)).current;
+  const logoOpacity = useSharedValue(1);
+  const previewOpacity = useSharedValue(0);
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
 
   // Handle opacity transitions
   useEffect(() => {
     const hasActivePoint = activePointIndex != null;
-    Animated.parallel([
-      Animated.timing(logoOpacity, {
-        toValue: hasActivePoint ? 0 : 1,
-        duration: 300,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-      Animated.timing(previewOpacity, {
-        toValue: hasActivePoint ? 1 : 0,
-        duration: 300,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: true,
-      }),
-    ]).start();
+    logoOpacity.value = withTiming(hasActivePoint ? 0 : 1, {
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+    });
+    previewOpacity.value = withTiming(hasActivePoint ? 1 : 0, {
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+    });
   }, [activePointIndex, logoOpacity, previewOpacity]);
 
   // Handle translations
@@ -69,9 +63,21 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
     const targetX = transform[0]?.translateX ?? 0;
     const targetY = transform[1]?.translateY ?? 0;
 
-    translateX.setValue(targetX);
-    translateY.setValue(targetY);
-  }, [translateX, translateY, activePoint, originalDimensions, zoomWindowSize]);
+    translateX.value = targetX;
+    translateY.value = targetY;
+  }, [activePoint, originalDimensions, zoomWindowSize, translateX, translateY]);
+
+  const logoStyle = useAnimatedStyle(() => ({
+    opacity: logoOpacity.value,
+  }));
+
+  const previewStyle = useAnimatedStyle(() => ({
+    opacity: previewOpacity.value,
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+    ],
+  }));
 
   if (!uri) return <Redirect href="/" />;
 
@@ -81,7 +87,7 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
       testID="zoom-preview-container"
       pointerEvents="none"
     >
-      <Animated.View style={[{ opacity: logoOpacity }]}>
+      <Animated.View style={logoStyle}>
         <Logo size={zoomWindowSize} />
       </Animated.View>
       <Animated.View
@@ -90,8 +96,8 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
           {
             width: zoomWindowSize,
             height: zoomWindowSize,
-            opacity: previewOpacity,
           },
+          { opacity: previewOpacity },
         ]}
         testID="zoom-preview-background"
       >
@@ -107,8 +113,8 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
               {
                 width: originalDimensions.width,
                 height: originalDimensions.height,
-                transform: [{ translateX }, { translateY }],
               },
+              previewStyle,
             ]}
             resizeMode="contain"
             testID="zoom-preview-image"
