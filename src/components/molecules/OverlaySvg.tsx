@@ -22,12 +22,11 @@ export const OverlaySvg: React.FC<OverlaySvgProps> = ({ dimensions }) => {
       .join(' ');
   }, [points, imageWidth, imageHeight]);
 
-  if (imageWidth === 0 || imageHeight === 0) {
-    return null;
-  }
+  const width = Math.max(0, imageWidth);
+  const height = Math.max(0, imageHeight);
 
   return (
-    <Svg width={imageWidth} height={imageHeight}>
+    <Svg width={width} height={height}>
       <Polygon
         points={polygonPoints}
         fill="none"
