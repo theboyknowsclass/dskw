@@ -5,10 +5,11 @@ type ScreenDimensions = {
   width: number;
   height: number;
   isLandscape: boolean;
-  deviceType: DeviceType | null;
+  isMobile: boolean;
 };
 
 export const useScreenDimensions = (): ScreenDimensions => {
   const { width, height } = useWindowDimensions();
-  return { width, height, isLandscape: width > height, deviceType };
+  const isMobile = deviceType === DeviceType.PHONE;
+  return { width, height, isLandscape: width > height, isMobile };
 };

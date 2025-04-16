@@ -1,10 +1,12 @@
 import { SettingsToggle } from '@atoms';
+import { useScreenDimensions } from '@hooks';
 import { CloseButton } from '@molecules';
 import { useSettingsStore } from '@stores';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 
 export const Settings: React.FC = () => {
   const { cropToOverlay, setCropToOverlay } = useSettingsStore();
+  const { isMobile } = useScreenDimensions();
 
   return (
     <View>
@@ -12,6 +14,7 @@ export const Settings: React.FC = () => {
         <CloseButton />
       </View>
       <View style={styles.container}>
+        {isMobile && <Text>Mobile</Text>}
         <SettingsToggle
           title="Crop to overlay"
           isEnabled={cropToOverlay}

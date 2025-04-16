@@ -1,7 +1,6 @@
 import { useContentMeasurements, useScreenDimensions } from '@hooks';
 import { useSourceImageStore } from '@stores';
 import { Dimensions } from '@types';
-import { DeviceType } from 'expo-device';
 
 /**
  * Interface defining the return type of the useEdit hook
@@ -36,12 +35,12 @@ export const ZOOM_WINDOW_PADDING = 40; // Padding between the zoom window and th
 export const useEdit = (): EditLayout => {
   // Get source image data and screen dimensions
   const { uri, originalDimensions } = useSourceImageStore();
-  const { isLandscape, deviceType } = useScreenDimensions();
+  const { isLandscape, isMobile } = useScreenDimensions();
   const { dimensions: contentContainerSize } = useContentMeasurements();
 
   // Initialize dimension variables
   const { maxImageWidth, maxImageHeight, zoomWindowSize } = getComponentSizes(
-    deviceType,
+    isMobile,
     isLandscape,
     contentContainerSize
   );
@@ -80,14 +79,14 @@ export const useEdit = (): EditLayout => {
  *   - maxImageHeight: The maximum allowed height for the image
  */
 function getComponentSizes(
-  deviceType: DeviceType | null,
+  isMobile: boolean,
   isLandscape: boolean,
   contentContainerSize: Dimensions
 ) {
   // Extract content dimensions
   const { width: contentWidth, height: contentHeight } = contentContainerSize;
 
-  if (deviceType === DeviceType.PHONE) {
+  if (isMobile) {
     return {
       zoomWindowSize: 0,
       maxImageWidth: contentWidth,

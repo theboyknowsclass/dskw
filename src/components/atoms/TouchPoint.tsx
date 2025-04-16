@@ -25,7 +25,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   parentDimensions: dimensions,
 }) => {
   const updatePoint = useOverlayStore((state) => state.updatePoint);
-  const { deviceType } = useScreenDimensions();
+  const { isMobile } = useScreenDimensions();
   const setActivePointIndex = useOverlayStore(
     (state) => state.setActivePointIndex
   );
@@ -62,7 +62,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     } else {
       isActive.value = false;
     }
-  }, [activePointIndex, index, isActive, scale, deviceType]);
+  }, [activePointIndex, index, isActive, scale, isMobile]);
 
   const convertToRelative = useCallback(
     (absoluteX: number, absoluteY: number): Point => {
