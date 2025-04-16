@@ -77,8 +77,8 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
 
   const updateStore = useCallback(
     (x: number, y: number) => {
-      setActivePointIndex(isActive.value ? index : null);
       updatePoint(index, { x, y });
+      setActivePointIndex(isActive.value ? index : null);
     },
     [index, updatePoint, setActivePointIndex, isActive]
   );
@@ -90,7 +90,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
         updateStore(relativeX.value, relativeY.value);
         needsStoreUpdate.value = false;
       }
-    }, 8); // ~60fps
+    }, 16); // ~60fps
 
     return () => clearInterval(interval);
   }, [updateStore, relativeX, relativeY, needsStoreUpdate]);
@@ -103,6 +103,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
       'worklet';
       isActive.value = true;
       scale.value = withTiming(1.2, { duration: 100 });
+      needsStoreUpdate.value = true;
     })
     .onUpdate((e) => {
       'worklet';
