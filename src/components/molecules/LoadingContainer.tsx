@@ -20,8 +20,8 @@ export const LoadingContainer: React.FC<LoadingContainerProps> = ({
   loadingAnimationSize,
 }) => {
   // Create shared values for opacity
-  const contentOpacity = useSharedValue(0);
-  const loadingOpacity = useSharedValue(1);
+  const contentOpacity = useSharedValue(isReady ? 1 : 0);
+  const loadingOpacity = useSharedValue(isReady ? 0 : 1);
 
   // Update animations when isReady changes
   useEffect(() => {

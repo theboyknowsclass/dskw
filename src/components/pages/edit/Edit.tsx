@@ -3,18 +3,17 @@ import { View, ImageBackground, StyleSheet } from 'react-native';
 import { PageTemplate } from '@templates';
 import { Overlay, ZoomPreview } from '@organisms';
 import { useEdit, ZOOM_WINDOW_PADDING } from './useEdit';
-import { DeviceType, deviceType } from 'expo-device';
+import { useScreenDimensions } from '@hooks';
 
 const EditContent: React.FC = () => {
   const { uri, isLandscape, zoomWindowSize, scaledWidth, scaledHeight } =
     useEdit();
   return (
     <View
-      style={{
-        width: '100%',
-        height: '100%',
-        flexDirection: isLandscape ? 'row' : 'column',
-      }}
+      style={[
+        styles.container,
+        { flexDirection: isLandscape ? 'row' : 'column' },
+      ]}
     >
       {zoomWindowSize ? (
         <View
@@ -48,10 +47,11 @@ const EditContent: React.FC = () => {
 };
 
 export const Edit: React.FC = () => {
+  const { isMobile } = useScreenDimensions();
   return (
     <PageTemplate>
       <PageTemplate.ActionItems>
-        {deviceType === DeviceType.PHONE ? <ZoomButton /> : null}
+        {isMobile ? <ZoomButton /> : null}
         <TransformImageButton />
       </PageTemplate.ActionItems>
       <EditContent />
@@ -66,4 +66,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  container: { width: '100%', height: '100%' },
 });

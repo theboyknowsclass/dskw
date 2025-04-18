@@ -78,11 +78,15 @@ export const useEdit = (): EditLayout => {
  *   - maxImageWidth: The maximum allowed width for the image
  *   - maxImageHeight: The maximum allowed height for the image
  */
-function getComponentSizes(
+const getComponentSizes = (
   isMobile: boolean,
   isLandscape: boolean,
   contentContainerSize: Dimensions
-) {
+): {
+  zoomWindowSize: number;
+  maxImageWidth: number;
+  maxImageHeight: number;
+} => {
   // Extract content dimensions
   const { width: contentWidth, height: contentHeight } = contentContainerSize;
 
@@ -127,4 +131,4 @@ function getComponentSizes(
     maxImageWidth: contentWidth,
     maxImageHeight: contentHeight - zoomWindowSize - ZOOM_WINDOW_PADDING,
   };
-}
+};

@@ -66,7 +66,7 @@ export const Logo: React.FC<LogoProps> = ({ size }) => {
         fontFamily="Orbitron_500Medium"
         fontWeight="500"
       >
-        DSKW
+        STR8N
       </Text>
     </Svg>
   );

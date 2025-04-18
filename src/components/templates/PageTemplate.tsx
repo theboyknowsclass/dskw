@@ -1,13 +1,9 @@
 import { useContentMeasurements, useScreenDimensions } from '@hooks';
-import { StyleSheet, View, LayoutChangeEvent } from 'react-native';
-import {
-  BackButton,
-  LoadingContainer,
-  SettingsButton,
-  ThemeToggle,
-} from '@molecules';
+import { StyleSheet, View, LayoutChangeEvent, ViewStyle } from 'react-native';
+import { LoadingContainer } from '@molecules';
 import React, { ReactNode } from 'react';
-import { ContentMeasurementsProvider } from '../../contexts/ContentMeasurementsContext';
+import { ContentMeasurementsProvider } from '@contexts';
+import { NavigationBar } from '@organisms';
 
 interface PageTemplateProps {
   children?: React.ReactNode | React.ReactNode[];
@@ -40,27 +36,12 @@ const Page: React.FC<PageTemplateProps> = ({ children }) => {
   // responsive styles for orientation
   const rootContainerStyles = [
     styles.rootContainer,
-    isLandscape ? styles.landscapeContainer : styles.portraitContainer,
-  ];
-
-  const navigationBarStyles = [
-    styles.navigationBarBase,
-    isLandscape ? styles.barLandscape : styles.barPortrait,
-  ];
-
-  const navigationBarPrimaryStyles = [
-    styles.navigationBarPrimary,
-    isLandscape ? styles.barLandscape : styles.barPortrait,
-  ];
-
-  const navigationBarSecondaryStyles = [
-    styles.navigationBarSecondary,
-    isLandscape ? styles.barLandscape : styles.barPortrait,
+    { flexDirection: isLandscape ? 'row' : 'column' } as ViewStyle,
   ];
 
   const actionBarStyles = [
     styles.actionBarBase,
-    isLandscape ? styles.barLandscape : styles.barPortrait,
+    { flexDirection: isLandscape ? 'column' : 'row' } as ViewStyle,
   ];
 
   const onLayout = (event: LayoutChangeEvent) => {
@@ -71,15 +52,7 @@ const Page: React.FC<PageTemplateProps> = ({ children }) => {
 
   return (
     <View style={rootContainerStyles}>
-      <View style={navigationBarStyles}>
-        <View style={navigationBarPrimaryStyles}>
-          <BackButton />
-        </View>
-        <View style={navigationBarSecondaryStyles}>
-          <ThemeToggle />
-          <SettingsButton />
-        </View>
-      </View>
+      <NavigationBar />
       <View style={styles.mainContent} onLayout={onLayout}>
         <LoadingContainer
           isReady={isReady}
@@ -111,43 +84,16 @@ const styles = StyleSheet.create({
     height: '100%',
     display: 'flex',
   },
-  portraitContainer: {
-    flexDirection: 'column',
-  },
-  landscapeContainer: {
-    flexDirection: 'row',
-  },
   mainContent: {
     flex: 1,
     margin: 16,
     position: 'relative',
-  },
-  navigationBarBase: {
-    display: 'flex',
-    flexGrow: 0,
-    padding: 16,
-    gap: 16,
-  },
-  navigationBarPrimary: {
-    flexGrow: 1,
-    gap: 16,
-  },
-  navigationBarSecondary: {
-    display: 'flex',
-    flexGrow: 0,
-    gap: 16,
   },
   actionBarBase: {
     display: 'flex',
     flexGrow: 0,
     justifyContent: 'space-evenly',
     padding: 16,
-  },
-  barPortrait: {
-    flexDirection: 'row',
-  },
-  barLandscape: {
-    flexDirection: 'column',
   },
 });
 
@@ -168,7 +114,21 @@ const separateChildren = (
   const otherChildren: ReactNode[] = [];
 
   React.Children.forEach(children, (child) => {
-    if (React.isValidElement(child) && child.type === ActionItems) {
+    if (!child) return;
+
+    const isValidElement = React.isValidElement(child);
+
+    // Check if this is an ActionItem component by:
+    // 1. Ensuring it's a valid React element
+    // 2. Checking if it's either the ActionItems component directly
+    //    or a component with the name 'ActionItems' - used for HMR
+    const isActionItem =
+      isValidElement &&
+      (child.type === ActionItems ||
+        (typeof child.type === 'function' &&
+          child.type.name === 'ActionItems'));
+
+    if (isActionItem) {
       // Collect action items
       if (child.props.children) {
         const items = React.Children.toArray(child.props.children);

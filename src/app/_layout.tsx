@@ -56,6 +56,10 @@ export const RootLayout = () => {
             options={{ headerShown: false, presentation: 'modal' }}
           />
           <Stack.Screen name="zoom" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="transform"
+            options={{ headerShown: false, presentation: 'modal' }}
+          />
         </Stack>
       </GestureHandlerRootView>
     </ThemeProvider>

@@ -27,18 +27,22 @@ type ZoomPreviewProps = {
  * Shows a magnified view of the image around the currently active corner point.
  * Completely redesigned with minimal state updates for maximum stability.
  */
-export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
+export const ZoomPreview: React.FC<ZoomPreviewProps> = ({
+  size: zoomWindowSize,
+}) => {
   // Direct store access - no intermediate state
   const activePointIndex = useOverlayStore((state) => state.activePointIndex);
   const activePoint = useOverlayStore((state) =>
-    state.activePointIndex != null ? state.points[state.activePointIndex] : null
+    state.activePointIndex !== null
+      ? state.points[state.activePointIndex]
+      : null
   );
   const updatePoint = useOverlayStore((state) => state.updatePoint);
   const { uri, originalDimensions } = useSourceImageStore();
 
-  const zoomWindowSize = size;
-  const logoOpacity = useSharedValue(1);
-  const previewOpacity = useSharedValue(0);
+  const hasActivePoint = activePointIndex !== null;
+  const logoOpacity = useSharedValue(hasActivePoint ? 0 : 1);
+  const previewOpacity = useSharedValue(hasActivePoint ? 1 : 0);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const savedTranslateX = useSharedValue(0);
@@ -46,7 +50,6 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
 
   // Handle opacity transitions
   useEffect(() => {
-    const hasActivePoint = activePointIndex != null;
     logoOpacity.value = withTiming(hasActivePoint ? 0 : 1, {
       duration: 300,
       easing: Easing.out(Easing.ease),
@@ -55,7 +58,7 @@ export const ZoomPreview: React.FC<ZoomPreviewProps> = ({ size }) => {
       duration: 300,
       easing: Easing.out(Easing.ease),
     });
-  }, [activePointIndex, logoOpacity, previewOpacity]);
+  }, [logoOpacity, previewOpacity, hasActivePoint]);
 
   // Handle translations
   useEffect(() => {

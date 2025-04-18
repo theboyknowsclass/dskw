@@ -122,7 +122,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
       needsStoreUpdate.value = true;
     });
 
-  const tapGesture = Gesture.Tap()
+  const tapGesture = Gesture.LongPress()
     .runOnJS(false)
     .onStart(() => {
       'worklet';
