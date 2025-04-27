@@ -1,4 +1,4 @@
-package com.ineffable.dskw
+package com.ineffable.str8n
 
 import android.app.Application
 import android.content.res.Configuration

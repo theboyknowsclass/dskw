@@ -1,4 +1,4 @@
-package com.ineffable.dskw
+package com.ineffable.str8n
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
