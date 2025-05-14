@@ -8,3 +8,4 @@ export { ThemeFontStyle } from './ThemeFontStyle';
 export { ThemeType } from './ThemeType';
 export { Result } from './Result';
 export { IconType } from './IconType';
+export { Vector } from './Vector';

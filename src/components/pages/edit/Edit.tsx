@@ -14,79 +14,113 @@ import { useScreenDimensions, useContentMeasurements } from '@hooks';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
 import { useEffect } from 'react';
 import { useSourceImageStore } from '@stores';
+import { Point, Vector } from '@types';
 
-interface Transform {
-  translateX: number;
-  translateY: number;
-  scale: number;
-}
-
-// Import the checkerboard pattern
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const checkerboardPattern = require('@assets/checkerboard.png');
+import checkerboardPattern from '@assets/checkerboard.png';
 
 const BORDER_PERCENTAGE = 0.2;
 const MAX_SCALE = 1;
+
+interface AnimatableSize {
+  width: DimensionValue;
+  height: DimensionValue;
+}
 
 const EditContent: React.FC = () => {
   const { uri, originalDimensions } = useSourceImageStore();
   const { dimensions: contentDimensions } = useContentMeasurements();
 
-  const transform = useSharedValue<Transform>({
-    translateX: 0,
-    translateY: 0,
-    scale: 1,
-  });
-  const savedTransform = useSharedValue<Transform>(transform.value);
-
-  const imageContainerWidth = useSharedValue<DimensionValue>('100%');
-  const imageContainerHeight = useSharedValue<DimensionValue>('100%');
-  const xOffset = useSharedValue(0);
-  const yOffset = useSharedValue(0);
-
   const imageWidth = originalDimensions.width;
   const imageHeight = originalDimensions.height;
   const checkerboardWidth = imageWidth * (1 + BORDER_PERCENTAGE * 2);
   const checkerboardHeight = imageHeight * (1 + BORDER_PERCENTAGE * 2);
+  const borderWidth = imageWidth * BORDER_PERCENTAGE;
+  const borderHeight = imageHeight * BORDER_PERCENTAGE;
+
+  const transform = useSharedValue<Vector>({
+    x: -borderWidth,
+    y: -borderHeight,
+  });
+  const savedTransform = useSharedValue<Vector>(transform.value);
+  const scale = useSharedValue(1);
+  const savedScale = useSharedValue(1);
+  const savedFocalPoint = useSharedValue<Point>({
+    x: 0,
+    y: 0,
+  });
+  const imageContainerSize = useSharedValue<AnimatableSize>({
+    width: '100%',
+    height: '100%',
+  });
+
+  const minScale = useSharedValue(1);
+
+  // derived values
+
+  // width calculations
+  const imageContainerWidth = useDerivedValue(() => {
+    return imageContainerSize.value.width as number;
+  });
+  const windowWidth = useDerivedValue(() => {
+    return imageContainerWidth.value / scale.value;
+  });
+  const maxX = useDerivedValue(() => {
+    return -checkerboardWidth + windowWidth.value;
+  });
+
+  // height calculations
+  const imageContainerHeight = useDerivedValue(() => {
+    return imageContainerSize.value.height as number;
+  });
+  const windowHeight = useDerivedValue(() => {
+    return imageContainerHeight.value / scale.value;
+  });
+
+  const maxY = useDerivedValue(() => {
+    return -checkerboardHeight + windowHeight.value;
+  });
 
   useEffect(() => {
     // Calculate scaled dimensions to fit the screen while maintaining aspect ratio
     const widthScale = contentDimensions.width / imageWidth;
     const heightScale = contentDimensions.height / imageHeight;
     const scaleFactor = Math.min(widthScale, heightScale);
-    imageContainerWidth.value = imageWidth * scaleFactor;
-    imageContainerHeight.value = imageHeight * scaleFactor;
 
-    const borderWidth = imageWidth * BORDER_PERCENTAGE;
-    const borderHeight = imageHeight * BORDER_PERCENTAGE;
-
-    xOffset.value = borderWidth;
-    yOffset.value = borderHeight;
-
-    transform.value = {
-      ...transform.value,
-      translateX: -borderWidth,
-      translateY: -borderHeight,
-      scale: scaleFactor,
+    // update shared values
+    minScale.value = scaleFactor / (1 + BORDER_PERCENTAGE * 2);
+    imageContainerSize.value = {
+      width: imageWidth * scaleFactor,
+      height: imageHeight * scaleFactor,
     };
+    scale.value = scaleFactor;
+    savedScale.value = scaleFactor;
   }, [
     contentDimensions,
+    imageContainerSize,
     imageWidth,
     imageHeight,
-    imageContainerWidth,
-    imageContainerHeight,
-    xOffset,
-    yOffset,
-    transform,
+    minScale,
+    scale,
+    savedScale,
   ]);
+
+  const updateTransform = (x: number, y: number) => {
+    'worklet';
+    transform.value = {
+      x: Math.min(0, Math.max(x, maxX.value)),
+      y: Math.min(0, Math.max(y, maxY.value)),
+    };
+  };
 
   const panGesture = Gesture.Pan()
     .enabled(true)
+    .maxPointers(1)
     .minDistance(0)
     .onStart(() => {
       'worklet';
@@ -94,15 +128,10 @@ const EditContent: React.FC = () => {
     })
     .onUpdate((e) => {
       'worklet';
-      const { translateX, translateY, scale } = savedTransform.value;
-      const newX = translateX + e.translationX / scale;
-      const newY = translateY + e.translationY / scale;
-
-      transform.value = {
-        scale,
-        translateX: Math.min(0, Math.max(newX, -xOffset.value * 2)),
-        translateY: Math.min(0, Math.max(newY, -yOffset.value * 2)),
-      };
+      const { x, y } = savedTransform.value;
+      const newX = x + e.translationX / scale.value;
+      const newY = y + e.translationY / scale.value;
+      updateTransform(newX, newY);
     })
     .onEnd(() => {
       'worklet';
@@ -110,18 +139,36 @@ const EditContent: React.FC = () => {
 
   const pinchGesture = Gesture.Pinch()
     .enabled(true)
-    .onStart(() => {
+    .onStart((e) => {
       'worklet';
       savedTransform.value = transform.value;
+      savedScale.value = scale.value;
+      const absoluteFocalX = e.focalX / savedScale.value - transform.value.x;
+      const absoluteFocalY = e.focalY / savedScale.value - transform.value.y;
+
+      savedFocalPoint.value = {
+        x: absoluteFocalX,
+        y: absoluteFocalY,
+      };
     })
     .onUpdate((e) => {
       'worklet';
-      const { scale, translateX, translateY } = savedTransform.value;
-      const newScale = scale * e.scale;
+      const { scale: eventScale } = e;
+      const { x: focalX, y: focalY } = savedFocalPoint.value;
 
-      // Get the focal point scaled to the original image
-      const focalX = e.focalX / scale;
-      const focalY = e.focalY / scale;
+      const newScale = Math.max(
+        Math.min(MAX_SCALE, savedScale.value * eventScale),
+        minScale.value
+      );
+
+      const newWindowWidth = imageContainerWidth.value / newScale;
+      const newWindowHeight = imageContainerHeight.value / newScale;
+
+      const newX = -focalX + newWindowWidth / 2;
+      const newY = -focalY + newWindowHeight / 2;
+
+      scale.value = newScale;
+      updateTransform(newX, newY);
     })
     .onEnd(() => {
       'worklet';
@@ -144,19 +191,16 @@ const EditContent: React.FC = () => {
     },
   });
 
-  const imageContainerStyle = useAnimatedStyle(
-    () => ({
-      width: imageContainerWidth.value,
-      height: imageContainerHeight.value,
-    }),
-    [contentDimensions]
-  );
+  const imageContainerStyle = useAnimatedStyle(() => ({
+    width: imageContainerSize.value.width,
+    height: imageContainerSize.value.height,
+  }));
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
-      { scale: transform.value.scale },
-      { translateX: transform.value.translateX },
-      { translateY: transform.value.translateY },
+      { scale: scale.value },
+      { translateX: transform.value.x },
+      { translateY: transform.value.y },
     ],
   }));
 
@@ -166,7 +210,7 @@ const EditContent: React.FC = () => {
         <Animated.View style={[styles.imageContainer, imageContainerStyle]}>
           <Animated.View style={[generatedStyles.checkerBoard, animatedStyle]}>
             <ImageBackground
-              source={checkerboardPattern}
+              source={require('../assets/checkerboard.png')}
               resizeMode="repeat"
               style={styles.checkerboard}
             >
