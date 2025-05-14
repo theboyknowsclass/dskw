@@ -6,9 +6,13 @@ import { Dimensions } from '@types';
 
 interface OverlaySvgProps {
   dimensions: Dimensions;
+  scale: number;
 }
 
-export const OverlaySvg: React.FC<OverlaySvgProps> = ({ dimensions }) => {
+export const OverlaySvg: React.FC<OverlaySvgProps> = ({
+  dimensions,
+  scale,
+}) => {
   const { colors } = useTheme();
 
   // Use selectors from the store for better performance
@@ -24,6 +28,7 @@ export const OverlaySvg: React.FC<OverlaySvgProps> = ({ dimensions }) => {
 
   const width = Math.max(0, imageWidth);
   const height = Math.max(0, imageHeight);
+  const strokeWidth = Math.floor(2 / scale);
 
   return (
     <Svg width={width} height={height}>
@@ -31,7 +36,7 @@ export const OverlaySvg: React.FC<OverlaySvgProps> = ({ dimensions }) => {
         points={polygonPoints}
         fill="none"
         stroke={colors.primary}
-        strokeWidth={2}
+        strokeWidth={strokeWidth}
       />
     </Svg>
   );

@@ -17,12 +17,14 @@ type TouchPointProps = {
   index: Corner;
   parentOffset: { xOffset: number; yOffset: number }; // used to calculate the relative position of the point
   parentDimensions: Dimensions; // used to calculate the relative position of the point
+  scale: number;
 };
 
 export const TouchPoint: React.FC<TouchPointProps> = ({
   index,
   parentOffset: offset,
   parentDimensions: dimensions,
+  // scale,
 }) => {
   const updatePoint = useOverlayStore((state) => state.updatePoint);
   const { isMobile } = useScreenDimensions();
@@ -39,7 +41,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   // Create shared values for position in relative coordinates (0-1)
   const relativeX = useSharedValue(point.x);
   const relativeY = useSharedValue(point.y);
-  const scale = useSharedValue(1); // allows for animating the point to be larger when active
+  const pointScale = useSharedValue(1); // allows for animating the point to be larger when active
   const isActive = useSharedValue(false);
   const needsStoreUpdate = useSharedValue(false);
 
@@ -62,7 +64,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     } else {
       isActive.value = false;
     }
-  }, [activePointIndex, index, isActive, scale, isMobile]);
+  }, [activePointIndex, index, isActive, pointScale, isMobile]);
 
   const convertToRelative = useCallback(
     (absoluteX: number, absoluteY: number): Point => {
@@ -102,7 +104,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     .onStart(() => {
       'worklet';
       isActive.value = true;
-      scale.value = withTiming(1.2, { duration: 100 });
+      pointScale.value = withTiming(1.2, { duration: 100 });
       needsStoreUpdate.value = true;
     })
     .onUpdate((e) => {
@@ -118,7 +120,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     .onEnd(() => {
       'worklet';
       isActive.value = false;
-      scale.value = withTiming(1, { duration: 100 });
+      pointScale.value = withTiming(1, { duration: 100 });
       needsStoreUpdate.value = true;
     });
 
@@ -127,7 +129,9 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     .onStart(() => {
       'worklet';
       isActive.value = !isActive.value;
-      scale.value = withTiming(isActive.value ? 1.2 : 1, { duration: 100 });
+      pointScale.value = withTiming(isActive.value ? 1.2 : 1, {
+        duration: 100,
+      });
       needsStoreUpdate.value = true;
     });
 
@@ -135,7 +139,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   const animatedStyles = useAnimatedStyle(() => {
     'worklet';
     return {
-      transform: [{ scale: scale.value }],
+      transform: [{ scale: pointScale.value }],
       left: screenX.value - 24,
       top: screenY.value - 24,
       borderColor: isActive.value

@@ -5,9 +5,10 @@ import { Dimensions } from '@types';
 
 interface OverlayProps {
   dimensions: Dimensions;
+  scale: number;
 }
 
-export const Overlay: React.FC<OverlayProps> = ({ dimensions }) => {
+export const Overlay: React.FC<OverlayProps> = ({ dimensions, scale }) => {
   const [offset, setOffset] = useState({ xOffset: 0, yOffset: 0 });
   const containerRef = useRef<View>(null); // Ref to track the container's position
 
@@ -20,10 +21,14 @@ export const Overlay: React.FC<OverlayProps> = ({ dimensions }) => {
   return (
     <View ref={containerRef} onLayout={onContainerLayout}>
       {/* SVG Layer (visual only) */}
-      <OverlaySvg dimensions={dimensions} />
+      <OverlaySvg dimensions={dimensions} scale={scale} />
 
       {/* Separate interaction layer */}
-      <OverlayGestureHandler offset={offset} dimensions={dimensions} />
+      <OverlayGestureHandler
+        offset={offset}
+        dimensions={dimensions}
+        scale={scale}
+      />
     </View>
   );
 };

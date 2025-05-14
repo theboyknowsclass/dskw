@@ -7,11 +7,13 @@ import { TouchPoint } from '../atoms';
 type OverlayGestureHandlerProps = {
   offset: { xOffset: number; yOffset: number };
   dimensions: Dimensions;
+  scale: number;
 };
 
 export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
   offset,
   dimensions,
+  scale,
 }) => {
   // Use selectors from the store for better performance
   const pointsLength = useOverlayStore((state) => state.points.length);
@@ -28,6 +30,7 @@ export const OverlayGestureHandler: React.FC<OverlayGestureHandlerProps> = ({
           index={index as Corner}
           parentOffset={offset}
           parentDimensions={dimensions}
+          scale={scale}
         />
       ))}
     </View>
