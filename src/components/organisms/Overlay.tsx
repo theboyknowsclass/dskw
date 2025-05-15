@@ -21,7 +21,7 @@ export const Overlay: React.FC<OverlayProps> = ({ dimensions, scale }) => {
   return (
     <View ref={containerRef} onLayout={onContainerLayout}>
       {/* SVG Layer (visual only) */}
-      <OverlaySvg dimensions={dimensions} scale={scale} />
+      {/* <OverlaySvg dimensions={dimensions} scale={scale} /> */}
 
       {/* Separate interaction layer */}
       <OverlayGestureHandler

@@ -1,4 +1,4 @@
-import { TransformImageButton } from '@molecules';
+import { OverlaySvg, TransformImageButton } from '@molecules';
 import {
   View,
   Image,
@@ -17,6 +17,8 @@ import Animated, {
 import { useEffect } from 'react';
 import { useSourceImageStore } from '@stores';
 import { Point, Vector } from '@types';
+import { Overlay } from '@organisms';
+import { Polygon, Rect, Svg } from 'react-native-svg';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const checkerboardPattern = require('@assets/checkerboard.png');
@@ -179,8 +181,6 @@ const EditContent: React.FC = () => {
       width: checkerboardWidth,
       height: checkerboardHeight,
       transformOrigin: 'top left',
-      borderWidth: 10,
-      borderColor: 'blue',
     },
     image: {
       width: originalDimensions.width,
@@ -218,11 +218,42 @@ const EditContent: React.FC = () => {
               resizeMode="cover"
               style={[styles.checkerboard, generatedStyles.checkerboard]}
             >
-              <Image
+              <ImageBackground
                 source={{ uri: uri ?? undefined }}
                 style={[generatedStyles.image]}
-              />
+              >
+                <Overlay dimensions={originalDimensions} scale={scale.value} />
+              </ImageBackground>
             </ImageBackground>
+          </Animated.View>
+          <Animated.View
+            style={[
+              {
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                zIndex: 1000,
+                overflow: 'hidden',
+              },
+              zoomControlTransformStyle,
+            ]}
+          >
+            <Svg
+              width={imageContainerWidth.value}
+              height={imageContainerHeight.value}
+              style={{
+                width: '100%',
+                height: '100%',
+                zIndex: 1000,
+              }}
+            >
+              <Polygon
+                points={`0,0 ${imageContainerWidth.value},0 ${imageContainerWidth.value},${imageContainerHeight.value} 0,${imageContainerHeight.value}`}
+                fill="none"
+                stroke="red"
+                strokeWidth={20}
+              />
+            </Svg>
           </Animated.View>
         </Animated.View>
       </GestureDetector>
@@ -247,16 +278,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'blue',
     display: 'flex',
   },
   imageContainer: {
+    position: 'relative',
     transformOrigin: 'top left',
     width: '100%',
     height: '100%',
-    borderWidth: 1,
-    borderColor: 'red',
     overflow: 'hidden',
     marginTop: 'auto',
     marginBottom: 'auto',
