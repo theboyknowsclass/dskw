@@ -215,7 +215,7 @@ const EditContent: React.FC = () => {
           >
             <ImageBackground
               source={checkerboardPattern}
-              resizeMode="repeat"
+              resizeMode="cover"
               style={[styles.checkerboard, generatedStyles.checkerboard]}
             >
               <Image
