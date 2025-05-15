@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.ineffable.dskw'
+    namespace 'com.ineffable.str8n'
     defaultConfig {
-        applicationId 'com.ineffable.dskw'
+        applicationId 'com.ineffable.str8n'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

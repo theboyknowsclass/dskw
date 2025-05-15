@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "dskw",
-    "slug": "dskw",
-    "scheme": "dskw-scheme",
+    "name": "str8n",
+    "slug": "str8n",
+    "scheme": "str8n-scheme",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
@@ -31,14 +31,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ineffable.dskw",
+      "bundleIdentifier": "com.ineffable.str8n",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to allow you to select and upload images.",
-        "NSPhotoLibraryAddUsageDescription": "This app needs access to save photos to your library.",
+        "NSPhotoLibraryAddUsageDescription": "This app needs access to save photos to your library."
       }
     },
     "android": {
-      "package": "com.ineffable.dskw",
+      "package": "com.ineffable.str8n",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -52,6 +52,15 @@
     },
     "experiments": {
       "baseUrl": "/dskw"
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "69fa859a-06fa-4151-b1b8-b8b2adb7476f"
+      }
+    },
+    "owner": "theboyknowsclass"
   }
 }

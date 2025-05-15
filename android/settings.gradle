@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'dskw'
+rootProject.name = 'str8n'
 
 dependencyResolutionManagement {
   versionCatalogs {
