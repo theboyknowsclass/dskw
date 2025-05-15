@@ -178,7 +178,7 @@ const EditContent: React.FC = () => {
   const composedGesture = Gesture.Simultaneous(panGesture, pinchGesture);
 
   const generatedStyles = StyleSheet.create({
-    checkerBoard: {
+    zoomControl: {
       width: checkerboardWidth,
       height: checkerboardHeight,
       transformOrigin: 'top left',
@@ -189,14 +189,19 @@ const EditContent: React.FC = () => {
       width: originalDimensions.width,
       height: originalDimensions.height,
     },
+    checkerboard: {
+      width: checkerboardWidth,
+      height: checkerboardHeight,
+    },
   });
 
+  // this animated style is used to resize the image container to the size of the image for centering the image
   const imageContainerStyle = useAnimatedStyle(() => ({
     width: imageContainerSize.value.width,
     height: imageContainerSize.value.height,
   }));
 
-  const animatedStyle = useAnimatedStyle(() => ({
+  const zoomControlTransformStyle = useAnimatedStyle(() => ({
     transform: [
       { scale: scale.value },
       { translateX: transform.value.x },
@@ -208,11 +213,13 @@ const EditContent: React.FC = () => {
     <View style={styles.container}>
       <GestureDetector gesture={composedGesture}>
         <Animated.View style={[styles.imageContainer, imageContainerStyle]}>
-          <Animated.View style={[generatedStyles.checkerBoard, animatedStyle]}>
+          <Animated.View
+            style={[generatedStyles.zoomControl, zoomControlTransformStyle]}
+          >
             <ImageBackground
-              source={require('../assets/checkerboard.png')}
+              source={checkerboardPattern}
               resizeMode="repeat"
-              style={styles.checkerboard}
+              style={[styles.checkerboard, generatedStyles.checkerboard]}
             >
               <Image
                 source={{ uri: uri ?? undefined }}
@@ -260,8 +267,6 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
   },
   checkerboard: {
-    width: '100%',
-    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
