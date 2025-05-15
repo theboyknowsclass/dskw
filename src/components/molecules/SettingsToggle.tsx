@@ -1,4 +1,4 @@
-import { Switch, Text } from './';
+import { Switch, Text } from '@atoms';
 import { useTheme } from '@react-navigation/native';
 import { View, StyleSheet } from 'react-native';
 
