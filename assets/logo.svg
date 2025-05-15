@@ -15,5 +15,5 @@
    <circle r="80" cx="875" cy="200" fill="url(#foreground)" stroke="url(#background)" stroke-width="30" />
    <circle r="80" cx="800" cy="700" fill="url(#foreground)" stroke="url(#background)" stroke-width="30" />
    <circle r="80" cx="250" cy="875" fill="url(#foreground)" stroke="url(#background)" stroke-width="30" />
-   <text x="50%" y="48%" dominant-baseline="middle" text-anchor="middle" fill="url(#background)" stroke="url(#background)" font-size="160" font-family="Orbitron" font-weight="500">str8n</text>
+   <text x="50%" y="47%" dominant-baseline="middle" text-anchor="middle" fill="url(#background)" stroke="url(#background)" font-size="130" font-family="Orbitron" font-weight="500">STR8N</text>
 </svg> 

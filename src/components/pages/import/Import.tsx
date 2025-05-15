@@ -1,7 +1,8 @@
-import { Logo, ImagePickerButton } from '@molecules';
+import { ImagePickerButton } from '@molecules';
 import { PageTemplate } from '@templates';
 import { View, StyleSheet } from 'react-native';
 import { useScreenDimensions } from '@hooks';
+import { Logo2 } from '@components/molecules/Logo2';
 
 export const Import: React.FC = () => {
   const { width, height } = useScreenDimensions();
@@ -10,7 +11,7 @@ export const Import: React.FC = () => {
   return (
     <PageTemplate>
       <View style={styles.container}>
-        <Logo size={logoSize} />
+        <Logo2 size={logoSize} />
         <ImagePickerButton />
       </View>
     </PageTemplate>

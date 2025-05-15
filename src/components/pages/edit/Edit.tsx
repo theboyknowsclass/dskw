@@ -206,8 +206,8 @@ const EditContent: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <GestureDetector gesture={composedGesture}>
-        <Animated.View style={[styles.imageContainer, imageContainerStyle]}>
+      <Animated.View style={[styles.imageContainer, imageContainerStyle]}>
+        <GestureDetector gesture={composedGesture}>
           <Animated.View
             style={[generatedStyles.zoomControl, zoomControlTransformStyle]}
           >
@@ -224,8 +224,8 @@ const EditContent: React.FC = () => {
               </ImageBackground>
             </ImageBackground>
           </Animated.View>
-        </Animated.View>
-      </GestureDetector>
+        </GestureDetector>
+      </Animated.View>
     </View>
   );
 };
