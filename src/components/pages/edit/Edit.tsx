@@ -1,28 +1,25 @@
-import { TransformImageButton, ZoomButton } from '@molecules';
+import { TransformImageButton } from '@molecules';
 import {
   View,
   Image,
   StyleSheet,
-  PanResponder,
-  Platform,
   ImageBackground,
   DimensionValue,
 } from 'react-native';
 import { PageTemplate } from '@templates';
-import { Overlay } from '@organisms';
-import { useScreenDimensions, useContentMeasurements } from '@hooks';
+import { useContentMeasurements } from '@hooks';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
-  withSpring,
 } from 'react-native-reanimated';
 import { useEffect } from 'react';
 import { useSourceImageStore } from '@stores';
 import { Point, Vector } from '@types';
 
-import checkerboardPattern from '@assets/checkerboard.png';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const checkerboardPattern = require('@assets/checkerboard.png');
 
 const BORDER_PERCENTAGE = 0.2;
 const MAX_SCALE = 1;

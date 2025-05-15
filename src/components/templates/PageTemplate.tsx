@@ -99,45 +99,43 @@ const styles = StyleSheet.create({
 
 // Separate children into action items and other children
 const separateChildren = (
-  children:
-    | string
-    | number
-    | boolean
-    | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
-    | Iterable<React.ReactNode>
-    | React.ReactPortal
-    | React.ReactNode[]
-    | null
-    | undefined
+  children: React.ReactNode
 ): { actionItems: ReactNode[]; otherChildren: ReactNode[] } => {
   const actionItems: ReactNode[] = [];
   const otherChildren: ReactNode[] = [];
 
   React.Children.forEach(children, (child) => {
-    if (!child) return;
+    if (!child || !React.isValidElement(child)) {
+      otherChildren.push(child);
+      return;
+    }
 
-    const isValidElement = React.isValidElement(child);
+    const actionItem = getActionItem(child);
 
-    // Check if this is an ActionItem component by:
-    // 1. Ensuring it's a valid React element
-    // 2. Checking if it's either the ActionItems component directly
-    //    or a component with the name 'ActionItems' - used for HMR
-    const isActionItem =
-      isValidElement &&
-      (child.type === ActionItems ||
-        (typeof child.type === 'function' &&
-          child.type.name === 'ActionItems'));
-
-    if (isActionItem) {
-      // Collect action items
-      if (child.props.children) {
-        const items = React.Children.toArray(child.props.children);
-        actionItems.push(...items);
-      }
+    if (actionItem) {
+      actionItems.push(...React.Children.toArray(actionItem));
     } else {
-      // Collect other children
       otherChildren.push(child);
     }
   });
+
   return { otherChildren, actionItems };
+};
+
+const getActionItem = (
+  child:
+    | React.ReactElement<unknown, string | React.JSXElementConstructor<unknown>>
+    | React.ReactPortal
+) => {
+  const isActionItem =
+    child.type === ActionItems ||
+    (typeof child.type === 'function' && child.type.name === 'ActionItems');
+
+  if (isActionItem) {
+    const element = child as React.ReactElement<{
+      children?: React.ReactNode;
+    }>;
+    return element.props.children;
+  }
+  return null;
 };
