@@ -12,9 +12,11 @@ import {
 } from '@utils/overlayUtils';
 import { router } from 'expo-router';
 import { TransformService } from '@services';
+import { useRef, useCallback } from 'react';
 
 type TransformImageHook = () => {
-  handleProcess: () => Promise<void>;
+  transformImage: () => Promise<void>;
+  cancel: () => void;
   isLoading: boolean;
   error: string | null;
 };
@@ -25,13 +27,24 @@ export const useTransformImage: TransformImageHook = () => {
     useTransformedImageStore();
   const { points: selectedOverlay } = useOverlayStore();
   const { cropToOverlay } = useSettingsStore();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const handleProcess = async () => {
+  const cancel = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setLoading(false);
+      setError('Image transformation cancelled');
+    }
+  }, [setLoading, setError]);
+
+  const transformImage = useCallback(async () => {
     if (!uri) return;
 
     try {
       setLoading(true);
       setError(null);
+      abortControllerRef.current = new AbortController();
 
       // Validate input image data
       if (!uri || !dimensions) {
@@ -63,19 +76,43 @@ export const useTransformImage: TransformImageHook = () => {
         { uri, dimensions },
         srcPoints,
         dstPoints,
-        cropToOverlay
+        cropToOverlay,
+        abortControllerRef.current.signal
       );
+
+      if (abortControllerRef.current.signal.aborted) {
+        return;
+      }
 
       setDestinationUri(transformedUri);
+      router.dismiss();
       router.push('export');
     } catch (err) {
-      setError(
-        `Error processing image: ${err instanceof Error ? err.message : String(err)}`
-      );
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('Image transformation cancelled');
+      } else {
+        setError(
+          `Error processing image: ${err instanceof Error ? err.message : String(err)}`
+        );
+      }
     } finally {
+      abortControllerRef.current = null;
       setLoading(false);
     }
-  };
+  }, [
+    uri,
+    dimensions,
+    selectedOverlay,
+    cropToOverlay,
+    setLoading,
+    setError,
+    setDestinationUri,
+  ]);
 
-  return { handleProcess, isLoading, error };
+  return {
+    transformImage,
+    cancel,
+    isLoading,
+    error,
+  };
 };

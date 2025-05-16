@@ -1,4 +1,4 @@
-# DSKW - Cross-Platform App
+# STR8N - Cross-Platform App
 
 A modern, cross-platform application built with React Native and Expo, following SOLID principles. This entire project was generated with **Cursor AI** powered by **Claude 3.7 Sonnet** thinking agent.
 

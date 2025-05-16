@@ -26,18 +26,25 @@ export class TransformService {
    * @param srcPoints - Array of 4 points representing the source corners
    * @param dstPoints - Array of 4 points representing the destination corners
    * @param cropToRectangle - Whether to crop the result to the transformed rectangle
+   * @param signal - Optional AbortSignal for cancellation
    * @returns Promise resolving to the transformed image as a base64 string
    */
   static transformImage = async (
     image: ImageSource,
     srcPoints: Point[],
     dstPoints: Point[],
-    cropToRectangle: boolean = false
+    cropToRectangle: boolean = false,
+    signal?: AbortSignal
   ) => {
     // Clear any existing OpenCV buffers to prevent memory leaks
     OpenCV.clearBuffers();
 
     try {
+      // Check for cancellation before starting
+      if (signal?.aborted) {
+        throw new Error('AbortError');
+      }
+
       const {
         uri,
         dimensions: { width, height },
@@ -55,12 +62,22 @@ export class TransformService {
         throw new Error('Image base64 is null');
       }
 
+      // Check for cancellation after loading image
+      if (signal?.aborted) {
+        throw new Error('AbortError');
+      }
+
       // Convert base64 image to OpenCV matrix
       const src = OpenCV.base64ToMat(base64);
 
       // Convert points to OpenCV vector format
       const srcCVPoints = this.getVector(srcPoints);
       const dstCVPoints = this.getVector(dstPoints);
+
+      // Check for cancellation after converting points
+      if (signal?.aborted) {
+        throw new Error('AbortError');
+      }
 
       // Calculate perspective transformation matrix using LU decomposition
       const perspectiveMatrix = OpenCV.invoke(
@@ -79,6 +96,11 @@ export class TransformService {
       // Create scalar for border color (black)
       const scalar = OpenCV.createObject(ObjectType.Scalar, 0);
 
+      // Check for cancellation before transformation
+      if (signal?.aborted) {
+        throw new Error('AbortError');
+      }
+
       // Apply perspective transformation with linear interpolation and constant border
       OpenCV.invoke(
         'warpPerspective',
@@ -90,6 +112,12 @@ export class TransformService {
         BorderTypes.BORDER_CONSTANT,
         scalar
       );
+
+      // Check for cancellation after transformation
+      if (signal?.aborted) {
+        throw new Error('AbortError');
+      }
+
       // Convert result back to base64 format
       const data2 = OpenCV.toJSValue(
         this.getCroppedImage(dst, cropToRectangle ? dstPoints : null)

@@ -7,13 +7,15 @@ export class TransformService {
    * @param srcPoints - Array of 4 points representing the source corners
    * @param dstPoints - Array of 4 points representing the destination corners
    * @param cropToRectangle - Whether to crop the result to the transformed rectangle
+   * @param signal - Optional AbortSignal for cancellation
    * @returns Promise resolving to the transformed image as a base64 string
    */
   static transformImage = async (
     image: ImageSource,
     srcPoints: Point[],
     dstPoints: Point[],
-    cropToRectangle: boolean = false
+    cropToRectangle: boolean = false,
+    signal?: AbortSignal
   ): Promise<string> => {
     // Ensure OpenCV is loaded
     if (!cv || !cv.Mat) {
@@ -34,15 +36,30 @@ export class TransformService {
     const itemsToDelete: EmscriptenEmbindInstance[] = [];
 
     try {
+      // Check for cancellation before starting
+      if (signal?.aborted) {
+        throw new Error('AbortError');
+      }
+
       // Load image into OpenCV format
       const src = cv.imread(await this.getHTMLImageElement(uri));
       itemsToDelete.push(src);
+
+      // Check for cancellation after loading image
+      if (signal?.aborted) {
+        throw new Error('AbortError');
+      }
 
       // Convert points to OpenCV matrix format
       const srcCVPoints = this.getCVPoints(srcPoints);
       itemsToDelete.push(srcCVPoints);
       const dstCVPoints = this.getCVPoints(dstPoints);
       itemsToDelete.push(dstCVPoints);
+
+      // Check for cancellation after converting points
+      if (signal?.aborted) {
+        throw new Error('AbortError');
+      }
 
       // Calculate perspective transformation matrix
       const perspectiveMatrix = cv.getPerspectiveTransform(
@@ -62,6 +79,11 @@ export class TransformService {
         perspectiveMatrix,
         new cv.Size(width, height)
       );
+
+      // Check for cancellation after transformation
+      if (signal?.aborted) {
+        throw new Error('AbortError');
+      }
 
       // Handle cropping if requested
       if (cropToRectangle) {

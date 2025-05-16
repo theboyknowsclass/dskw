@@ -1,4 +1,4 @@
-import { useTheme } from '@hooks';
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import {
   Text as RNText,

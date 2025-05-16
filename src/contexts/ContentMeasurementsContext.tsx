@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode } from 'react';
 import { Dimensions } from '@types';
 
 interface ContentMeasurementsContextType {
@@ -41,14 +41,4 @@ export const ContentMeasurementsProvider: React.FC<
       {children}
     </ContentMeasurementsContext.Provider>
   );
-};
-
-export const useContentMeasurements = () => {
-  const context = useContext(ContentMeasurementsContext);
-  if (context === undefined) {
-    throw new Error(
-      'useContentMeasurements must be used within a ContentMeasurementsProvider'
-    );
-  }
-  return context;
 };

@@ -1,1 +1,1 @@
-export { AppShellLayout } from './AppShellLayout';
+export { PageTemplate } from './PageTemplate';

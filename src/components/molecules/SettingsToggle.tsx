@@ -8,11 +8,11 @@ interface SettingsToggleProps {
   onToggle: (value: boolean) => void;
 }
 
-export const SettingsToggle = ({
+export const SettingsToggle: React.FC<SettingsToggleProps> = ({
   title,
   isEnabled,
   onToggle,
-}: SettingsToggleProps) => {
+}) => {
   const {
     colors: { primary },
   } = useTheme();

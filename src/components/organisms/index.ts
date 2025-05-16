@@ -1,2 +1,3 @@
-export { Overlay } from './Overlay';
-export { ZoomPreview } from './ZoomPreview';
+export { NavigationBar } from './NavigationBar';
+export { SelectionOverlay } from './SelectionOverlay';
+export { PanZoomControl } from './PanZoomControl';

@@ -10,6 +10,7 @@
       "@molecules": ["./components/molecules/index.ts"],
       "@atoms": ["./components/atoms/index.ts"],
       "@pages": ["./components/pages/index.ts"],
+      "@pages/*": ["./components/pages/*"],
       "@components/*": ["./components/*"],
       "@services": ["./services/index.ts"],
       "@services/*": ["./services/*"],
@@ -19,9 +20,11 @@
       "@utils/*": ["./utils/*"],
       "@types": ["./types/index.ts"],
       "@types/*": ["./types/*"],
-      "@assets/*": ["../assets/*"],
+      "@assets/*": ["./assets/*"],
       "@stores": ["./stores/index.ts"],
-      "@stores/*": ["./stores/*"]
+      "@stores/*": ["./stores/*"],
+      "@contexts": ["./contexts/index.ts"],
+      "@contexts/*": ["./contexts/*"]
     }
   },
 }

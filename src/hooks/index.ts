@@ -1,4 +1,5 @@
 export { useScreenDimensions } from './useScreenDimensions';
-export { useTheme } from './useTheme';
+export { useSavedTheme } from './useSavedTheme';
 export { useTransformImage } from './useTransformImage';
 export { useShareImage } from './useShareImage';
+export { useContentMeasurements } from './useContentMeasurements';

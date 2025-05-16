@@ -1,24 +1,19 @@
 import { TextButton } from '@atoms';
-import { useTransformImage } from '@hooks';
 import { StyleSheet } from 'react-native';
-export const TransformImageButton: React.FC = () => {
-  const { handleProcess, isLoading, error } = useTransformImage();
+import { router } from 'expo-router';
 
+export const TransformImageButton: React.FC = () => {
   const onTransformImagePress = async () => {
-    await handleProcess();
-    if (error) {
-      console.error(error);
-    }
+    router.push('/transform');
   };
 
   return (
     <TextButton
-      key="transform-image"
-      accessibilityLabel="Go"
+      key={'transform-image'}
+      accessibilityLabel={'Go'}
       onPress={onTransformImagePress}
-      loading={isLoading}
-      disabled={isLoading}
-      title="Go"
+      disabled={false}
+      title={'Go'}
       variant="outline"
       style={styles.button}
       size="medium"
@@ -29,17 +24,17 @@ export const TransformImageButton: React.FC = () => {
 
 const styles = StyleSheet.create({
   button: {
-    width: 36,
-    height: 36,
-    paddingVertical: 28,
-    paddingHorizontal: 28,
+    width: 56,
+    height: 56,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
     borderWidth: 2,
-    borderRadius: '50%',
+    borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontFamily: 'Orbitron_700Bold',
   },
 });

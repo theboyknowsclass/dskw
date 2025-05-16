@@ -1,7 +1,7 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';
 import { ThemeProvider } from '@react-navigation/native';
-import { useTheme } from '@hooks/useTheme';
+import { useSavedTheme } from '@hooks/useSavedTheme';
 
 import {
   Orbitron_400Regular,
@@ -10,7 +10,7 @@ import {
   Orbitron_700Bold,
   Orbitron_800ExtraBold,
   Orbitron_900Black,
-  useFonts,
+  useFonts as expoUseFonts,
 } from '@expo-google-fonts/orbitron';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -23,7 +23,7 @@ SplashScreen.preventAutoHideAsync();
  * This component wraps the entire app and provides theme context to all child components.
  */
 export const RootLayout = () => {
-  const [loaded, error] = useFonts({
+  const [loaded, error] = expoUseFonts({
     Orbitron_400Regular,
     Orbitron_500Medium,
     Orbitron_600SemiBold,
@@ -31,7 +31,7 @@ export const RootLayout = () => {
     Orbitron_800ExtraBold,
     Orbitron_900Black,
   });
-  const theme = useTheme();
+  const theme = useSavedTheme();
 
   useEffect(() => {
     if (loaded || error) {
@@ -47,11 +47,19 @@ export const RootLayout = () => {
     <ThemeProvider value={theme}>
       {/* GestureHandlerRootView is required for gesture handling in React Native */}
       <GestureHandlerRootView style={styles.container}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        ></Stack>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="edit" options={{ headerShown: false }} />
+          <Stack.Screen name="export" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="settings"
+            options={{ headerShown: false, presentation: 'modal' }}
+          />
+          <Stack.Screen
+            name="transform"
+            options={{ headerShown: false, presentation: 'modal' }}
+          />
+        </Stack>
       </GestureHandlerRootView>
     </ThemeProvider>
   );
