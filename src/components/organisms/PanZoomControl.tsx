@@ -29,11 +29,7 @@ const PanZoom: React.FC<PanZoomProps> = ({
   minScale = 0.1,
   initialTranslate = { x: 0, y: 0 },
 }) => {
-  const {
-    scale,
-    panGesture: contextPanGesture,
-    gesturesEnabled,
-  } = useContext(PanZoomContext);
+  const { scale, panGesture: contextPanGesture } = useContext(PanZoomContext);
   scale.value = initialScale;
   const savedScale = useSharedValue(initialScale);
   const translate = useSharedValue<Vector>(initialTranslate);
@@ -65,16 +61,18 @@ const PanZoom: React.FC<PanZoomProps> = ({
     [maxX, maxY, translate]
   );
 
-  const updateScale = (newScale: number) => {
-    'worklet';
-    scale.value = Math.max(minScale, Math.min(newScale, maxScale));
-    return scale.value;
-  };
+  const updateScale = useCallback(
+    (newScale: number) => {
+      'worklet';
+      scale.value = Math.max(minScale, Math.min(newScale, maxScale));
+      return scale.value;
+    },
+    [maxScale, minScale, scale]
+  );
 
   const panGesture = useMemo(
     () =>
       Gesture.Pan()
-        .enabled(gesturesEnabled)
         .maxPointers(1)
         .minDistance(0)
         .onStart(() => {
@@ -90,38 +88,50 @@ const PanZoom: React.FC<PanZoomProps> = ({
         })
         .onEnd(() => {
           'worklet';
-        }),
-    [gesturesEnabled, savedTranslate, scale, updateTranslate, translate]
+        })
+        .withRef(contextPanGesture),
+    [contextPanGesture, savedTranslate, scale, updateTranslate, translate]
   );
 
-  const pinchGesture = Gesture.Pinch()
-    .enabled(true)
-    .onStart((e) => {
-      'worklet';
-      savedScale.value = scale.value;
-      savedFocalPoint.value = {
-        x: e.focalX,
-        y: e.focalY,
-      };
-    })
-    .onUpdate((e) => {
-      'worklet';
+  const pinchGesture = useMemo(
+    () =>
+      Gesture.Pinch()
+        .enabled(true)
+        .onStart((e) => {
+          'worklet';
+          savedScale.value = scale.value;
+          savedFocalPoint.value = {
+            x: e.focalX,
+            y: e.focalY,
+          };
+        })
+        .onUpdate((e) => {
+          'worklet';
 
-      // update scale
-      const { scale: eventScale } = e;
-      const newScale = updateScale(savedScale.value * eventScale);
+          // update scale
+          const { scale: eventScale } = e;
+          const newScale = updateScale(savedScale.value * eventScale);
 
-      // update translate to keep the focal point in the same position
-      const { x: focalX, y: focalY } = savedFocalPoint.value;
-      const newWindowWidth = controlSize.width / newScale;
-      const newWindowHeight = controlSize.height / newScale;
-      const newX = -focalX + newWindowWidth / 2;
-      const newY = -focalY + newWindowHeight / 2;
-      updateTranslate(newX, newY);
-    })
-    .onEnd(() => {
-      'worklet';
-    });
+          // update translate to keep the focal point in the same position
+          const { x: focalX, y: focalY } = savedFocalPoint.value;
+          const newWindowWidth = controlSize.width / newScale;
+          const newWindowHeight = controlSize.height / newScale;
+          const newX = -focalX + newWindowWidth / 2;
+          const newY = -focalY + newWindowHeight / 2;
+          updateTranslate(newX, newY);
+        })
+        .onEnd(() => {
+          'worklet';
+        }),
+    [
+      savedFocalPoint,
+      savedScale,
+      scale,
+      updateTranslate,
+      controlSize,
+      updateScale,
+    ]
+  );
 
   const handleWheel = (e: WheelEvent) => {
     // Prevent default scrolling behavior
@@ -146,10 +156,7 @@ const PanZoom: React.FC<PanZoomProps> = ({
   contextPanGesture.current = panGesture;
 
   // Combine both gestures
-  const composedGesture = useMemo(
-    () => Gesture.Exclusive(panGesture, pinchGesture),
-    [panGesture, pinchGesture]
-  );
+  const composedGesture = Gesture.Exclusive(panGesture, pinchGesture);
 
   const layoutStyle = {
     width: contentSize.width,
@@ -171,6 +178,7 @@ const PanZoom: React.FC<PanZoomProps> = ({
         position: 'relative',
         width: controlSize.width,
         height: controlSize.height,
+        pointerEvents: 'box-none',
       }}
       {...(Platform.OS === 'web' ? { onWheel: handleWheel } : {})}
     >

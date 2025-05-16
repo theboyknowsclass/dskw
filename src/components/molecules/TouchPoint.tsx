@@ -26,11 +26,7 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   index,
   position: absolutePosition,
 }) => {
-  const {
-    scale,
-    panGesture: parentPanGesture,
-    setGesturesEnabled,
-  } = useContext(PanZoomContext);
+  const { scale, panGesture: parentPanGesture } = useContext(PanZoomContext);
   const updatePoint = useOverlayStore((state) => state.updatePoint);
   const theme = useTheme();
 
@@ -80,10 +76,10 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   const panGesture = Gesture.Pan()
     .maxPointers(1)
     .runOnJS(false)
+    .minDistance(0)
     .onStart(() => {
       'worklet';
       isActive.value = true;
-      runOnJS(setGesturesEnabled)(false);
       savedAbsolutePosition.value = absolutePosition.value;
     })
     .onUpdate((e) => {
@@ -112,22 +108,9 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     .onEnd(() => {
       'worklet';
       isActive.value = false;
-      runOnJS(setGesturesEnabled)(true);
       runOnJS(updateStore)(relativePosition.value.x, relativePosition.value.y);
-    });
-
-  const tapGesture = Gesture.Tap()
-    .maxDuration(100)
-    .onStart(() => {
-      'worklet';
-      isActive.value = !isActive.value;
-      runOnJS(setGesturesEnabled)(!isActive.value);
-    });
-
-  // Block external gestures
-  if (parentPanGesture.current) {
-    panGesture.blocksExternalGesture(parentPanGesture.current);
-  }
+    })
+    .blocksExternalGesture(parentPanGesture.current!);
 
   // Animated styles for the point
   const animatedStyles = useAnimatedStyle(() => {
@@ -146,10 +129,10 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
     };
   });
 
-  const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
+  // const composedGesture = Gesture.Simultaneous(panGesture, tapGesture);
 
   return (
-    <GestureDetector gesture={composedGesture}>
+    <GestureDetector gesture={panGesture}>
       <Animated.View style={[styles.touchPoint, animatedStyles]} />
     </GestureDetector>
   );
