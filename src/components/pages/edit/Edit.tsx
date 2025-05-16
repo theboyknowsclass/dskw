@@ -1,5 +1,5 @@
 import { CheckerBoardBackground, TransformImageButton } from '@molecules';
-import { View, StyleSheet, ImageBackground, Platform } from 'react-native';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 import { PageTemplate } from '@templates';
 import { useContentMeasurements } from '@hooks';
 import { useSourceImageStore } from '@stores';
