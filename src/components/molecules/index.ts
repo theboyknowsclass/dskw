@@ -10,3 +10,4 @@ export { LoadingContainer } from './LoadingContainer';
 export { ZoomButton } from './ZoomButton';
 export { SettingsToggle } from './SettingsToggle';
 export { TouchPoint } from './TouchPoint';
+export { CheckerBoardBackground } from './CheckerBoardBackground';

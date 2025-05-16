@@ -1,4 +1,4 @@
-import { TransformImageButton } from '@molecules';
+import { CheckerBoardBackground, TransformImageButton } from '@molecules';
 import { View, StyleSheet, ImageBackground, Platform } from 'react-native';
 import { PageTemplate } from '@templates';
 import { useContentMeasurements } from '@hooks';
@@ -7,8 +7,6 @@ import { PanZoomControl, SelectionOverlay } from '@components/organisms';
 
 const BORDER_PERCENTAGE = 0.2;
 const MAX_SCALE = 1;
-
-const checkerboardPattern = require('../../../assets/checkerboard.png');
 
 const EditContent: React.FC = () => {
   const { uri, originalDimensions } = useSourceImageStore();
@@ -69,16 +67,9 @@ const EditContent: React.FC = () => {
         maxScale={MAX_SCALE}
         initialTranslate={initialTranlate}
       >
-        <ImageBackground
-          source={checkerboardPattern}
-          style={[
-            styles.checkerboard,
-            {
-              width: checkerboardSize.width,
-              height: checkerboardSize.height,
-            },
-          ]}
-          resizeMode={Platform.OS === 'android' ? 'cover' : 'repeat'}
+        <CheckerBoardBackground
+          width={checkerboardSize.width}
+          height={checkerboardSize.height}
         >
           <ImageBackground
             source={{ uri: uri ?? undefined }}
@@ -94,7 +85,7 @@ const EditContent: React.FC = () => {
           >
             <SelectionOverlay />
           </ImageBackground>
-        </ImageBackground>
+        </CheckerBoardBackground>
       </PanZoomControl>
     </View>
   );
