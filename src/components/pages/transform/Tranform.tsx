@@ -41,8 +41,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: '100%',
     verticalAlign: 'middle',
-    borderWidth: 1,
-    borderColor: 'red',
   },
   closeButtonContainer: {
     position: 'absolute',
