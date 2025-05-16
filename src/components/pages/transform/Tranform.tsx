@@ -1,6 +1,7 @@
 import { LoadingSpinner, Text } from '@atoms';
-import { useScreenDimensions, useTheme, useTransformImage } from '@hooks';
+import { useScreenDimensions, useTransformImage } from '@hooks';
 import { CloseButton } from '@molecules';
+import { useTheme } from '@react-navigation/native';
 import { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 

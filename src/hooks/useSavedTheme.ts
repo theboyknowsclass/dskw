@@ -11,7 +11,7 @@ import { AsyncStorageService } from '@services';
  * 2. Determines the initial theme based on the device's color scheme
  * 3. Loads the stored theme or sets the default theme
  */
-export const useTheme = () => {
+export const useSavedTheme = () => {
   const colorScheme = useColorScheme();
   const { theme, setTheme } = useThemeStore();
 

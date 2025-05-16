@@ -1,231 +1,101 @@
 import { TransformImageButton } from '@molecules';
-import {
-  View,
-  StyleSheet,
-  ImageBackground,
-  DimensionValue,
-} from 'react-native';
+import { View, StyleSheet, ImageBackground, Platform } from 'react-native';
 import { PageTemplate } from '@templates';
 import { useContentMeasurements } from '@hooks';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
-  useAnimatedStyle,
-  useDerivedValue,
-  useSharedValue,
-} from 'react-native-reanimated';
-import { useEffect } from 'react';
 import { useSourceImageStore } from '@stores';
-import { Point, Vector } from '@types';
-import { Overlay } from '@organisms';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const checkerboardPattern = require('@assets/checkerboard.png');
+import { PanZoomControl, SelectionOverlay } from '@components/organisms';
 
 const BORDER_PERCENTAGE = 0.2;
 const MAX_SCALE = 1;
 
-interface AnimatableSize {
-  width: DimensionValue;
-  height: DimensionValue;
-}
+const checkerboardPattern = require('../../../assets/checkerboard.png');
 
 const EditContent: React.FC = () => {
   const { uri, originalDimensions } = useSourceImageStore();
-  const { dimensions: contentDimensions } = useContentMeasurements();
+  const { dimensions: contentDimensions, isReady } = useContentMeasurements();
 
-  const imageWidth = originalDimensions.width;
-  const imageHeight = originalDimensions.height;
-  const checkerboardWidth = imageWidth * (1 + BORDER_PERCENTAGE * 2);
-  const checkerboardHeight = imageHeight * (1 + BORDER_PERCENTAGE * 2);
-  const borderWidth = imageWidth * BORDER_PERCENTAGE;
-  const borderHeight = imageHeight * BORDER_PERCENTAGE;
+  if (!isReady) {
+    return null;
+  }
 
-  const transform = useSharedValue<Vector>({
-    x: -borderWidth,
-    y: -borderHeight,
-  });
-  const savedTransform = useSharedValue<Vector>(transform.value);
-  const scale = useSharedValue(1);
-  const savedScale = useSharedValue(1);
-  const savedFocalPoint = useSharedValue<Point>({
-    x: 0,
-    y: 0,
-  });
-  const imageContainerSize = useSharedValue<AnimatableSize>({
-    width: '100%',
-    height: '100%',
-  });
+  const minCheckerboardWidth =
+    originalDimensions.width * (1 + BORDER_PERCENTAGE * 2);
+  const minCheckerboardHeight =
+    originalDimensions.height * (1 + BORDER_PERCENTAGE * 2);
 
-  const minScale = useSharedValue(1);
-
-  // derived values
-
-  // width calculations
-  const imageContainerWidth = useDerivedValue(() => {
-    return imageContainerSize.value.width as number;
-  });
-  const windowWidth = useDerivedValue(() => {
-    return imageContainerWidth.value / scale.value;
-  });
-  const maxX = useDerivedValue(() => {
-    return -checkerboardWidth + windowWidth.value;
-  });
-
-  // height calculations
-  const imageContainerHeight = useDerivedValue(() => {
-    return imageContainerSize.value.height as number;
-  });
-  const windowHeight = useDerivedValue(() => {
-    return imageContainerHeight.value / scale.value;
-  });
-
-  const maxY = useDerivedValue(() => {
-    return -checkerboardHeight + windowHeight.value;
-  });
-
-  useEffect(() => {
-    // Calculate scaled dimensions to fit the screen while maintaining aspect ratio
-    const widthScale = contentDimensions.width / imageWidth;
-    const heightScale = contentDimensions.height / imageHeight;
-    const scaleFactor = Math.min(widthScale, heightScale);
-
-    // update shared values
-    minScale.value = scaleFactor / (1 + BORDER_PERCENTAGE * 2);
-    imageContainerSize.value = {
-      width: imageWidth * scaleFactor,
-      height: imageHeight * scaleFactor,
-    };
-    scale.value = scaleFactor;
-    savedScale.value = scaleFactor;
-  }, [
-    contentDimensions,
-    imageContainerSize,
-    imageWidth,
-    imageHeight,
-    minScale,
-    scale,
-    savedScale,
-  ]);
-
-  const updateTransform = (x: number, y: number) => {
-    'worklet';
-    transform.value = {
-      x: Math.min(0, Math.max(x, maxX.value)),
-      y: Math.min(0, Math.max(y, maxY.value)),
-    };
+  const imageDimensions = {
+    width: originalDimensions.width,
+    height: originalDimensions.height,
   };
 
-  const panGesture = Gesture.Pan()
-    .enabled(true)
-    .maxPointers(1)
-    .minDistance(0)
-    .onStart(() => {
-      'worklet';
-      savedTransform.value = transform.value;
-    })
-    .onUpdate((e) => {
-      'worklet';
-      const { x, y } = savedTransform.value;
-      const newX = x + e.translationX / scale.value;
-      const newY = y + e.translationY / scale.value;
-      updateTransform(newX, newY);
-    })
-    .onEnd(() => {
-      'worklet';
-    });
+  const widthScale = contentDimensions.width / imageDimensions.width;
+  const heightScale = contentDimensions.height / imageDimensions.height;
+  const initialScale = Math.min(widthScale, heightScale);
+  const minScale = initialScale / (1 + BORDER_PERCENTAGE * 2);
 
-  const pinchGesture = Gesture.Pinch()
-    .enabled(true)
-    .onStart((e) => {
-      'worklet';
-      savedTransform.value = transform.value;
-      savedScale.value = scale.value;
-      const absoluteFocalX = e.focalX / savedScale.value - transform.value.x;
-      const absoluteFocalY = e.focalY / savedScale.value - transform.value.y;
+  const checkerboardSize = {
+    width: Math.max(
+      minCheckerboardWidth,
+      Math.round(contentDimensions.width / minScale)
+    ),
+    height: Math.max(
+      minCheckerboardHeight,
+      Math.round(contentDimensions.height / minScale)
+    ),
+  };
 
-      savedFocalPoint.value = {
-        x: absoluteFocalX,
-        y: absoluteFocalY,
-      };
-    })
-    .onUpdate((e) => {
-      'worklet';
-      const { scale: eventScale } = e;
-      const { x: focalX, y: focalY } = savedFocalPoint.value;
+  const absoluteWindowSize = {
+    width: contentDimensions.width / initialScale,
+    height: contentDimensions.height / initialScale,
+  };
 
-      const newScale = Math.max(
-        Math.min(MAX_SCALE, savedScale.value * eventScale),
-        minScale.value
-      );
+  const borderWidth = (checkerboardSize.width - imageDimensions.width) / 2;
+  const borderHeight = (checkerboardSize.height - imageDimensions.height) / 2;
 
-      const newWindowWidth = imageContainerWidth.value / newScale;
-      const newWindowHeight = imageContainerHeight.value / newScale;
-
-      const newX = -focalX + newWindowWidth / 2;
-      const newY = -focalY + newWindowHeight / 2;
-
-      scale.value = newScale;
-      updateTransform(newX, newY);
-    })
-    .onEnd(() => {
-      'worklet';
-    });
-
-  // Combine both gestures
-  const composedGesture = Gesture.Simultaneous(panGesture, pinchGesture);
-
-  const generatedStyles = StyleSheet.create({
-    zoomControl: {
-      width: checkerboardWidth,
-      height: checkerboardHeight,
-      transformOrigin: 'top left',
-    },
-    image: {
-      width: originalDimensions.width,
-      height: originalDimensions.height,
-    },
-    checkerboard: {
-      width: checkerboardWidth,
-      height: checkerboardHeight,
-    },
-  });
-
-  // this animated style is used to resize the image container to the size of the image for centering the image
-  const imageContainerStyle = useAnimatedStyle(() => ({
-    width: imageContainerSize.value.width,
-    height: imageContainerSize.value.height,
-  }));
-
-  const zoomControlTransformStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { translateX: transform.value.x },
-      { translateY: transform.value.y },
-    ],
-  }));
+  const offsetX = (absoluteWindowSize.width - imageDimensions.width) / 2;
+  const offsetY = (absoluteWindowSize.height - imageDimensions.height) / 2;
+  const initialTranlate = {
+    x: -borderWidth + offsetX,
+    y: -borderHeight + offsetY,
+  };
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.imageContainer, imageContainerStyle]}>
-        <GestureDetector gesture={composedGesture}>
-          <Animated.View
-            style={[generatedStyles.zoomControl, zoomControlTransformStyle]}
+      <PanZoomControl
+        contentSize={checkerboardSize}
+        controlSize={contentDimensions}
+        initialScale={initialScale}
+        minScale={minScale}
+        maxScale={MAX_SCALE}
+        initialTranslate={initialTranlate}
+      >
+        <ImageBackground
+          source={checkerboardPattern}
+          style={[
+            styles.checkerboard,
+            {
+              width: checkerboardSize.width,
+              height: checkerboardSize.height,
+            },
+          ]}
+          resizeMode={Platform.OS === 'android' ? 'cover' : 'repeat'}
+        >
+          <ImageBackground
+            source={{ uri: uri ?? undefined }}
+            style={[
+              {
+                position: 'absolute',
+                top: borderHeight,
+                left: borderWidth,
+                width: imageDimensions.width,
+                height: imageDimensions.height,
+              },
+            ]}
           >
-            <ImageBackground
-              source={checkerboardPattern}
-              resizeMode="cover"
-              style={[styles.checkerboard, generatedStyles.checkerboard]}
-            >
-              <ImageBackground
-                source={{ uri: uri ?? undefined }}
-                style={[generatedStyles.image]}
-              >
-                <Overlay dimensions={originalDimensions} scale={scale.value} />
-              </ImageBackground>
-            </ImageBackground>
-          </Animated.View>
-        </GestureDetector>
-      </Animated.View>
+            <SelectionOverlay />
+          </ImageBackground>
+        </ImageBackground>
+      </PanZoomControl>
     </View>
   );
 };
@@ -248,21 +118,13 @@ const styles = StyleSheet.create({
     height: '100%',
     overflow: 'hidden',
     display: 'flex',
-  },
-  imageContainer: {
-    position: 'relative',
-    transformOrigin: 'top left',
-    width: '100%',
-    height: '100%',
-    overflow: 'hidden',
-    marginTop: 'auto',
-    marginBottom: 'auto',
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    backgroundColor: 'transparent',
+    borderRadius: 5,
   },
   checkerboard: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
   },
   overlayWrapper: {
     position: 'absolute',
