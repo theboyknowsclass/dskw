@@ -1,4 +1,4 @@
-import { LoadingSpinner, Text } from '@atoms';
+import { ProgressWheel, Text } from '@atoms';
 import { useScreenDimensions, useTransformImage } from '@hooks';
 import { CloseButton } from '@molecules';
 import { useTheme } from '@react-navigation/native';
@@ -21,7 +21,11 @@ export const Transform: React.FC = () => {
         <CloseButton onPress={cancel} />
       </View>
       <View style={styles.content}>
-        <LoadingSpinner size={loadingAnimationSize} animating={isLoading} />
+        <ProgressWheel
+          size={loadingAnimationSize}
+          progress={undefined}
+          animating={isLoading}
+        />
         <Text style={styles.text} size="large" color={colors.primary}>
           Reticulating splines...
         </Text>

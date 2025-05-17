@@ -1,4 +1,4 @@
-import { LoadingSpinner } from '@atoms';
+import { ProgressWheel } from '@atoms';
 import { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Animated, {
@@ -48,7 +48,11 @@ export const LoadingContainer: React.FC<LoadingContainerProps> = ({
   return (
     <View style={styles.animatedContainer}>
       <Animated.View style={[styles.loading, loadingAnimatedStyle]}>
-        <LoadingSpinner size={loadingAnimationSize} animating={!isReady} />
+        <ProgressWheel
+          size={loadingAnimationSize}
+          progress={undefined}
+          animating={!isReady}
+        />
       </Animated.View>
       <Animated.View style={[styles.content, contentAnimatedStyle]}>
         {children}
