@@ -1,10 +1,10 @@
 <svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg" >
    <defs>
       <style type="text/css">
-         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+         <!-- @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap') -->
       </style>
       <linearGradient id="foreground">
-         <stop stop-color="#20C997"/>
+         <stop stop-color="#00BCD4"/>
       </linearGradient>
       <linearGradient id="background">
          <stop stop-color="#FFFFFF"/>
