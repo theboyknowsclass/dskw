@@ -20,7 +20,9 @@
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-navigation/drawer": "^7.1.1",
     "@react-navigation/native": "^7.0.14",
+    "@shopify/react-native-skia": "v2.0.0-next.4",
     "@techstark/opencv-js": "^4.10.0-release.1",
+    "@types/react": "~19.0.10",
     "expo": "^53.0.9",
     "expo-constants": "~17.1.6",
     "expo-dev-client": "~5.1.8",
@@ -42,13 +44,11 @@
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
-    "react-native-screens": "~4.10.0",
+    "react-native-screens": "~4.11.1",
     "react-native-svg": "15.11.2",
     "react-native-web": "^0.20.0",
-    "zustand": "^5.0.3",
     "typescript": "~5.8.3",
-    "@types/react": "~19.0.10",
-    "@shopify/react-native-skia": "v2.0.0-next.4"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

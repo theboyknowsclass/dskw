@@ -27,6 +27,18 @@
             "node_modules/@expo-google-fonts/orbitron/Orbitron_900Black.ttf"
           ]
         }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#ffffff",
+          "image": "./assets/splash-icon-1024.png",
+          "dark": {
+            "image": "./assets/splash-icon-1024.png",
+            "backgroundColor": "#000000"
+          },
+          "imageWidth": 200
+        }
       ]
     ],
     "ios": {

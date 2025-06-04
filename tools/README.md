@@ -1,6 +1,8 @@
-# Play Store Icon Generator
+# Icon Generator
 
-This tool generates a Google Play Store icon from the SVG logo in your project, centering a 384x384px render in a 512x512px white square as required by Play Store guidelines.
+This tool generates multiple icons from the SVG logo in your project:
+- `icon-with-border-512.png`: A 384x384px logo centered in a 512x512px white square (for Google Play Store)
+- `splash-icon-1024.png`: A 1024x1024px transparent PNG (for splash screens and other uses)
 
 ## Requirements
 - Python 3.8+
@@ -41,7 +43,9 @@ pip install Pillow
 From the `tools` directory (with your virtual environment activated):
 
 ```sh
-python generate_play_store_icon.py
+python generate_icons.py
 ```
 
-The generated icon will be saved as `public/play-store-icon-512x512.png` in your project root. 
+The generated icons will be saved in the `public` directory of your project root:
+- `public/icon-with-border-512.png`
+- `public/splash-icon-1024.png` 
