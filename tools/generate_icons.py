@@ -1,21 +1,138 @@
 import os
 import subprocess
-from PIL import Image
+from PIL import Image, ImageDraw, ImageOps
 import time
+import xml.etree.ElementTree as ET
+
+def extract_svg_colors(svg_path):
+    """Extract accent and mask background colors from SVG file."""
+    tree = ET.parse(svg_path)
+    root = tree.getroot()
+    
+    # Find the accent color
+    accent_color = None
+    mask_bg_color = None
+    
+    for gradient in root.findall('.//{http://www.w3.org/2000/svg}linearGradient'):
+        gradient_id = gradient.get('id')
+        stop = gradient.find('.//{http://www.w3.org/2000/svg}stop')
+        if stop is not None:
+            color = stop.get('stop-color')
+            if gradient_id == 'accent':
+                accent_color = color
+            elif gradient_id == 'mask-background':
+                mask_bg_color = color
+    
+    return accent_color, mask_bg_color
+
+def run_inkscape_export(svg_path, output_path, width, height):
+    """Run Inkscape to export SVG to PNG with specified dimensions."""
+    inkscape_cmd = [
+        'inkscape',
+        '--export-filename=' + output_path,
+        f'--export-width={width}',
+        f'--export-height={height}',
+        '--export-background-opacity=0',
+        svg_path
+    ]
+    
+    print(f"Running Inkscape command for {width}x{height}...")
+    subprocess.run(inkscape_cmd, check=True)
+    print("Inkscape command completed")
+    
+    # Wait for the temp PNG file to exist
+    timeout = 10
+    waited = 0
+    while not os.path.exists(output_path) and waited < timeout:
+        print(f"Waiting for temp file... ({waited:.1f}s)")
+        time.sleep(0.5)
+        waited += 0.5
+        
+    if not os.path.exists(output_path):
+        raise Exception(f"Temp PNG file was not created after {timeout} seconds.")
+        
+    print(f"Temp file found at: {output_path}")
+
+def create_bordered_icon(svg_path, size, border_width, background_color=None, grayscale=False):
+    """Create an icon with a colored border and transparent center.
+    
+    Args:
+        svg_path: Path to the SVG file
+        size: Final size of the icon
+        border_width: Width of the border
+        background_color: Color of the background (None for transparent)
+        grayscale: Whether to convert the final image to grayscale
+    """
+    # Extract colors from SVG
+    accent_color, mask_bg_color = extract_svg_colors(svg_path)
+    print(f"Extracted colors for {os.path.basename(svg_path)} - Accent: {accent_color}, Mask Background: {mask_bg_color}")
+    
+    # Determine border color based on mask background
+    border_color = accent_color if mask_bg_color.lower() == 'white' else None
+    print(f"Using border color: {border_color}")
+    
+    # Calculate dimensions
+    center_size = size - (2 * border_width)
+    x = border_width
+    y = border_width
+    
+    # Create temporary PNG
+    temp_png = os.path.join(os.path.dirname(svg_path), f'temp-{center_size}x{center_size}.png')
+    run_inkscape_export(svg_path, temp_png, center_size, center_size)
+    
+    # Create base image with transparent background
+    final_image = Image.new('RGBA', (size, size), (0, 0, 0, 0))
+    svg_image = Image.open(temp_png).convert('RGBA')
+    
+    if border_color:
+        print(f"Creating border rectangle with color: {border_color}")
+        # Create a new image with transparent background
+        border_rect = Image.new('RGBA', (size, size), (0, 0, 0, 0))
+        # Draw the border rectangle
+        border_draw = ImageDraw.Draw(border_rect)
+        border_draw.rectangle([(0, 0), (size, size)], fill=border_color)
+        # Create a mask for the center
+        mask = Image.new('L', (size, size), 255)  # Start with all white (opaque)
+        mask_draw = ImageDraw.Draw(mask)
+        # Use exact coordinates to avoid 1-pixel gaps
+        mask_draw.rectangle([(x, y), (x + center_size - 1, y + center_size - 1)], fill=0)  # Make center black (transparent)
+        # Apply the mask to keep the center transparent
+        border_rect.putalpha(mask)
+        final_image = border_rect
+    
+    # If we have a background color, create a background
+    if background_color:
+        bg_image = Image.new('RGBA', (size, size), background_color)
+        final_image = Image.alpha_composite(bg_image, final_image)
+    
+    final_image.paste(svg_image, (x, y), svg_image)
+    
+    # Convert to grayscale if requested
+    if grayscale:
+        final_image = ImageOps.grayscale(final_image).convert('RGBA')
+    
+    # Clean up temporary file
+    try:
+        os.remove(temp_png)
+        print(f"Cleaned up temporary file: {temp_png}")
+    except Exception as e:
+        print(f"Warning: Could not remove temporary file {temp_png}: {e}")
+    
+    return final_image
 
 def generate_icons():
     # Input and output paths
     current_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(current_dir)
     svg_path = os.path.join(project_root, 'assets', 'logo.svg')
+    svg_inverse_path = os.path.join(project_root, 'assets', 'logo-inverse.svg')
     output_dir = os.path.join(project_root, 'assets')
     
-    # Define paths for both icons
-    temp_384 = os.path.join(output_dir, 'temp-384x384.png')
-    temp_768 = os.path.join(output_dir, 'temp-768x768.png')
-    temp_1024 = os.path.join(output_dir, 'temp-1024x1024.png')
+    # Define output paths
     icon_with_border = os.path.join(output_dir, 'icon-with-border-512.png')
     icon_with_border_large = os.path.join(output_dir, 'icon-with-border-1024.png')
+    icon_with_border_inverse = os.path.join(output_dir, 'icon-with-border-inverse-1024.png')
+    icon_with_border_grayscale = os.path.join(output_dir, 'icon-with-border-grayscale-1024.png')
     splash_icon = os.path.join(output_dir, 'splash-icon-1024.png')
     
     print(f"Current directory: {current_dir}")
@@ -26,135 +143,48 @@ def generate_icons():
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
     
-    # Check if SVG file exists
+    # Check if SVG files exist
     if not os.path.exists(svg_path):
         print(f"Error: SVG file not found at {svg_path}")
         return
+    if not os.path.exists(svg_inverse_path):
+        print(f"Error: Inverse SVG file not found at {svg_inverse_path}")
+        return
     
     try:
-        # Clean up any existing temp files
-        for temp_file in [temp_384, temp_768, temp_1024]:
-            if os.path.exists(temp_file):
-                os.remove(temp_file)
-                print(f"Removed existing temp file: {temp_file}")
-        
-        # Generate Play Store icon (384x384 centered in 512x512 white square)
+        # Generate Play Store icon (512x512)
         print("\nGenerating Play Store icon...")
-        inkscape_cmd_384 = [
-            'inkscape',
-            '--export-filename=' + temp_384,
-            '--export-width=384',
-            '--export-height=384',
-            '--export-background=white',
-            svg_path
-        ]
-        
-        print("Running Inkscape command for 384x384...")
-        subprocess.run(inkscape_cmd_384, check=True)
-        print("Inkscape command completed")
-        
-        # Wait for the temp PNG file to exist
-        timeout = 10
-        waited = 0
-        while not os.path.exists(temp_384) and waited < timeout:
-            print(f"Waiting for temp file... ({waited:.1f}s)")
-            time.sleep(0.5)
-            waited += 0.5
-            
-        if not os.path.exists(temp_384):
-            print(f"Error: Temp PNG file was not created after {timeout} seconds.")
-            return
-            
-        print(f"Temp file found at: {temp_384}")
-        
-        # Create the 512x512 icon with white background
-        final_image = Image.new('RGBA', (512, 512), 'white')
-        svg_image = Image.open(temp_384)
-        x = (512 - 384) // 2
-        y = (512 - 384) // 2
-        final_image.paste(svg_image, (x, y), svg_image)
+        final_image = create_bordered_icon(svg_path, 512, 30)
         final_image.save(icon_with_border, 'PNG')
         print(f"Generated icon with border at: {icon_with_border}")
 
-        # Generate 768x768 version for the 1024x1024 icon
-        print("\nGenerating 768x768 version for large icon...")
-        inkscape_cmd_768 = [
-            'inkscape',
-            '--export-filename=' + temp_768,
-            '--export-width=768',
-            '--export-height=768',
-            '--export-background=white',
-            svg_path
-        ]
-        
-        print("Running Inkscape command for 768x768...")
-        subprocess.run(inkscape_cmd_768, check=True)
-        print("Inkscape command completed")
-        
-        # Wait for the temp PNG file to exist
-        waited = 0
-        while not os.path.exists(temp_768) and waited < timeout:
-            print(f"Waiting for temp file... ({waited:.1f}s)")
-            time.sleep(0.5)
-            waited += 0.5
-            
-        if not os.path.exists(temp_768):
-            print(f"Error: Temp PNG file was not created after {timeout} seconds.")
-            return
-            
-        print(f"Temp file found at: {temp_768}")
-        
-        # Create the 1024x1024 icon with white background
-        final_image_large = Image.new('RGBA', (1024, 1024), 'white')
-        svg_image_large = Image.open(temp_768)
-        x = (1024 - 768) // 2
-        y = (1024 - 768) // 2
-        final_image_large.paste(svg_image_large, (x, y), svg_image_large)
+        # Generate large icon (1024x1024)
+        print("\nGenerating large icon...")
+        final_image_large = create_bordered_icon(svg_path, 1024, 60)
         final_image_large.save(icon_with_border_large, 'PNG')
         print(f"Generated large icon with border at: {icon_with_border_large}")
         
+        # Generate inverse icon (1024x1024)
+        print("\nGenerating inverse icon...")
+        final_image_inverse = create_bordered_icon(svg_inverse_path, 1024, 60)
+        final_image_inverse.save(icon_with_border_inverse, 'PNG')
+        print(f"Generated inverse icon with border at: {icon_with_border_inverse}")
+        
+        # Generate grayscale version with black background (1024x1024)
+        print("\nGenerating grayscale icon...")
+        final_image_grayscale = create_bordered_icon(svg_inverse_path, 1024, 60, 
+                                                   background_color='black', grayscale=True)
+        final_image_grayscale.save(icon_with_border_grayscale, 'PNG')
+        print(f"Generated grayscale icon with border at: {icon_with_border_grayscale}")
+        
         # Generate splash icon (1024x1024 with transparency)
         print("\nGenerating splash icon...")
-        inkscape_cmd_1024 = [
-            'inkscape',
-            '--export-filename=' + temp_1024,
-            '--export-width=1024',
-            '--export-height=1024',
-            svg_path
-        ]
-        
-        print("Running Inkscape command for 1024x1024...")
-        subprocess.run(inkscape_cmd_1024, check=True)
-        print("Inkscape command completed")
-        
-        # Wait for the temp PNG file to exist
-        waited = 0
-        while not os.path.exists(temp_1024) and waited < timeout:
-            print(f"Waiting for temp file... ({waited:.1f}s)")
-            time.sleep(0.5)
-            waited += 0.5
-            
-        if not os.path.exists(temp_1024):
-            print(f"Error: Temp PNG file was not created after {timeout} seconds.")
-            return
-            
-        print(f"Temp file found at: {temp_1024}")
-        
-        # Save the 1024x1024 splash icon
-        splash_image = Image.open(temp_1024)
-        splash_image.save(splash_icon, 'PNG')
+        run_inkscape_export(svg_path, splash_icon, 1024, 1024)
         print(f"Generated splash icon at: {splash_icon}")
         
-        # Clean up temporary files
-        for temp_file in [temp_384, temp_768, temp_1024]:
-            try:
-                os.remove(temp_file)
-                print(f"Cleaned up temporary file: {temp_file}")
-            except Exception as e:
-                print(f"Warning: Could not remove temporary file {temp_file}: {e}")
-        
         # Verify the files were created
-        for output_file in [icon_with_border, icon_with_border_large, splash_icon]:
+        for output_file in [icon_with_border, icon_with_border_large, icon_with_border_inverse, 
+                          icon_with_border_grayscale, splash_icon]:
             if os.path.exists(output_file):
                 print(f"Final file size for {os.path.basename(output_file)}: {os.path.getsize(output_file)} bytes")
             else:

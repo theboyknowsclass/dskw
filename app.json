@@ -5,7 +5,7 @@
     "scheme": "str8n-scheme",
     "version": "1.0.0",
     "orientation": "default",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon-with-border-1024.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -47,6 +47,11 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to allow you to select and upload images.",
         "NSPhotoLibraryAddUsageDescription": "This app needs access to save photos to your library."
+      },
+      "icon": {
+        "light": "./assets/icon-with-border-1024.png",
+        "dark": "./assets/icon-with-border-inverse-1024.png",
+        "tinted": "./assets/icon-with-border-grayscale-1024.png"
       }
     },
     "android": {

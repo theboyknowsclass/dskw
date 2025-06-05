@@ -7,10 +7,10 @@
          <stop stop-color="#00BCD4"/>
       </linearGradient>
       <linearGradient id="mask-background">
-         <stop stop-color="white"/>
+         <stop stop-color="black"/>
       </linearGradient>
       <linearGradient id="mask-foreground">
-         <stop stop-color="black"/>
+         <stop stop-color="white"/>
       </linearGradient>
    </defs>
    <mask id="myMask" mask-type="luminance">

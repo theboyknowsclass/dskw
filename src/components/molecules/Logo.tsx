@@ -24,11 +24,11 @@ export const Logo: React.FC<LogoProps> = ({ size }) => {
   const points = [
     { x: 150, y: 150 },
     { x: 875, y: 200 },
-    { x: 800, y: 700 },
+    { x: 800, y: 750 },
     { x: 250, y: 875 },
   ];
 
-  const fontPosition = { x: 250, y: 515 };
+  const fontPosition = { x: 250, y: 525 };
   const fontSize = 130;
 
   const width = Math.max(size, 0);
