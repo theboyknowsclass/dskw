@@ -120,12 +120,13 @@ def create_bordered_icon(svg_path, size, border_width, background_color=None, gr
     
     return final_image
 
-def generate_icons():
+def generate_assets():
     # Input and output paths
     current_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(current_dir)
     svg_path = os.path.join(project_root, 'assets', 'logo.svg')
     svg_inverse_path = os.path.join(project_root, 'assets', 'logo-inverse.svg')
+    feature_graphic_svg = os.path.join(project_root, 'assets', 'feature-graphic.svg')
     output_dir = os.path.join(project_root, 'assets')
     
     # Define output paths
@@ -134,6 +135,7 @@ def generate_icons():
     icon_with_border_inverse = os.path.join(output_dir, 'icon-with-border-inverse-1024.png')
     icon_with_border_grayscale = os.path.join(output_dir, 'icon-with-border-grayscale-1024.png')
     splash_icon = os.path.join(output_dir, 'splash-icon-1024.png')
+    feature_graphic = os.path.join(output_dir, 'feature-graphic.png')
     
     print(f"Current directory: {current_dir}")
     print(f"Project root: {project_root}")
@@ -149,6 +151,9 @@ def generate_icons():
         return
     if not os.path.exists(svg_inverse_path):
         print(f"Error: Inverse SVG file not found at {svg_inverse_path}")
+        return
+    if not os.path.exists(feature_graphic_svg):
+        print(f"Error: Feature graphic SVG file not found at {feature_graphic_svg}")
         return
     
     try:
@@ -182,9 +187,14 @@ def generate_icons():
         run_inkscape_export(svg_path, splash_icon, 1024, 1024)
         print(f"Generated splash icon at: {splash_icon}")
         
+        # Generate feature graphic (1024x500)
+        print("\nGenerating feature graphic...")
+        run_inkscape_export(feature_graphic_svg, feature_graphic, 1024, 500)
+        print(f"Generated feature graphic at: {feature_graphic}")
+        
         # Verify the files were created
         for output_file in [icon_with_border, icon_with_border_large, icon_with_border_inverse, 
-                          icon_with_border_grayscale, splash_icon]:
+                          icon_with_border_grayscale, splash_icon, feature_graphic]:
             if os.path.exists(output_file):
                 print(f"Final file size for {os.path.basename(output_file)}: {os.path.getsize(output_file)} bytes")
             else:
@@ -196,4 +206,4 @@ def generate_icons():
         print(f"Error processing image: {e}")
 
 if __name__ == '__main__':
-    generate_icons() 
+    generate_assets() 

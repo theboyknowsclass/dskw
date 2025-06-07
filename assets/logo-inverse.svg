@@ -15,7 +15,7 @@
    </defs>
    <mask id="myMask" mask-type="luminance">
    <rect width="1024" height="1024" fill="url(#mask-background)"/>
-   <polygon points="150,150 875,200 800,700 250,875" fill="url(#mask-foreground)" stroke="url(#mask-background)" stroke-width="30" />
+   <polygon points="150,150 875,200 800,750 250,875" fill="url(#mask-foreground)" stroke="url(#mask-background)" stroke-width="30" />
    <circle r="80" cx="150" cy="150" fill="url(#mask-foreground)" stroke="url(#mask-background)" stroke-width="30" />
    <circle r="80" cx="875" cy="200" fill="url(#mask-foreground)" stroke="url(#mask-background)" stroke-width="30" />
    <circle r="80" cx="800" cy="750" fill="url(#mask-foreground)" stroke="url(#mask-background)" stroke-width="30" />

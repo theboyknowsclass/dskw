@@ -1,0 +1,27 @@
+<svg width="4096" height="2000" xmlns="http://www.w3.org/2000/svg" fill="none">
+   <defs>
+      <style type="text/css">
+         <!-- @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap') -->
+      </style>
+      <linearGradient id="accent">
+         <stop stop-color="#00BCD4"/>
+      </linearGradient>
+      <linearGradient id="mask-background">
+         <stop stop-color="white"/>
+      </linearGradient>
+      <linearGradient id="mask-foreground">
+         <stop stop-color="black"/>
+      </linearGradient>
+   </defs>
+   <mask id="myMask" mask-type="luminance">
+   <rect width="4096" height="2000" fill="url(#mask-background)"/>
+   <polygon points="1686,638 2411,688 2336,1238 1786,1363" fill="url(#mask-foreground)" stroke="url(#mask-background)" stroke-width="30" />
+   <circle r="80" cx="1686" cy="638" fill="url(#mask-foreground)" stroke="url(#mask-background)" stroke-width="30" />
+   <circle r="80" cx="2411" cy="688" fill="url(#mask-foreground)" stroke="url(#mask-background)" stroke-width="30" />
+   <circle r="80" cx="2336" cy="1238" fill="url(#mask-foreground)" stroke="url(#mask-background)" stroke-width="30" />
+   <circle r="80" cx="1786" cy="1363" fill="url(#mask-foreground)" stroke="url(#mask-background)" stroke-width="30" />
+   <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="url(#mask-background)" stroke="url(#mask-background)" font-size="130" font-family="Orbitron" font-weight="500">STR8N</text>
+   <text x="50%" y="90%" dominant-baseline="middle" text-anchor="middle" fill="url(#mask-foreground)" stroke="url(#mask-foreground)" font-size="100" font-family="Orbitron" font-weight="200">Correct your Perspective</text> 
+  </mask>
+   <rect width="4096" height="2000" fill="url(#accent)" mask="url(#myMask)" />
+</svg>
