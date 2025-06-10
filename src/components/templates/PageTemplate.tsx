@@ -25,10 +25,8 @@ interface PageTemplateComponent extends React.FC<PageTemplateProps> {
 
 // Create the Page component
 const Page: React.FC<PageTemplateProps> = ({ children }) => {
-  const { isLandscape, width, height } = useScreenDimensions();
+  const { isLandscape } = useScreenDimensions();
   const { setIsReady, setDimensions, isReady } = useContentMeasurements();
-
-  const loadingAnimationSize = (isLandscape ? width : height) * 0.3;
 
   // Extract action items from children
   const { otherChildren, actionItems } = separateChildren(children);
@@ -54,12 +52,7 @@ const Page: React.FC<PageTemplateProps> = ({ children }) => {
     <View style={rootContainerStyles}>
       <NavigationBar />
       <View style={styles.mainContent} onLayout={onLayout}>
-        <LoadingContainer
-          isReady={isReady}
-          loadingAnimationSize={loadingAnimationSize}
-        >
-          {otherChildren}
-        </LoadingContainer>
+        <LoadingContainer isReady={isReady}>{otherChildren}</LoadingContainer>
       </View>
       <View style={actionBarStyles}>{actionItems}</View>
     </View>

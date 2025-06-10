@@ -1,4 +1,3 @@
-import { ProgressWheel } from '@atoms';
 import { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Animated, {
@@ -11,17 +10,14 @@ import Animated, {
 interface LoadingContainerProps {
   children: React.ReactNode;
   isReady: boolean;
-  loadingAnimationSize: number;
 }
 
 export const LoadingContainer: React.FC<LoadingContainerProps> = ({
   children,
   isReady,
-  loadingAnimationSize,
 }) => {
   // Create shared values for opacity
   const contentOpacity = useSharedValue(isReady ? 1 : 0);
-  const loadingOpacity = useSharedValue(isReady ? 0 : 1);
 
   // Update animations when isReady changes
   useEffect(() => {
@@ -29,31 +25,15 @@ export const LoadingContainer: React.FC<LoadingContainerProps> = ({
       duration: 800,
       easing: Easing.inOut(Easing.ease),
     });
-
-    loadingOpacity.value = withTiming(isReady ? 0 : 1, {
-      duration: 800,
-      easing: Easing.inOut(Easing.ease),
-    });
-  }, [isReady, contentOpacity, loadingOpacity]);
+  }, [isReady, contentOpacity]);
 
   // Create animated styles
   const contentAnimatedStyle = useAnimatedStyle(() => ({
     opacity: contentOpacity.value,
   }));
 
-  const loadingAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: loadingOpacity.value,
-  }));
-
   return (
     <View style={styles.animatedContainer}>
-      <Animated.View style={[styles.loading, loadingAnimatedStyle]}>
-        <ProgressWheel
-          size={loadingAnimationSize}
-          progress={undefined}
-          animating={!isReady}
-        />
-      </Animated.View>
       <Animated.View style={[styles.content, contentAnimatedStyle]}>
         {children}
       </Animated.View>
