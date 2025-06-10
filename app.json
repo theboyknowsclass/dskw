@@ -46,7 +46,8 @@
       "bundleIdentifier": "com.ineffable.str8n",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to allow you to select and upload images.",
-        "NSPhotoLibraryAddUsageDescription": "This app needs access to save photos to your library."
+        "NSPhotoLibraryAddUsageDescription": "This app needs access to save photos to your library.",
+        "ITSAppUsesNonExemptEncryption": false
       },
       "icon": {
         "light": "./assets/icon-with-border-1024.png",
