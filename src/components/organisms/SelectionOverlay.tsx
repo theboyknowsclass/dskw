@@ -13,9 +13,11 @@ export const SelectionOverlay: React.FC = () => {
   const { scale } = useContext(PanZoomContext);
   const points = useOverlayStore((state) => state.points);
   const pointIndices = Array.from(points, (_, k) => k);
-  const { width, height } = useSourceImageStore(
-    (state) => state.originalDimensions
-  );
+  const {
+    sourceImage: {
+      dimensions: { width, height },
+    },
+  } = useSourceImageStore();
 
   const absolutePoints = points.map((p) =>
     makeMutable({

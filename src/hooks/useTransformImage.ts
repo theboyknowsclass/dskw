@@ -22,7 +22,7 @@ type TransformImageHook = () => {
 };
 
 export const useTransformImage: TransformImageHook = () => {
-  const { uri, originalDimensions: dimensions } = useSourceImageStore();
+  const { sourceImage } = useSourceImageStore();
   const { setDestinationUri, setLoading, setError, isLoading, error } =
     useTransformedImageStore();
   const { points: selectedOverlay } = useOverlayStore();
@@ -39,17 +39,14 @@ export const useTransformImage: TransformImageHook = () => {
   }, [setLoading, setError]);
 
   const transformImage = useCallback(async () => {
-    if (!uri) return;
+    if (!sourceImage) return;
+
+    const { dimensions } = sourceImage;
 
     try {
       setLoading(true);
       setError(null);
       abortControllerRef.current = new AbortController();
-
-      // Validate input image data
-      if (!uri || !dimensions) {
-        throw new Error('Image source or dimensions are missing');
-      }
 
       const { width, height } = dimensions;
 
@@ -73,7 +70,7 @@ export const useTransformImage: TransformImageHook = () => {
 
       // Perform the actual image transformation
       const transformedUri = await TransformService.transformImage(
-        { uri, dimensions },
+        sourceImage,
         srcPoints,
         dstPoints,
         cropToOverlay,
@@ -100,8 +97,7 @@ export const useTransformImage: TransformImageHook = () => {
       setLoading(false);
     }
   }, [
-    uri,
-    dimensions,
+    sourceImage,
     selectedOverlay,
     cropToOverlay,
     setLoading,

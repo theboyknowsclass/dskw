@@ -1,11 +1,12 @@
 import { Redirect } from 'expo-router';
 import { useSourceImageStore } from '@stores';
 import { Edit } from '@pages';
+import { IsDefaultSourceImage } from '@types';
 
 export const EditRoute: React.FC = () => {
-  const { uri } = useSourceImageStore();
+  const { sourceImage } = useSourceImageStore();
 
-  if (!uri) return <Redirect href="/" />;
+  if (IsDefaultSourceImage(sourceImage)) return <Redirect href="/" />;
 
   return <Edit />;
 };

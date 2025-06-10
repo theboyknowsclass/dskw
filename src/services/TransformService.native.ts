@@ -6,6 +6,7 @@ import {
   DecompTypes,
   Mat,
   DataTypes,
+  RotateFlags,
 } from 'react-native-fast-opencv';
 import { Point, ImageSource, Corner } from '@types';
 import { toBase64 } from '@utils/imageUtils';
@@ -48,6 +49,7 @@ export class TransformService {
       const {
         uri,
         dimensions: { width, height },
+        tags,
       } = image;
 
       // Validate input image URI
@@ -68,7 +70,21 @@ export class TransformService {
       }
 
       // Convert base64 image to OpenCV matrix
-      const src = OpenCV.base64ToMat(base64);
+      let src: Mat;
+
+      const rotation = this.getRotation(tags?.Orientation);
+      if (rotation !== null) {
+        const originalOrientation = OpenCV.base64ToMat(base64);
+        src = OpenCV.createObject(
+          ObjectType.Mat,
+          height,
+          width,
+          DataTypes.CV_8UC4
+        );
+        OpenCV.invoke('rotate', originalOrientation, src, rotation);
+      } else {
+        src = OpenCV.base64ToMat(base64);
+      }
 
       // Convert points to OpenCV vector format
       const srcCVPoints = this.getVector(srcPoints);
@@ -88,7 +104,12 @@ export class TransformService {
       );
 
       // Create destination matrix for transformed image
-      const dst = OpenCV.base64ToMat(base64);
+      const dst = OpenCV.createObject(
+        ObjectType.Mat,
+        height,
+        width,
+        DataTypes.CV_8UC4
+      );
 
       // Create size object for output dimensions
       const size = OpenCV.createObject(ObjectType.Size, width, height);
@@ -177,4 +198,20 @@ export class TransformService {
 
     return cropped;
   };
+
+  static getRotation(Orientation: number | undefined) {
+    switch (Orientation) {
+      case 5:
+      case 6:
+        return RotateFlags.ROTATE_90_CLOCKWISE;
+      case 7:
+      case 8:
+        return RotateFlags.ROTATE_90_COUNTERCLOCKWISE;
+      case 3:
+      case 4:
+        return RotateFlags.ROTATE_180;
+      default:
+        return null;
+    }
+  }
 }

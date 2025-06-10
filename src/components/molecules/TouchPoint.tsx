@@ -30,9 +30,8 @@ export const TouchPoint: React.FC<TouchPointProps> = ({
   const updatePoint = useOverlayStore((state) => state.updatePoint);
   const theme = useTheme();
 
-  const { width: imageWidth, height: imageHeight } = useSourceImageStore(
-    (state) => state.originalDimensions
-  );
+  const { sourceImage } = useSourceImageStore();
+  const { width: imageWidth, height: imageHeight } = sourceImage.dimensions;
 
   // allows for animating the point to be larger when active
   const isActive = useSharedValue(false);

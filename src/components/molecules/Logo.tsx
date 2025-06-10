@@ -63,7 +63,7 @@ export const Logo: React.FC<LogoProps> = ({ size }) => {
 
   const pathColor = useDerivedValue(() => {
     return dark ? background : foreground;
-  }, [dark]);
+  }, [dark, background, foreground]);
 
   const font = useFont(
     require('../../assets/Orbitron_500Medium.ttf'),

@@ -1,5 +1,9 @@
 export { Corner } from './Corner';
-export { ImageSource } from './ImageSource';
+export {
+  ImageSource,
+  DefaultSourceImage,
+  IsDefaultSourceImage,
+} from './ImageSource';
 export { Dimensions } from './Dimensions';
 export { Point } from './Point';
 export { ThemeColors } from './ThemeColors';

@@ -5,8 +5,7 @@ import { router } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 export const ImagePickerButton: React.FC = () => {
-  const { isLoading, setLoading, setUri, setOriginalDimensions } =
-    useSourceImageStore();
+  const { isLoading, setLoading, setSourceImage } = useSourceImageStore();
   const { resetPoints } = useOverlayStore();
 
   const onStartPress = async () => {
@@ -15,9 +14,7 @@ export const ImagePickerButton: React.FC = () => {
       const { success, error, data } = await ImagePickerService.selectImage();
       if (success && data) {
         resetPoints();
-        const { uri, dimensions } = data;
-        setUri(uri);
-        setOriginalDimensions(dimensions);
+        setSourceImage(data);
         router.navigate('edit');
         return;
       }

@@ -7,7 +7,9 @@ import { create } from 'zustand';
  */
 type SettingsState = {
   cropToOverlay: boolean;
+  maintainExifMetadata: boolean;
   setCropToOverlay: (cropToOverlay: boolean) => void;
+  setMaintainExifMetadata: (maintainExifMetadata: boolean) => void;
 };
 
 /**
@@ -17,5 +19,8 @@ type SettingsState = {
  */
 export const useSettingsStore = create<SettingsState>()((set) => ({
   cropToOverlay: false,
+  maintainExifMetadata: false,
   setCropToOverlay: (cropToOverlay: boolean) => set({ cropToOverlay }),
+  setMaintainExifMetadata: (maintainExifMetadata: boolean) =>
+    set({ maintainExifMetadata }),
 }));

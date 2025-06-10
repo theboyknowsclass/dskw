@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Dimensions } from '@types';
+import { DefaultSourceImage, ImageSource } from '@types';
 
 /**
  * Represents the state of the source image store.
@@ -14,12 +14,10 @@ import { Dimensions } from '@types';
  * @property clearImage - Function to clear the image state
  */
 type SourceImageState = {
-  uri: string | null;
-  originalDimensions: Dimensions;
+  sourceImage: ImageSource;
   isLoading: boolean;
   error: string | null;
-  setUri: (uri: string | null) => void;
-  setOriginalDimensions: (dimensions: Dimensions) => void;
+  setSourceImage: (sourceImage: ImageSource) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   clearImage: () => void;
@@ -31,19 +29,15 @@ type SourceImageState = {
  * @returns The source image store
  */
 export const useSourceImageStore = create<SourceImageState>()((set) => ({
-  uri: null,
-  originalDimensions: { width: 0, height: 0 },
+  sourceImage: DefaultSourceImage,
   isLoading: false,
   error: null,
-  setUri: (uri: string | null) => set({ uri }),
-  setOriginalDimensions: (dimensions: Dimensions) =>
-    set({ originalDimensions: dimensions }),
+  setSourceImage: (sourceImage: ImageSource) => set({ sourceImage }),
   setLoading: (isLoading: boolean) => set({ isLoading }),
   setError: (error: string | null) => set({ error }),
   clearImage: () =>
     set({
-      uri: null,
-      originalDimensions: { width: 0, height: 0 },
+      sourceImage: DefaultSourceImage,
       error: null,
     }),
 }));

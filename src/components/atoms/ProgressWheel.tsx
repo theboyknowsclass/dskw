@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react';
 import Animated, {
   cancelAnimation,
   Easing,
-  useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
   withRepeat,

@@ -9,12 +9,14 @@ const BORDER_PERCENTAGE = 0.2;
 const MAX_SCALE = 1;
 
 const EditContent: React.FC = () => {
-  const { uri, originalDimensions } = useSourceImageStore();
+  const { sourceImage } = useSourceImageStore();
   const { dimensions: contentDimensions, isReady } = useContentMeasurements();
 
-  if (!isReady) {
+  if (!isReady || !sourceImage) {
     return null;
   }
+
+  const { uri, dimensions: originalDimensions } = sourceImage;
 
   const minCheckerboardWidth =
     originalDimensions.width * (1 + BORDER_PERCENTAGE * 2);
