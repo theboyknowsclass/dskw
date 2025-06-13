@@ -54,7 +54,9 @@ export const useShareImage = () => {
       setTemporaryFileUri(tempFilePath);
 
       // Share the temporary file
-      await Sharing.shareAsync(tempFilePath);
+      await Sharing.shareAsync(tempFilePath, {
+        mimeType: 'image/jpeg',
+      });
 
       // Clean up the temporary file after sharing
       await FileSystemService.deleteFile(tempFilePath);

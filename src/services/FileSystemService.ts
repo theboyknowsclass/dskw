@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system';
+import { cleanBase64 } from '@utils/imageUtils';
 
 /**
  * FileSystemService provides methods for reading and writing images to the file system.
@@ -32,19 +33,6 @@ export class FileSystemService {
   }
 
   /**
-   * Saves an image from a base64 string to the file system
-   * @param base64 - The base64 representation of the image to save
-   * @returns Promise resolving to the filename of the saved image
-   */
-  static async saveImage(base64: string): Promise<string> {
-    const filename = FileSystem.documentDirectory + 'some_unique_file_name.png';
-    await FileSystem.writeAsStringAsync(filename, base64, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    return filename;
-  }
-
-  /**
    * Writes a base64 string to a specific file path
    * @param filePath - The path where the file should be written
    * @param base64 - The base64 string to write
@@ -53,7 +41,8 @@ export class FileSystemService {
     filePath: string,
     base64: string
   ): Promise<void> {
-    await FileSystem.writeAsStringAsync(filePath, base64, {
+    const cleanBase64String = cleanBase64(base64);
+    await FileSystem.writeAsStringAsync(filePath, cleanBase64String, {
       encoding: FileSystem.EncodingType.Base64,
     });
   }
