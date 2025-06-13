@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/icon-with-border-1024.png",
+      "image": "./assets/splash-icon-1024.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -32,9 +32,9 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#ffffff",
-          "image": "./assets/icon-with-border-1024.png",
+          "image": "./assets/splash-icon-1024.png",
           "dark": {
-            "image": "./assets/icon-with-border-1024.png",
+            "image": "./assets/splash-icon-1024.png",
             "backgroundColor": "#000000"
           },
           "imageWidth": 200
@@ -57,11 +57,7 @@
     },
     "android": {
       "package": "com.ineffable.str8n",
-      "versionCode": 1,
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png",
